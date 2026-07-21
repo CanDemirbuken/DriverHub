@@ -1,0 +1,8 @@
+﻿using DriverHub.Domain.Abstraction;
+
+namespace DriverHub.Domain.Entities;
+
+public sealed class Location : Entity
+{
+    public string Name { get; set; } = string.Empty;
+}
