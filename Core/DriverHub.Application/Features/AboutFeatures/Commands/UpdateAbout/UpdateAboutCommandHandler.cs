@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,6 +10,10 @@ public sealed class UpdateAboutCommandHandler(IRepository<About> repository, IUn
     public async Task Handle(UpdateAboutCommand request, CancellationToken cancellationToken)
     {
         var about = await repository.GetByIdAsync(request.Id);
+
+        if (about is null)
+            throw new NotFoundException();
+
         about.Title = request.Title;
         about.Description = request.Description;
         about.ImageUrl = request.ImageUrl;

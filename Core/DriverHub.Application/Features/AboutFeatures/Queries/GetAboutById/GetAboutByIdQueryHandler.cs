@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,6 +10,9 @@ public sealed class GetAboutByIdQueryHandler(IRepository<About> repository) : IR
     public async Task<GetAboutByIdQueryResponse> Handle(GetAboutByIdQuery request, CancellationToken cancellationToken)
     {
         var about = await repository.GetByIdAsync(request.Id, cancellationToken);
+        if (about is null)
+            throw new NotFoundException();
+
         GetAboutByIdQueryResponse response = new GetAboutByIdQueryResponse(
             about.Id,
             about.Title,

@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,6 +10,8 @@ public sealed class RemoveAboutCommandHandler(IRepository<About> repository, IUn
     public async Task Handle(RemoveAboutCommand request, CancellationToken cancellationToken)
     {
         var about = await repository.GetByIdAsync(request.Id);
+        if (about is null)
+            throw new NotFoundException();
 
         repository.Remove(about);
         await unitOfWork.SaveChangesAsync(cancellationToken);
