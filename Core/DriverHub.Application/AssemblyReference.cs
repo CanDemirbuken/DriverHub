@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace DriverHub.Persistence;
+namespace DriverHub.Application;
 
 public static class AssemblyReference
 {

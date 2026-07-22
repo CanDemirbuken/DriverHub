@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Core/">
+    <Project Path="Core/DriverHub.Application/DriverHub.Application.csproj" Id="7d424cd3-7754-4316-85ba-3c6b7568d03b" />
     <Project Path="Core/DriverHub.Domain/DriverHub.Domain.csproj" />
   </Folder>
   <Folder Name="/Infrastructure/">

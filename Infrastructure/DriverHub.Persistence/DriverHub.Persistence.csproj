@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Core\DriverHub.Application\DriverHub.Application.csproj" />
 		<ProjectReference Include="..\..\Core\DriverHub.Domain\DriverHub.Domain.csproj" />
 	</ItemGroup>
 

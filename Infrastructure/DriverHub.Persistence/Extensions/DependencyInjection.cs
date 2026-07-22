@@ -1,15 +1,17 @@
-﻿using DriverHub.Persistence.Context;
+﻿using DriverHub.Application.Interfaces;
+using DriverHub.Persistence.Context;
 using DriverHub.Persistence.Options.Sql;
+using DriverHub.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace DriverHub.Persistence;
+namespace DriverHub.Persistence.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPersistence(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<SqlOptions>()
             .Bind(configuration.GetSection(SqlOptions.SectionName))
@@ -26,6 +28,11 @@ public static class DependencyInjection
 
             options.UseSqlServer(sqlOptions.ConnectionString);
         });
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        services.AddScoped<IUnitOfWork>(serviceProvider =>
+            serviceProvider.GetRequiredService<AppDbContext>());
 
         return services;
     }
