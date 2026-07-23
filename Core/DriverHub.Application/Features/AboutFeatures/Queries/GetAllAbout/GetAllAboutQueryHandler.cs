@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Features.AboutFeatures.Mappings;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,14 +10,8 @@ public sealed class GetAllAboutQueryHandler(IRepository<About> repository) : IRe
     public async Task<IReadOnlyList<GetAllAboutQueryResponse>> Handle(GetAllAboutQuery request, CancellationToken cancellationToken)
     {
         var abouts = await repository.GetAllAsync(cancellationToken);
-        IReadOnlyList<GetAllAboutQueryResponse> response = abouts.Select(about => new GetAllAboutQueryResponse
-        (
-            about.Id,
-            about.Title,
-            about.Description,
-            about.ImageUrl
-        )).ToList();
 
+        IReadOnlyList<GetAllAboutQueryResponse> response = abouts.Select(about => about.ToGetAllResponse()).ToList();
         return response;
     }
 }

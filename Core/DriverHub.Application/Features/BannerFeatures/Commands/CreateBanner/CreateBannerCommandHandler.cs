@@ -1,22 +1,20 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Features.BannerFeatures.Mappings;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
 namespace DriverHub.Application.Features.BannerFeatures.Commands.CreateBanner;
 
-public sealed class CreateBannerCommandHandler(IRepository<Banner> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateBannerCommand>
+public sealed class CreateBannerCommandHandler(IRepository<Banner> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateBannerCommand, CreateBannerCommandResponse>
 {
-    public async Task Handle(CreateBannerCommand request, CancellationToken cancellationToken)
+    public async Task<CreateBannerCommandResponse> Handle(CreateBannerCommand request, CancellationToken cancellationToken)
     {
-        Banner banner = new Banner()
-        {
-            Title = request.Title,
-            Description = request.Description,
-            VideoDescription = request.VideoDescription,
-            VideoUrl = request.VideoUrl
-        };
+        Banner banner = request.ToEntity();
 
         await repository.AddAsync(banner, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        CreateBannerCommandResponse response = new CreateBannerCommandResponse(banner.Id);
+        return response;
     }
 }

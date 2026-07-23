@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.BannerFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -10,17 +11,10 @@ public sealed class GetBannerByIdQueryHandler(IRepository<Banner> repository) : 
     public async Task<GetBannerByIdQueryResponse> Handle(GetBannerByIdQuery request, CancellationToken cancellationToken)
     {
         var banner = await repository.GetByIdAsync(request.Id, cancellationToken);
-
         if (banner is null)
             throw new NotFoundException();
 
-        GetBannerByIdQueryResponse response = new GetBannerByIdQueryResponse(
-            banner.Id,
-            banner.Title,
-            banner.Description,
-            banner.VideoDescription,
-            banner.VideoUrl);
-
+        GetBannerByIdQueryResponse response = banner.ToGetByIdResponse();
         return response;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.AboutFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -13,12 +14,7 @@ public sealed class GetAboutByIdQueryHandler(IRepository<About> repository) : IR
         if (about is null)
             throw new NotFoundException();
 
-        GetAboutByIdQueryResponse response = new GetAboutByIdQueryResponse(
-            about.Id,
-            about.Title,
-            about.Description,
-            about.ImageUrl);
-
+        GetAboutByIdQueryResponse response = about.ToGetByIdResponse();
         return response;
     }
 }

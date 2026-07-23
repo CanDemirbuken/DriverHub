@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Features.BrandFeatures.Mappings;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,12 +10,8 @@ public sealed class GetAllBrandQueryHandler(IRepository<Brand> repository) : IRe
     public async Task<IReadOnlyList<GetAllBrandQueryResponse>> Handle(GetAllBrandQuery request, CancellationToken cancellationToken)
     {
         IReadOnlyList<Brand> brands = await repository.GetAllAsync(cancellationToken);
-        IReadOnlyList<GetAllBrandQueryResponse> response = brands.Select(b => new GetAllBrandQueryResponse
-        (
-            b.Id,
-            b.Name
-        )).ToList();
 
+        IReadOnlyList<GetAllBrandQueryResponse> response = brands.Select(b => b.ToGetAllResponse()).ToList();
         return response;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.BannerFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -13,10 +14,7 @@ public sealed class UpdateBannerCommandHandler(IRepository<Banner> repository, I
         if (banner is null)
             throw new NotFoundException();
 
-        banner.Title = request.Title;
-        banner.Description = request.Description;
-        banner.VideoDescription = request.VideoDescription;
-        banner.VideoUrl = request.VideoUrl;
+        request.ApplyTo(banner);
 
         repository.Update(banner);
         await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 
 namespace DriverHub.Persistence.Repositories;
 
-public sealed class Repository<T>(AppDbContext context) : IRepository<T> where T : class
+public class Repository<T>(AppDbContext context) : IRepository<T> where T : class
 {
-    private readonly DbSet<T> _dbSet = context.Set<T>();
+    protected readonly DbSet<T> _dbSet = context.Set<T>();
 
     public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await _dbSet.ToListAsync(cancellationToken);

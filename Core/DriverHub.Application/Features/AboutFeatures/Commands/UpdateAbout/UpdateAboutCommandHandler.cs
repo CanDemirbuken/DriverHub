@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.AboutFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -14,9 +15,7 @@ public sealed class UpdateAboutCommandHandler(IRepository<About> repository, IUn
         if (about is null)
             throw new NotFoundException();
 
-        about.Title = request.Title;
-        about.Description = request.Description;
-        about.ImageUrl = request.ImageUrl;
+        request.ApplyTo(about);
 
         repository.Update(about);
         await unitOfWork.SaveChangesAsync();

@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.BrandFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -13,7 +14,7 @@ public sealed class GetBrandByIdQueryHandler(IRepository<Brand> repository) : IR
         if (brand is null)
             throw new NotFoundException();
 
-        GetBrandByIdQueryResponse response = new GetBrandByIdQueryResponse(brand.Id, brand.Name);
+        GetBrandByIdQueryResponse response = brand.ToGetByIdResponse();
         return response;
     }
 }

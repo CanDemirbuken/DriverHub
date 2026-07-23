@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Features.BannerFeatures.Mappings;
+using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
 
@@ -9,15 +10,8 @@ public sealed class GetAllBannerQueryHandler(IRepository<Banner> repository) : I
     public async Task<IReadOnlyList<GetAllBannerQueryResponse>> Handle(GetAllBannerQuery request, CancellationToken cancellationToken)
     {
         var banners = await repository.GetAllAsync(cancellationToken);
-        IReadOnlyList<GetAllBannerQueryResponse> response = banners.Select(b => new GetAllBannerQueryResponse
-        (
-            b.Id,
-            b.Title,
-            b.Description,
-            b.VideoDescription,
-            b.VideoUrl)
-        ).ToList();
 
+        IReadOnlyList<GetAllBannerQueryResponse> response = banners.Select(b => b.ToGetAllResponse()).ToList();
         return response;
     }
 }
