@@ -8,7 +8,8 @@ namespace DriverHub.Application.Features.ContactFeatures.Mappings;
 
 public static class ContactMappingExtensions
 {
-    public static GetAllContactQueryResponse ToGetAllResponse(this Contact contact)
+    public static GetAllContactQueryResponse ToGetAllResponse(
+        this Contact contact)
     {
         return new GetAllContactQueryResponse(
             contact.Id,
@@ -18,7 +19,8 @@ public static class ContactMappingExtensions
             contact.Message);
     }
 
-    public static GetContactByIdQueryResponse ToGetByIdResponse(this Contact contact)
+    public static GetContactByIdQueryResponse ToGetByIdResponse(
+        this Contact contact)
     {
         return new GetContactByIdQueryResponse(
             contact.Id,
@@ -39,7 +41,9 @@ public static class ContactMappingExtensions
         };
     }
 
-    public static void ApplyTo(this UpdateContactCommand command, Contact contact)
+    public static void ApplyTo(
+        this UpdateContactCommand command,
+        Contact contact)
     {
         contact.Name = command.Name;
         contact.Email = command.Email;

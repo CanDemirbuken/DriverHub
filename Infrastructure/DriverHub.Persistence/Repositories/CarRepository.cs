@@ -24,4 +24,20 @@ public sealed class CarRepository(AppDbContext context) : Repository<Car>(contex
                 car => car.Id == id,
                 cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Car>> GetPagedCarsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .AsNoTracking()
+            .OrderByDescending(car => car.CreatedDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .CountAsync(cancellationToken);
+    }
 }

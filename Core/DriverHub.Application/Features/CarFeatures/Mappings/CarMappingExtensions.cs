@@ -4,6 +4,7 @@ using DriverHub.Application.Features.CarFeatures.Queries.GetAllCar;
 using DriverHub.Application.Features.CarFeatures.Queries.GetAllCarWithBrand;
 using DriverHub.Application.Features.CarFeatures.Queries.GetCarById;
 using DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
+using DriverHub.Application.Features.CarFeatures.Queries.GetPagedCars;
 using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Features.CarFeatures.Mappings;
@@ -25,19 +26,35 @@ public static class CarMappingExtensions
             car.BigImageUrl);
     }
 
-    public static GetAllCarWithBrandQueryResponse ToGetAllWithBrandResponse(this Car car)
+    public static GetPagedCarsQueryResponse ToGetPagedCarsResponse(this Car car)
+    {
+        return new GetPagedCarsQueryResponse(
+            car.Id,
+            car.BrandId,
+            car.Model,
+            car.CoverImageUrl,
+            car.Km,
+            car.Transmission,
+            car.Seat,
+            car.Luggage,
+            car.Fuel,
+            car.BigImageUrl);
+    }
+
+    public static GetAllCarWithBrandQueryResponse ToGetAllWithBrandResponse(
+        this Car car)
     {
         return new GetAllCarWithBrandQueryResponse(
-             car.Id,
-             car.Brand!.Name,
-             car.Model,
-             car.CoverImageUrl,
-             car.Km,
-             car.Transmission,
-             car.Seat,
-             car.Luggage,
-             car.Fuel,
-             car.BigImageUrl);
+            car.Id,
+            car.Brand!.Name,
+            car.Model,
+            car.CoverImageUrl,
+            car.Km,
+            car.Transmission,
+            car.Seat,
+            car.Luggage,
+            car.Fuel,
+            car.BigImageUrl);
     }
 
     public static GetCarByIdQueryResponse ToGetByIdResponse(this Car car)
@@ -55,7 +72,8 @@ public static class CarMappingExtensions
             car.BigImageUrl);
     }
 
-    public static GetCarByIdWithBrandQueryResponse ToGetByIdWithBrandResponse(this Car car)
+    public static GetCarByIdWithBrandQueryResponse ToGetByIdWithBrandResponse(
+        this Car car)
     {
         return new GetCarByIdWithBrandQueryResponse(
             car.Id,

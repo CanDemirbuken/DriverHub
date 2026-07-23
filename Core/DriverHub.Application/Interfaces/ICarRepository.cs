@@ -10,4 +10,12 @@ public interface ICarRepository : IRepository<Car>
     Task<Car?> GetCarByIdWithBrandAsync(
         Guid Id,
         CancellationToken cancellationToken = default);
+
+    Task<int> CountAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Car>> GetPagedCarsAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

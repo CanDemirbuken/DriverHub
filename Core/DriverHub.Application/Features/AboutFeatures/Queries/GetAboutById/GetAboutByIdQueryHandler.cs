@@ -14,7 +14,6 @@ public sealed class GetAboutByIdQueryHandler(IRepository<About> repository) : IR
         if (about is null)
             throw new NotFoundException();
 
-        GetAboutByIdQueryResponse response = about.ToGetByIdResponse();
-        return response;
+        return about.ToGetByIdResponse();
     }
 }
