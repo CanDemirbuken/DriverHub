@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.BrandFeatures.Commands.UpdateBrand;
 
@@ -7,8 +8,7 @@ public sealed class UpdateBrandCommandValidator : AbstractValidator<UpdateBrandC
     public UpdateBrandCommandValidator()
     {
         RuleFor(command => command.Id)
-            .NotEmpty()
-            .WithMessage("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
 
         RuleFor(b => b.Name)
             .NotEmpty()

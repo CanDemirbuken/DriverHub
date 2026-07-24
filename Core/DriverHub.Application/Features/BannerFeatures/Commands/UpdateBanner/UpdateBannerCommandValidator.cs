@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.BannerFeatures.Commands.UpdateBanner;
 
@@ -7,8 +8,7 @@ public sealed class UpdateBannerCommandValidator : AbstractValidator<UpdateBanne
     public UpdateBannerCommandValidator()
     {
         RuleFor(command => command.Id)
-            .NotEmpty()
-            .WithMessage("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
 
         RuleFor(command => command.Title)
             .NotEmpty()

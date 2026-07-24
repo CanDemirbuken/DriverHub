@@ -14,6 +14,10 @@ public sealed class CreateCarCommandHandler(IRepository<Car> carRepository, IRep
         if (!brandExists)
             throw new NotFoundException("Marka bilgisi bulunamadı.");
 
+        bool carExists = await carRepository.AnyAsync(predicate: c => c.Model == request.Model && c.BrandId == request.BrandId, cancellationToken);
+        if (carExists)
+            throw new ConflictException("Bu marka ve model bilgisine sahip bir araç zaten mevcut.");
+
         Car car = request.ToEntity();
 
         await carRepository.AddAsync(car, cancellationToken);

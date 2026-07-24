@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.ContactFeatures.Commands.UpdateContact;
 
@@ -7,12 +8,11 @@ public sealed class UpdateContactCommandValidator : AbstractValidator<UpdateCont
     public UpdateContactCommandValidator()
     {
         RuleFor(command => command.Id)
-            .NotEmpty()
-            .WithMessage("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
 
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Ad Soyad alanı zorunludur.")
+            .WithMessage("Ad Soyad bilgisi zorunludur.")
             .MaximumLength(150)
             .WithMessage("Ad Soyad en fazla 150 karakter olabilir.");
 
@@ -26,13 +26,13 @@ public sealed class UpdateContactCommandValidator : AbstractValidator<UpdateCont
 
         RuleFor(x => x.Subject)
             .NotEmpty()
-            .WithMessage("Konu alanı zorunludur.")
+            .WithMessage("Konu bilgisi zorunludur.")
             .MaximumLength(250)
             .WithMessage("Konu en fazla 250 karakter olabilir.");
 
         RuleFor(x => x.Message)
             .NotEmpty()
-            .WithMessage("Mesaj alanı zorunludur.")
+            .WithMessage("Mesaj bilgisi zorunludur.")
             .MinimumLength(10)
             .WithMessage("Mesaj en az 10 karakter olmalıdır.")
             .MaximumLength(4000)

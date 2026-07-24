@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Features.CategoryFeatures.Mappings;
+﻿using DriverHub.Application.Exceptions;
+using DriverHub.Application.Features.CategoryFeatures.Mappings;
 using DriverHub.Application.Interfaces;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -9,6 +10,10 @@ public sealed class CreateCategoryCommandHandler(IRepository<Category> repositor
 {
     public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
+        bool categoryExists = await repository.AnyAsync(predicate: c => c.Name == request.Name, cancellationToken);
+        if (categoryExists)
+            throw new ConflictException("Bu isimde bir kategori zaten mevcut.");
+
         Category category = request.ToEntity();
 
         await repository.AddAsync(category, cancellationToken);

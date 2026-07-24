@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
 
@@ -7,18 +8,17 @@ public sealed class UpdateCarCommandValidator : AbstractValidator<UpdateCarComma
     public UpdateCarCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty()
-            .WithMessage("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Güncellenecek kaydın Id bilgisi boş bırakılamaz.");
 
         RuleFor(x => x.BrandId)
             .NotEmpty()
-            .WithMessage("Brand alanı zorunludur.");
+            .WithMessage("Brand bilgisi zorunludur.");
 
         RuleFor(x => x.Model)
             .NotEmpty()
-            .WithMessage("Model alanı zorunludur.")
+            .WithMessage("Model bilgisi zorunludur.")
             .MaximumLength(150)
-            .WithMessage("Model en fazla 150 karakter olabilir.");
+            .WithMessage("Model bilgisi en fazla 150 karakter olabilir.");
 
         RuleFor(x => x.CoverImageUrl)
             .NotEmpty()

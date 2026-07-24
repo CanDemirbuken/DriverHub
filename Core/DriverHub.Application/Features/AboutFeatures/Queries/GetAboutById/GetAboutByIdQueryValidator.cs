@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.AboutFeatures.Queries.GetAboutById;
 
@@ -7,7 +8,6 @@ public sealed class GetAboutByIdQueryValidator : AbstractValidator<GetAboutByIdQ
     public GetAboutByIdQueryValidator()
     {
         RuleFor(query => query.Id)
-            .NotEmpty()
-            .WithMessage("Getirilecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Getirilecek kaydın Id bilgisi boş bırakılamaz.");
     }
 }

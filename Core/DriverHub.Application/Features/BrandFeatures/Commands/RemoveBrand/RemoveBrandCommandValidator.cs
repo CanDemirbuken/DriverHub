@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.BrandFeatures.Commands.RemoveBrand;
 
@@ -7,7 +8,6 @@ public sealed class RemoveBrandCommandValidator : AbstractValidator<RemoveBrandC
     public RemoveBrandCommandValidator()
     {
         RuleFor(command => command.Id)
-            .NotEmpty()
-            .WithMessage("Silinecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Silinecek kaydın Id bilgisi boş bırakılamaz.");
     }
 }

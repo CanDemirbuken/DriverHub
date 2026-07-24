@@ -1,6 +1,7 @@
 ﻿using DriverHub.Application.Exceptions;
 using DriverHub.WebApi.Models.Errors;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Middlewares;
 
@@ -20,6 +21,10 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
         {
             await HandleNotFoundExceptionAsync(context, exception);
         }
+        catch (ConflictException exception)
+        {
+            await HandleConflictExceptionAsync(context, exception);
+        }
         catch (Exception exception)
         {
             await HandleUnexpectedExceptionAsync(context, exception);
@@ -28,18 +33,28 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
 
     private static async Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
     {
-        string[] errors = exception.Errors
-            .Select(error => error.ErrorMessage)
-            .Where(errorMessage =>
-                !string.IsNullOrWhiteSpace(errorMessage))
-            .Distinct()
-            .ToArray();
+        Dictionary<string, string[]> errors = exception.Errors
+            .Where(error =>
+                !string.IsNullOrWhiteSpace(error.PropertyName) &&
+                !string.IsNullOrWhiteSpace(error.ErrorMessage))
+            .GroupBy(error => error.PropertyName)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .Select(error => error.ErrorMessage)
+                    .Distinct()
+                    .ToArray());
 
-        ValidationErrorDetails response = new()
+        ValidationProblemDetails response = new(errors)
         {
-            StatusCode = StatusCodes.Status400BadRequest,
-            Errors = errors
+            Type = "https://httpstatuses.com/400",
+            Title = "Validation failed",
+            Status = StatusCodes.Status400BadRequest,
+            Detail = "Bir veya daha fazla validation hatası oluştu.",
+            Instance = context.Request.Path
         };
+
+        response.Extensions["traceId"] = context.TraceIdentifier;
 
         await WriteResponseAsync(
             context,
@@ -49,15 +64,39 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
 
     private static async Task HandleNotFoundExceptionAsync(HttpContext context, NotFoundException exception)
     {
-        ErrorResult response = new()
+        ProblemDetails response = new()
         {
-            StatusCode = StatusCodes.Status404NotFound,
-            Message = exception.Message
+            Type = "https://httpstatuses.com/404",
+            Title = "Resource not found",
+            Status = StatusCodes.Status404NotFound,
+            Detail = exception.Message,
+            Instance = context.Request.Path
         };
+
+        response.Extensions["traceId"] = context.TraceIdentifier;
 
         await WriteResponseAsync(
             context,
             StatusCodes.Status404NotFound,
+            response);
+    }
+
+    private static async Task HandleConflictExceptionAsync(HttpContext context, ConflictException exception)
+    {
+        ProblemDetails response = new()
+        {
+            Type = "https://httpstatuses.com/409",
+            Title = "Conflict",
+            Status = StatusCodes.Status409Conflict,
+            Detail = exception.Message,
+            Instance = context.Request.Path
+        };
+
+        response.Extensions["traceId"] = context.TraceIdentifier;
+
+        await WriteResponseAsync(
+            context,
+            StatusCodes.Status409Conflict,
             response);
     }
 
@@ -70,11 +109,16 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
             context.Request.Path.Value,
             context.TraceIdentifier);
 
-        ErrorResult response = new()
+        ProblemDetails response = new()
         {
-            StatusCode = StatusCodes.Status500InternalServerError,
-            Message = "Beklenmeyen bir hata oluştu."
+            Type = "https://httpstatuses.com/500",
+            Title = "Internal server error",
+            Status = StatusCodes.Status500InternalServerError,
+            Detail = "Beklenmeyen bir hata oluştu.",
+            Instance = context.Request.Path
         };
+
+        response.Extensions["traceId"] = context.TraceIdentifier;
 
         await WriteResponseAsync(
             context,
@@ -85,7 +129,7 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
     private static async Task WriteResponseAsync<TResponse>(HttpContext context, int statusCode, TResponse response)
     {
         context.Response.StatusCode = statusCode;
-        context.Response.ContentType = "application/json";
+        context.Response.ContentType = "application/problem+json";
 
         await context.Response.WriteAsJsonAsync(response);
     }

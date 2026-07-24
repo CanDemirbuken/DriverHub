@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.BannerFeatures.Queries.GetBannerById;
 
@@ -7,7 +8,6 @@ public sealed class GetBannerByIdQueryValidator : AbstractValidator<GetBannerByI
     public GetBannerByIdQueryValidator()
     {
         RuleFor(query => query.Id)
-            .NotEmpty()
-            .WithMessage("Getirilecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Getirilecek kaydın Id bilgisi boş bırakılamaz.");
     }
 }

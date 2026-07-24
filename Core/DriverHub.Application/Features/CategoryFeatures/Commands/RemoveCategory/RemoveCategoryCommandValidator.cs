@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DriverHub.Application.Common.Validations;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Commands.RemoveCategory;
 
@@ -7,7 +8,6 @@ public sealed class RemoveCategoryCommandValidator : AbstractValidator<RemoveCat
     public RemoveCategoryCommandValidator()
     {
         RuleFor(command => command.Id)
-            .NotEmpty()
-            .WithMessage("Silinecek kaydın Id bilgisi boş bırakılamaz.");
+            .ValidId("Silinecek kaydın Id bilgisi boş bırakılamaz.");
     }
 }

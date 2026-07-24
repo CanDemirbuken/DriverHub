@@ -33,13 +33,14 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICarRepository, CarRepository>();
-        
+
         services.AddScoped<IAboutQueryService, AboutQueryService>();
         services.AddScoped<IBannerQueryService, BannerQueryService>();
         services.AddScoped<IBrandQueryService, BrandQueryService>();
         services.AddScoped<ICarQueryService, CarQueryService>();
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         services.AddScoped<IContactQueryService, ContactQueryService>();
+        services.AddScoped<IFeatureQueryService, FeatureQueryService>();
 
         services.AddScoped<IUnitOfWork>(serviceProvider =>
             serviceProvider.GetRequiredService<AppDbContext>());
