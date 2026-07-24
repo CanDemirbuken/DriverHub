@@ -25,6 +25,15 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
         {
             await HandleConflictExceptionAsync(context, exception);
         }
+        catch (OperationCanceledException)
+            when (context.RequestAborted.IsCancellationRequested)
+        {
+            logger.LogInformation(
+                "İstek istemci tarafından iptal edildi. Method: {RequestMethod}, Path: {RequestPath}, TraceId: {TraceId}",
+                context.Request.Method,
+                context.Request.Path.Value,
+                context.TraceIdentifier);
+        }
         catch (Exception exception)
         {
             await HandleUnexpectedExceptionAsync(context, exception);
@@ -131,6 +140,8 @@ public sealed class GlobalExceptionMiddleware(RequestDelegate next, ILogger<Glob
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/problem+json";
 
-        await context.Response.WriteAsJsonAsync(response);
+        await context.Response.WriteAsJsonAsync(
+            response,
+            cancellationToken: context.RequestAborted);
     }
 }

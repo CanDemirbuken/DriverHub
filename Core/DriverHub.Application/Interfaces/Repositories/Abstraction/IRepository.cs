@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DriverHub.Application.Interfaces;
+namespace DriverHub.Application.Interfaces.Repositories.Abstraction;
 
 public interface IRepository<T> where T : class
 {

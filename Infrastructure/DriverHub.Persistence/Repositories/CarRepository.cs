@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Features.CarFeatures.Mappings;
-using DriverHub.Application.Interfaces;
+using DriverHub.Application.Interfaces.Repositories;
 using MediatR;
 
 namespace DriverHub.Application.Features.CarFeatures.Queries.GetAllCarWithBrand;

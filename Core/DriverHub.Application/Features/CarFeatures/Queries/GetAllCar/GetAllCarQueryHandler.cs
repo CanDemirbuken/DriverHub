@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Features.CarFeatures.Mappings;
-using DriverHub.Application.Interfaces;
+using DriverHub.Application.Interfaces.Repositories.Abstraction;
 using DriverHub.Domain.Entities;
 using MediatR;
 

@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Features.ContactFeatures.Mappings;
-using DriverHub.Application.Interfaces;
+using DriverHub.Application.Interfaces.Repositories.Abstraction;
 using DriverHub.Domain.Entities;
 using MediatR;
 

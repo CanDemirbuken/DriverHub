@@ -4,6 +4,7 @@
     <Project Path="Core/DriverHub.Domain/DriverHub.Domain.csproj" />
   </Folder>
   <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/DriverHub.Infrastructure/DriverHub.Infrastructure.csproj" Id="a7172658-6654-4c2a-bd50-8554b47fb187" />
     <Project Path="Infrastructure/DriverHub.Persistence/DriverHub.Persistence.csproj" />
   </Folder>
   <Folder Name="/Presentation/">

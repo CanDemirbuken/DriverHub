@@ -1,4 +1,4 @@
-﻿namespace DriverHub.Application.Interfaces;
+﻿namespace DriverHub.Application.Interfaces.UnitOfWork;
 
 public interface IUnitOfWork
 {

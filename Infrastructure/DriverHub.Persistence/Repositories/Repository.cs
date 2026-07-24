@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Interfaces;
+﻿using DriverHub.Application.Interfaces.Repositories.Abstraction;
 using DriverHub.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

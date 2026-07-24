@@ -1,4 +1,5 @@
 using DriverHub.Application.Extensions;
+using DriverHub.Infrastructure.Extensions;
 using DriverHub.Persistence.Extensions;
 using DriverHub.WebApi.Extensions;
 using Serilog;
@@ -23,6 +24,7 @@ try
     builder.Services.AddApplication();
 
     builder.Services.AddPersistence(builder.Configuration);
+    builder.Services.AddInfrastructure(builder.Configuration);
 
     WebApplication app = builder.Build();
 

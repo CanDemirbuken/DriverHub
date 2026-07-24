@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Infrastructure\DriverHub.Infrastructure\DriverHub.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\Infrastructure\DriverHub.Persistence\DriverHub.Persistence.csproj" />
 	</ItemGroup>
 
