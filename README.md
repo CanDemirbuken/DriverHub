@@ -13,41 +13,31 @@
 
 > 🚧 **Project Status**
 >
-> DriverHub is currently under active development. The project is being built incrementally with a strong focus on production-ready backend architecture, maintainability, scalability, and enterprise software development practices.
+> DriverHub is currently under active development and is being built as a long-term reference project for modern ASP.NET Core backend development. Every architectural decision is intentionally evaluated and refined with maintainability, scalability, and production-readiness in mind.
 
 ---
 
 # 📖 Overview
 
-**DriverHub** is a production-oriented **ASP.NET Core 10 Web API** project developed using **Clean Architecture**.
+**DriverHub** is a production-oriented **ASP.NET Core 10 Web API** built using **Clean Architecture**, **CQRS**, and **Vertical Slice Architecture**.
 
-Rather than simply implementing CRUD operations, the project focuses on applying modern backend architecture principles and enterprise software development practices. Throughout its development, the project emphasizes writing clean, maintainable, scalable, and testable code while following real-world architectural patterns.
-
-The project currently adopts and continues to evolve around:
-
-- Clean Architecture
-- CQRS
-- MediatR
-- FluentValidation
-- Repository Pattern
-- Unit of Work
-- Feature-Based Organization
-- Mapping Extensions
-- SOLID Principles
-- Separation of Concerns
-- Production-Ready API Design
+Rather than serving as a simple CRUD application, DriverHub focuses on implementing modern backend architecture, clean code principles, and enterprise software development practices. Every feature is designed with maintainability, scalability, testability, and long-term sustainability in mind.
 
 ---
 
-# 🎯 Development Philosophy
+# 🎯 Design Principles
 
-DriverHub is intentionally developed as a **production-oriented reference project**.
+DriverHub is developed around a few fundamental principles:
 
-Instead of implementing features as quickly as possible, each architectural decision is carefully evaluated and refined to align with enterprise software development practices.
+- Build features through Vertical Slices
+- Keep business logic independent from infrastructure
+- Separate HTTP contracts from application use-cases
+- Follow RESTful API conventions
+- Produce consistent HTTP responses using RFC7807 ProblemDetails
+- Keep the codebase clean, maintainable, and scalable
+- Continuously refactor and improve architectural decisions
 
-The objective is not only to build a functional application, but also to create a clean, maintainable, scalable, and well-structured codebase that reflects real-world backend development principles.
-
-Every new feature is treated as an opportunity to improve the architecture, reduce technical debt, and build a project that can confidently serve as a long-term reference for modern ASP.NET Core development.
+Rather than following tutorials step-by-step, the project intentionally evolves by reviewing, refining, and improving every architectural decision throughout the development process.
 
 ---
 
@@ -71,65 +61,71 @@ DriverHub
     └── DriverHub.UnitTest
 ```
 
-The solution follows the **Clean Architecture** approach, ensuring that business rules remain completely independent from infrastructure and presentation concerns.
+The solution follows the **Clean Architecture** approach where dependencies always point toward the business layer, allowing the Domain and Application layers to remain completely independent from infrastructure and presentation concerns.
 
 ---
 
-# 🚀 Technologies
+# 🚀 Technology Stack
 
 - ASP.NET Core 10
 - Entity Framework Core 10
 - SQL Server
 - Clean Architecture
+- Vertical Slice Architecture
 - CQRS
 - MediatR
 - FluentValidation
-- Repository Pattern
-- Unit of Work
-- Dependency Injection
-- Options Pattern
 - RESTful API
 - Swagger / OpenAPI
 
 ---
 
-# ✅ Current Features
+# ✅ Implemented Features
 
 ## Architecture
 
 - Clean Architecture
-- Layered Solution Structure
-- SOLID Principles
-- Separation of Concerns
-
-## Persistence
-
-- Entity Framework Core Code First
-- SQL Server
-- Fluent API Configurations
-- Generic Repository
+- Vertical Slice Architecture
+- CQRS with MediatR
+- Feature-Based Organization
+- Repository Pattern
 - Unit of Work
-- Automatic Audit Fields
-- Automatic Configuration Discovery
+- Mapping Extensions
 
-## Application
+## Validation
 
-- CQRS Architecture
-- MediatR
 - FluentValidation
 - Validation Pipeline Behavior
+- ValidationProblemDetails Responses
+
+## Error Handling
+
 - Global Exception Middleware
-- Feature-Based Organization
-- Feature Mapping Extensions
-- Generic CRUD Structure
-- Create Command Responses
+- RFC7807 ProblemDetails
+- Consistent HTTP Error Contracts
+- TraceId Support
+- Custom Business Exceptions
 
 ## API
 
-- RESTful API
+- RESTful API Design
+- Standardized HTTP Status Codes
+- Request / Command Separation
 - Swagger / OpenAPI
-- Dependency Injection
-- Options Pattern
+- ProducesResponseType Documentation
+
+## Data Access
+
+- Entity Framework Core Code First
+- SQL Server
+- Generic Repository
+- Unit of Work
+- Fluent API Configurations
+- Automatic Configuration Discovery
+- Automatic Audit Fields
+- Pagination
+- Query Projection
+- No-Tracking Queries
 
 ---
 
@@ -138,36 +134,32 @@ The solution follows the **Clean Architecture** approach, ensuring that business
 ## Architecture
 
 - [x] Clean Architecture
+- [x] Vertical Slice Architecture
 - [x] CQRS
 - [x] MediatR
 - [x] FluentValidation
 - [x] Repository Pattern
 - [x] Unit of Work
 - [x] Validation Pipeline Behavior
-- [x] Global Exception Middleware
-- [x] Feature Mapping Extensions
+- [x] RFC7807 ProblemDetails
+- [x] Global Exception Handling
+- [x] RESTful API Standards
+- [x] HTTP Contract Standardization
 
-## Database
+## Data Access
 
 - [x] Entity Framework Core
 - [x] SQL Server
 - [x] Code First
 - [x] Migrations
-
-## API
-
-- [x] REST API
-- [x] Swagger
-
-## Performance
-
-- [ ] Pagination
-- [ ] Query Projection
-- [ ] No-Tracking Queries
-- [ ] Caching
+- [x] Pagination
+- [x] Query Projection
+- [x] No-Tracking Queries
+- [ ] Response Caching
 
 ## Security
 
+- [ ] ASP.NET Core Identity
 - [ ] JWT Authentication
 - [ ] Authorization
 - [ ] Refresh Token
@@ -186,43 +178,42 @@ The solution follows the **Clean Architecture** approach, ensuring that business
 
 ## Frontend
 
-- [ ] Admin Panel
+- [ ] Angular Admin Panel
 - [ ] Public Website
 
 ---
 
-# 🎯 Project Goals
+# 🎯 Goals
 
-The primary objective of DriverHub is to become a **production-ready reference project** demonstrating modern ASP.NET Core backend development and enterprise application architecture.
+The primary objective of DriverHub is to become a production-ready backend reference project demonstrating modern ASP.NET Core application architecture.
 
 The project prioritizes:
 
-- Clean Architecture
+- Maintainable Code
+- Scalable Architecture
+- Testability
+- Readability
 - SOLID Principles
 - Separation of Concerns
-- Domain-Driven Design (DDD)
-- CQRS
-- Scalable Software Design
-- Maintainable Code
-- Feature-Oriented Development
-- Testability
 - Production-Ready API Design
+
+Rather than focusing solely on implementing features, DriverHub aims to demonstrate how enterprise backend applications can be designed, structured, and evolved over time.
 
 ---
 
-# 📚 Learning Objectives
+# 📚 Learning Focus
 
 DriverHub also serves as a long-term personal reference project for mastering:
 
 - ASP.NET Core
 - Clean Architecture
+- Vertical Slice Architecture
 - CQRS
 - MediatR
 - Entity Framework Core
 - FluentValidation
-- Repository Pattern
-- Unit of Work
-- Authentication & Authorization
+- ASP.NET Core Identity
+- JWT Authentication
 - Enterprise Backend Development
 
 ---
