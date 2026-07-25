@@ -13,31 +13,40 @@
 
 > 🚧 **Project Status**
 >
-> DriverHub is currently under active development and is being built as a long-term reference project for modern ASP.NET Core backend development. Every architectural decision is intentionally evaluated and refined with maintainability, scalability, and production-readiness in mind.
+> DriverHub is currently under active development and is being built as a long-term reference project for modern ASP.NET Core backend development.
+>
+> The project intentionally prioritizes architectural quality over implementation speed. Every design decision is evaluated, challenged, and continuously refined to achieve maintainability, scalability, security, and production readiness.
+>
+> Authentication infrastructure, JWT authentication, and refresh token support have been implemented. More advanced security features such as refresh token rotation, reuse detection, and email confirmation are planned as the project evolves.
 
 ---
 
 # 📖 Overview
 
-**DriverHub** is a production-oriented **ASP.NET Core 10 Web API** built using **Clean Architecture**, **CQRS**, and **Vertical Slice Architecture**.
+**DriverHub** is a production-oriented **ASP.NET Core 10 Web API** built using **Clean Architecture**, **Vertical Slice Architecture**, and **CQRS**.
 
-Rather than serving as a simple CRUD application, DriverHub focuses on implementing modern backend architecture, clean code principles, and enterprise software development practices. Every feature is designed with maintainability, scalability, testability, and long-term sustainability in mind.
+Rather than serving as a simple CRUD application, DriverHub focuses on implementing modern backend architecture, clean code principles, security best practices, and enterprise software development techniques.
+
+The primary objective is not simply to build features, but to build them in a way that remains maintainable, testable, scalable, and production-ready.
 
 ---
 
 # 🎯 Design Principles
 
-DriverHub is developed around a few fundamental principles:
+DriverHub is built around several core principles:
 
-- Build features through Vertical Slices
-- Keep business logic independent from infrastructure
-- Separate HTTP contracts from application use-cases
-- Follow RESTful API conventions
-- Produce consistent HTTP responses using RFC7807 ProblemDetails
-- Keep the codebase clean, maintainable, and scalable
-- Continuously refactor and improve architectural decisions
+- Vertical Slice Architecture
+- Clean Architecture
+- CQRS with MediatR
+- Separation of Concerns
+- Feature-Based Organization
+- Explicit Application Contracts
+- RESTful API Standards
+- RFC7807 ProblemDetails
+- Security First
+- Continuous Refactoring
 
-Rather than following tutorials step-by-step, the project intentionally evolves by reviewing, refining, and improving every architectural decision throughout the development process.
+Rather than blindly following tutorials, every architectural decision is reviewed, discussed, challenged, and improved throughout the project's lifecycle.
 
 ---
 
@@ -61,7 +70,7 @@ DriverHub
     └── DriverHub.UnitTest
 ```
 
-The solution follows the **Clean Architecture** approach where dependencies always point toward the business layer, allowing the Domain and Application layers to remain completely independent from infrastructure and presentation concerns.
+The solution follows **Clean Architecture**, where dependencies always point toward the business layer, allowing the Domain and Application layers to remain completely independent from infrastructure and presentation concerns.
 
 ---
 
@@ -70,6 +79,8 @@ The solution follows the **Clean Architecture** approach where dependencies alwa
 - ASP.NET Core 10
 - Entity Framework Core 10
 - SQL Server
+- ASP.NET Core Identity
+- JWT Authentication
 - Clean Architecture
 - Vertical Slice Architecture
 - CQRS
@@ -102,17 +113,9 @@ The solution follows the **Clean Architecture** approach where dependencies alwa
 
 - Global Exception Middleware
 - RFC7807 ProblemDetails
-- Consistent HTTP Error Contracts
 - TraceId Support
 - Custom Business Exceptions
-
-## API
-
-- RESTful API Design
-- Standardized HTTP Status Codes
-- Request / Command Separation
-- Swagger / OpenAPI
-- ProducesResponseType Documentation
+- Consistent HTTP Error Contracts
 
 ## Data Access
 
@@ -126,6 +129,26 @@ The solution follows the **Clean Architecture** approach where dependencies alwa
 - Pagination
 - Query Projection
 - No-Tracking Queries
+
+## Authentication
+
+- ASP.NET Core Identity
+- JWT Authentication
+- Refresh Token Infrastructure
+- Secure Refresh Token Hashing
+- Identity Error Mapping
+- Identity Seeding
+- Account Lockout
+- JWT Claims-Based Authentication
+- Role-Based Authentication Infrastructure
+
+## API
+
+- RESTful API Design
+- Standardized HTTP Status Codes
+- Swagger / OpenAPI
+- ProducesResponseType Documentation
+- Explicit Request / Response Contracts
 
 ---
 
@@ -159,17 +182,23 @@ The solution follows the **Clean Architecture** approach where dependencies alwa
 
 ## Security
 
-- [ ] ASP.NET Core Identity
-- [ ] JWT Authentication
+- [x] ASP.NET Core Identity
+- [x] JWT Authentication
+- [x] Identity Seeding
+- [x] Refresh Token Infrastructure
+- [ ] Refresh Token Rotation
+- [ ] Refresh Token Reuse Detection
 - [ ] Authorization
-- [ ] Refresh Token
 - [ ] Role-Based Authorization
+- [ ] Email Confirmation
+- [ ] Password Reset
 
 ## Infrastructure
 
 - [ ] Logging
 - [ ] Serilog
 - [ ] Health Checks
+- [ ] Rate Limiting
 
 ## Testing
 
@@ -180,6 +209,31 @@ The solution follows the **Clean Architecture** approach where dependencies alwa
 
 - [ ] Angular Admin Panel
 - [ ] Public Website
+
+---
+
+# 🔐 Authentication
+
+DriverHub uses **ASP.NET Core Identity** together with **JWT Bearer Authentication** to provide a modern authentication infrastructure.
+
+Implemented security features include:
+
+- JWT Access Tokens
+- Refresh Token Infrastructure
+- Secure Refresh Token Hashing
+- ASP.NET Core Identity
+- Identity Error Mapping
+- Account Lockout
+- Identity Seeding
+- Claims-Based Authentication
+
+Upcoming improvements:
+
+- Refresh Token Rotation
+- Refresh Token Reuse Detection
+- Email Confirmation
+- Password Reset
+- Session Management
 
 ---
 
@@ -195,9 +249,10 @@ The project prioritizes:
 - Readability
 - SOLID Principles
 - Separation of Concerns
+- Secure Authentication & Authorization
 - Production-Ready API Design
 
-Rather than focusing solely on implementing features, DriverHub aims to demonstrate how enterprise backend applications can be designed, structured, and evolved over time.
+Rather than focusing solely on implementing features, DriverHub demonstrates how enterprise backend applications evolve through continuous architectural refinement.
 
 ---
 
@@ -213,8 +268,26 @@ DriverHub also serves as a long-term personal reference project for mastering:
 - Entity Framework Core
 - FluentValidation
 - ASP.NET Core Identity
+- Authentication & Authorization
 - JWT Authentication
+- Refresh Token Security
 - Enterprise Backend Development
+
+---
+
+# 📈 Latest Progress
+
+### July 2026
+
+- ✅ Authentication architecture implemented
+- ✅ ASP.NET Core Identity integrated
+- ✅ JWT Authentication implemented
+- ✅ Refresh Token infrastructure implemented
+- ✅ Secure refresh token hashing implemented
+- ✅ Identity error mapping added
+- ✅ Identity seeding implemented
+- ✅ Account lockout support added
+- ✅ Authentication contracts standardized
 
 ---
 
