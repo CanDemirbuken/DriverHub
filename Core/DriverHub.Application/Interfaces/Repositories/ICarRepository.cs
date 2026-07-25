@@ -1,5 +1,4 @@
-﻿using DriverHub.Application.Interfaces.Repositories.Abstraction;
-using DriverHub.Domain.Entities;
+﻿using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Interfaces.Repositories;
 

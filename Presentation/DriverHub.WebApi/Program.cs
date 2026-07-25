@@ -1,5 +1,6 @@
 using DriverHub.Application.Extensions;
 using DriverHub.Infrastructure.Extensions;
+using DriverHub.Infrastructure.Services.Identity;
 using DriverHub.Persistence.Extensions;
 using DriverHub.WebApi.Extensions;
 using Serilog;
@@ -28,6 +29,16 @@ try
 
     WebApplication app = builder.Build();
 
+    await using (AsyncServiceScope scope =
+    app.Services.CreateAsyncScope())
+    {
+        IdentitySeeder identitySeeder =
+            scope.ServiceProvider
+                .GetRequiredService<IdentitySeeder>();
+
+        await identitySeeder.SeedAsync();
+    }
+
     app.UseGlobalExceptionMiddleware();
 
     if (app.Environment.IsDevelopment())
@@ -37,6 +48,7 @@ try
 
     app.UseHttpsRedirection();
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();

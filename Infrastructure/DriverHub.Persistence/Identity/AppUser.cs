@@ -7,8 +7,8 @@ public sealed class AppUser : IdentityUser
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
 
-    public bool IsActive { get; set; } = true;
-    public bool IsDeleted { get; set; }
+    public bool IsActive { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
 
     public DateTime CreatedDate { get; set; }
 

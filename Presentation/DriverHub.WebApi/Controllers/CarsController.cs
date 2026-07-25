@@ -1,6 +1,5 @@
 ﻿using DriverHub.Application.Features.CarFeatures.Commands.CreateCar;
 using DriverHub.Application.Features.CarFeatures.Commands.RemoveCar;
-using DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
 using DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
 using DriverHub.Application.Features.CarFeatures.Queries.GetPagedCarsWithBrand;
 using DriverHub.WebApi.Controllers.Abstraction;

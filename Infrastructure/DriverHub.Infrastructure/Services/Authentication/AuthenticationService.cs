@@ -1,0 +1,110 @@
+﻿using DriverHub.Application.Common.Constants;
+using DriverHub.Application.Common.Results;
+using DriverHub.Application.Contracts.Authentication;
+using DriverHub.Application.Contracts.Authentication.Login;
+using DriverHub.Application.Contracts.Authentication.Register;
+using DriverHub.Application.Contracts.Authentication.Token;
+using DriverHub.Application.Interfaces.Authentication;
+using DriverHub.Application.Interfaces.Repositories;
+using DriverHub.Persistence.Identity;
+using Microsoft.AspNetCore.Identity;
+
+namespace DriverHub.Infrastructure.Services.Authentication;
+
+public sealed class AuthenticationService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService tokenService, IRefreshTokenHasher refreshTokenHasher, IRefreshTokenRepository refreshTokenRepository) : IAuthenticationService
+{
+    public async Task<Result<LoginUserResponse>> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+
+        if (user is null)
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
+
+        var loginResult =
+            await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
+
+        if (loginResult.IsLockedOut)
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.AccountLocked);
+
+        if (!loginResult.Succeeded)
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
+
+        if (!user.IsActive || user.IsDeleted)
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.UserInactive);
+
+        var roles = await userManager.GetRolesAsync(user);
+
+        var createTokenRequest = new CreateTokenRequest(
+            user.Id,
+            user.Email!,
+            roles.ToList());
+
+        TokenResponse tokenResponse = tokenService.GenerateToken(createTokenRequest);
+
+        string refreshTokenHash = refreshTokenHasher.Hash(tokenResponse.RefreshToken);
+
+        var storeRefreshTokenRequest = new StoreRefreshTokenRequest(
+            refreshTokenHash,
+            DateTime.UtcNow,
+            tokenResponse.RefreshTokenExpiresAt,
+            user.Id);
+
+        await refreshTokenRepository.CreateAsync(storeRefreshTokenRequest, cancellationToken);
+
+        var response = new LoginUserResponse(
+            tokenResponse.AccessToken,
+            tokenResponse.AccessTokenExpiresAt,
+            tokenResponse.RefreshToken,
+            tokenResponse.RefreshTokenExpiresAt);
+
+        return Result<LoginUserResponse>.Success(response);
+    }
+
+    public async Task<Result<RegisterUserResponse>> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
+    {
+        var existingUser = await userManager.FindByEmailAsync(request.Email);
+
+        if (existingUser is not null)
+            return Result<RegisterUserResponse>.Failure(AuthenticationErrors.EmailAlreadyExists);
+
+        var user = new AppUser
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            UserName = request.Email,
+            IsActive = true,
+            IsDeleted = false
+        };
+
+        IdentityResult creationResult = await userManager.CreateAsync(user, request.Password);
+
+        if (!creationResult.Succeeded)
+        {
+            IReadOnlyCollection<Error> errors =
+                IdentityErrorMapper.Map(creationResult.Errors);
+
+            return Result<RegisterUserResponse>.Failure(errors);
+        }
+
+        IdentityResult roleResult = await userManager.AddToRoleAsync(user, RoleNames.User);
+
+        if (!roleResult.Succeeded)
+        {
+            IdentityResult deletionResult = await userManager.DeleteAsync(user);
+
+            if (!deletionResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Kullanıcı oluşturuldu ancak '{RoleNames.User}' rolü " +
+                    "atanamadı ve kullanıcı kaydı geri alınamadı.");
+            }
+
+            return Result<RegisterUserResponse>.Failure(AuthenticationErrors.DefaultRoleAssignmentFailed);
+        }
+
+        var response = new RegisterUserResponse(user.Id);
+
+        return Result<RegisterUserResponse>.Success(response);
+    }
+}

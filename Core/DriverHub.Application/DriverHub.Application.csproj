@@ -16,4 +16,8 @@
     <ProjectReference Include="..\DriverHub.Domain\DriverHub.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Identity\" />
+  </ItemGroup>
+
 </Project>

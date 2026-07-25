@@ -1,6 +1,5 @@
 ﻿using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Application.Interfaces.Repositories;
-using DriverHub.Application.Interfaces.Repositories.Abstraction;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Persistence.Context;
 using DriverHub.Persistence.Options.Sql;

@@ -1,6 +1,6 @@
 ﻿using DriverHub.Application.Exceptions;
 using DriverHub.Application.Features.FeatureFeatures.Mappings;
-using DriverHub.Application.Interfaces.Repositories.Abstraction;
+using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
 
