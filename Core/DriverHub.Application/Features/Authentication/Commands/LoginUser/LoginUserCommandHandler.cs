@@ -14,7 +14,7 @@ public sealed class LoginUserCommandHandler(IAuthenticationService identityServi
         Result<LoginUserResponse> loginResult = await identityService.LoginAsync(loginRequest, cancellationToken);
 
         if (loginResult.IsFailure)
-            return Result<LoginUserCommandResponse>.Failure(loginResult.Errors);
+            return Result<LoginUserCommandResponse>.Failure(loginResult.StatusCode, loginResult.Errors);
 
         LoginUserCommandResponse response = new(
             loginResult.Value.AccessToken,
@@ -22,6 +22,6 @@ public sealed class LoginUserCommandHandler(IAuthenticationService identityServi
             loginResult.Value.RefreshToken,
             loginResult.Value.RefreshTokenExpiresAt);
 
-        return Result<LoginUserCommandResponse>.Success(response);
+        return Result<LoginUserCommandResponse>.Success(response, loginResult.StatusCode);
     }
 }

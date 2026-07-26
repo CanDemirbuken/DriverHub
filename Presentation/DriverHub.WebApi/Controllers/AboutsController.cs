@@ -1,50 +1,61 @@
-﻿using DriverHub.Application.Features.AboutFeatures.Commands.CreateAbout;
+﻿using DriverHub.Application.Common.Results;
+using DriverHub.Application.Features.AboutFeatures.Commands.CreateAbout;
 using DriverHub.Application.Features.AboutFeatures.Commands.RemoveAbout;
-using DriverHub.Application.Features.AboutFeatures.Commands.UpdateAbout;
 using DriverHub.Application.Features.AboutFeatures.Queries.GetAboutById;
 using DriverHub.Application.Features.AboutFeatures.Queries.GetAllAbout;
+using DriverHub.WebApi.Controllers.Abstraction;
+using DriverHub.WebApi.Mappings;
+using DriverHub.WebApi.Models.Abouts;
+using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Controllers;
 
-
-[Route("api/[controller]")]
-[ApiController]
-public sealed class AboutsController(IMediator mediator) : ControllerBase
+public sealed class AboutsController(IMediator mediator) : BaseController(mediator)
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<GetAllAboutQueryResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetAllAboutQuery(), cancellationToken);
-        return Ok(response);
+        Result<IReadOnlyList<GetAllAboutQueryResponse>> result = await _mediator.Send(new GetAllAboutQuery(), cancellationToken);
+        return ToActionResult(result);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<GetAboutByIdQueryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<GetAboutByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetAboutByIdQuery(id), cancellationToken);
-        return Ok(response);
+        Result<GetAboutByIdQueryResponse> result = await _mediator.Send(new GetAboutByIdQuery(id), cancellationToken);
+        return ToActionResult(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateAboutCommand request, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<CreateAboutCommandResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<CreateAboutCommandResponse>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateAsync(CreateAboutCommand request, CancellationToken cancellationToken)
     {
-        await mediator.Send(request, cancellationToken);
-        return Ok("Ekleme işlemi başarılı");
+        Result<CreateAboutCommandResponse> result = await _mediator.Send(request, cancellationToken);
+        return ToActionResult(result);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdateAboutCommand request, CancellationToken cancellationToken)
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateAsync(Guid id, UpdateAboutRequest request, CancellationToken cancellationToken)
     {
-        await mediator.Send(request, cancellationToken);
-        return Ok("Güncelleme işlemi başarılı");
+        Result result = await _mediator.Send(request.ToCommand(id), cancellationToken);
+        return ToActionResult(result);
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Remove(Guid id, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
-        await mediator.Send(new RemoveAboutCommand(id), cancellationToken);
-        return Ok("Silme işlemi başarılı");
+        Result result = await _mediator.Send(new RemoveAboutCommand(id), cancellationToken);
+        return ToActionResult(result);
     }
 }

@@ -7,6 +7,7 @@ using DriverHub.Application.Contracts.Authentication.Token;
 using DriverHub.Application.Interfaces.Authentication;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Persistence.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace DriverHub.Infrastructure.Services.Authentication;
@@ -15,24 +16,24 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
 {
     public async Task<Result<LoginUserResponse>> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        AppUser? user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
-            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
+            return Result<LoginUserResponse>.Failure(StatusCodes.Status401Unauthorized, "E-mail ya da şifre hatalı.");
 
-        var loginResult =
+        if (!user.IsActive || user.IsDeleted)
+            return Result<LoginUserResponse>.Failure(StatusCodes.Status401Unauthorized, "E-mail ya da şifre hatalı.");
+
+        SignInResult loginResult =
             await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
 
         if (loginResult.IsLockedOut)
-            return Result<LoginUserResponse>.Failure(AuthenticationErrors.AccountLocked);
+            return Result<LoginUserResponse>.Failure(StatusCodes.Status423Locked, "Kullanıcı hesabı başarısız giriş denemeleri nedeniyle geçici olarak kilitlenmiştir.");
 
         if (!loginResult.Succeeded)
-            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
+            return Result<LoginUserResponse>.Failure(StatusCodes.Status401Unauthorized, "E-mail ya da şifre hatalı.");
 
-        if (!user.IsActive || user.IsDeleted)
-            return Result<LoginUserResponse>.Failure(AuthenticationErrors.UserInactive);
-
-        var roles = await userManager.GetRolesAsync(user);
+        IList<string> roles = await userManager.GetRolesAsync(user);
 
         var createTokenRequest = new CreateTokenRequest(
             user.Id,
@@ -57,15 +58,15 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             tokenResponse.RefreshToken,
             tokenResponse.RefreshTokenExpiresAt);
 
-        return Result<LoginUserResponse>.Success(response);
+        return Result<LoginUserResponse>.Success(response, StatusCodes.Status200OK);
     }
 
     public async Task<Result<RegisterUserResponse>> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
     {
-        var existingUser = await userManager.FindByEmailAsync(request.Email);
+        AppUser? existingUser = await userManager.FindByEmailAsync(request.Email);
 
         if (existingUser is not null)
-            return Result<RegisterUserResponse>.Failure(AuthenticationErrors.EmailAlreadyExists);
+            return Result<RegisterUserResponse>.Failure(StatusCodes.Status409Conflict, "Bu e-mail adresi ile kayıtlı bir kullanıcı bulunmaktadır.");
 
         var user = new AppUser
         {
@@ -81,10 +82,9 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
 
         if (!creationResult.Succeeded)
         {
-            IReadOnlyCollection<Error> errors =
-                IdentityErrorMapper.Map(creationResult.Errors);
+            IReadOnlyCollection<string> errors = IdentityErrorMapper.Map(creationResult.Errors);
 
-            return Result<RegisterUserResponse>.Failure(errors);
+            return Result<RegisterUserResponse>.Failure(StatusCodes.Status400BadRequest, errors);
         }
 
         IdentityResult roleResult = await userManager.AddToRoleAsync(user, RoleNames.User);
@@ -94,17 +94,18 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             IdentityResult deletionResult = await userManager.DeleteAsync(user);
 
             if (!deletionResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"Kullanıcı oluşturuldu ancak '{RoleNames.User}' rolü " +
-                    "atanamadı ve kullanıcı kaydı geri alınamadı.");
-            }
+                throw new InvalidOperationException($"Kullanıcı oluşturuldu ancak '{RoleNames.User}' rolü " + "atanamadı ve kullanıcı kaydı geri alınamadı.");
 
-            return Result<RegisterUserResponse>.Failure(AuthenticationErrors.DefaultRoleAssignmentFailed);
+            IReadOnlyCollection<string> errors = IdentityErrorMapper.Map(roleResult.Errors);
+
+            return Result<RegisterUserResponse>.Failure(StatusCodes.Status500InternalServerError,
+                errors.Count > 0
+                    ? errors
+                    : ["Kullanıcıya varsayılan rol atanamadı."]);
         }
 
         var response = new RegisterUserResponse(user.Id);
 
-        return Result<RegisterUserResponse>.Success(response);
+        return Result<RegisterUserResponse>.Success(response, StatusCodes.Status201Created);
     }
 }

@@ -22,10 +22,10 @@ public sealed class RegisterUserCommandHandler(IAuthenticationService identitySe
 
         if (result.IsFailure)
         {
-            return Result<RegisterUserCommandResponse>.Failure(result.Errors);
+            return Result<RegisterUserCommandResponse>.Failure(result.StatusCode, result.Errors);
         }
 
         RegisterUserCommandResponse response = new(result.Value.Id);
-        return Result<RegisterUserCommandResponse>.Success(response);
+        return Result<RegisterUserCommandResponse>.Success(response, result.StatusCode);
     }
 }

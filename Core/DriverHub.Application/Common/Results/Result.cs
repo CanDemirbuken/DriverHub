@@ -1,8 +1,14 @@
-﻿namespace DriverHub.Application.Common.Results;
+﻿using DriverHub.Application.Features.BannerFeatures.Queries.GetAllBanner;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
+
+using System.Text.Json.Serialization;
+
+namespace DriverHub.Application.Common.Results;
 
 public class Result
 {
-    protected Result(bool isSuccess, IReadOnlyCollection<Error> errors)
+    protected Result(bool isSuccess, int statusCode, IReadOnlyCollection<string> errors)
     {
         if (isSuccess && errors.Count > 0)
         {
@@ -17,28 +23,37 @@ public class Result
         }
 
         IsSuccess = isSuccess;
+        StatusCode = statusCode;
         Errors = errors;
     }
 
     public bool IsSuccess { get; }
-
     public bool IsFailure => !IsSuccess;
+    [JsonIgnore] public int StatusCode { get; }
+    public IReadOnlyCollection<string> Errors { get; }
 
-    public IReadOnlyCollection<Error> Errors { get; }
-
-    public static Result Success()
+    public static Result Success(int statusCode)
     {
-        return new Result(true, []);
+        return new Result(
+            true,
+            statusCode,
+            []);
     }
 
-    public static Result Failure(Error error)
+    public static Result Failure(int statusCode, string error)
     {
-        return new Result(false, [error]);
+        return new Result(
+            false,
+            statusCode,
+            [error]);
     }
 
-    public static Result Failure(IEnumerable<Error> errors)
+    public static Result Failure(int statusCode, IEnumerable<string> errors)
     {
-        return new Result(false, errors.ToArray());
+        return new Result(
+            false,
+            statusCode,
+            errors.ToArray());
     }
 }
 
@@ -46,7 +61,7 @@ public class Result<T> : Result
 {
     private readonly T? _value;
 
-    private Result(T? value, bool isSuccess, IReadOnlyCollection<Error> errors) : base(isSuccess, errors)
+    private Result(T? value, bool isSuccess, int statusCode, IReadOnlyCollection<string> errors) : base(isSuccess, statusCode, errors)
     {
         _value = value;
     }
@@ -65,29 +80,37 @@ public class Result<T> : Result
         }
     }
 
-    public static Result<T> Success(T value)
+    public static Result<T> Success(T value, int statusCode)
     {
         ArgumentNullException.ThrowIfNull(value);
 
         return new Result<T>(
             value,
             true,
+            statusCode,
             []);
     }
 
-    public static new Result<T> Failure(Error error)
+    public static Result<T> Failure(int statusCode, string error)
     {
         return new Result<T>(
             default,
             false,
+            statusCode,
             [error]);
     }
 
-    public static new Result<T> Failure(IEnumerable<Error> errors)
+    public static Result<T> Failure(int statusCode, IEnumerable<string> errors)
     {
         return new Result<T>(
             default,
             false,
+            statusCode,
             errors.ToArray());
+    }
+
+    internal static Result<IReadOnlyList<GetAllBannerQueryResponse>> Success(object statusCode)
+    {
+        throw new NotImplementedException();
     }
 }

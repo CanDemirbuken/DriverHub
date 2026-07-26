@@ -1,27 +1,35 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
+using DriverHub.Application.Features.CarFeatures.Commands.CreateCar;
 using DriverHub.Application.Features.CarFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
 
-public sealed class UpdateCarCommandHandler(IRepository<Car> carRepository, IRepository<Brand> brandRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCarCommand>
+public sealed class UpdateCarCommandHandler(IRepository<Car> carRepository, IRepository<Brand> brandRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCarCommand, Result>
 {
-    public async Task Handle(UpdateCarCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateCarCommand request, CancellationToken cancellationToken)
     {
         var car = await carRepository.GetByIdAsync(request.Id, cancellationToken);
         if (car is null)
-            throw new NotFoundException();
+            return Result.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
         bool brandExists = await brandRepository.AnyAsync(b => b.Id == request.BrandId, cancellationToken);
         if (!brandExists)
-            throw new NotFoundException("Marka bilgisi bulunamadı.");
+            return Result.Failure(StatusCodes.Status404NotFound, "Marka bilgisi bulunamadı.");
+
+        bool carExists = await carRepository.AnyAsync(predicate: c => c.Model == request.Model && c.BrandId == request.BrandId, cancellationToken);
+        if (carExists)
+            return Result<CreateCarCommandResponse>.Failure(StatusCodes.Status409Conflict, "Bu marka ve model bilgisine sahip bir araç zaten mevcut.");
 
         request.ApplyTo(car);
 
         carRepository.Update(car);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success(StatusCodes.Status204NoContent);
     }
 }

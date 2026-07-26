@@ -1,23 +1,27 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.BannerFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.BannerFeatures.Commands.UpdateBanner;
 
-public sealed class UpdateBannerCommandHandler(IRepository<Banner> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateBannerCommand>
+public sealed class UpdateBannerCommandHandler(IRepository<Banner> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateBannerCommand, Result>
 {
-    public async Task Handle(UpdateBannerCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateBannerCommand request, CancellationToken cancellationToken)
     {
+
         var banner = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (banner is null)
-            throw new NotFoundException();
+            return Result.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
         request.ApplyTo(banner);
 
         repository.Update(banner);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success(StatusCodes.Status204NoContent);
     }
 }

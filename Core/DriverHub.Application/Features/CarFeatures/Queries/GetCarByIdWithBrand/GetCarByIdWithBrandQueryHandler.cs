@@ -1,19 +1,20 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.CarFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
 
-public sealed class GetCarByIdWithBrandQueryHandler(ICarRepository carRepository) : IRequestHandler<GetCarByIdWithBrandQuery, GetCarByIdWithBrandQueryResponse>
+public sealed class GetCarByIdWithBrandQueryHandler(ICarRepository carRepository) : IRequestHandler<GetCarByIdWithBrandQuery, Result<GetCarByIdWithBrandQueryResponse>>
 {
-    public async Task<GetCarByIdWithBrandQueryResponse> Handle(GetCarByIdWithBrandQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetCarByIdWithBrandQueryResponse>> Handle(GetCarByIdWithBrandQuery request, CancellationToken cancellationToken)
     {
         var car = await carRepository.GetCarByIdWithBrandAsync(request.Id, cancellationToken);
         if (car is null)
-            throw new NotFoundException();
+            return Result<GetCarByIdWithBrandQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
-        GetCarByIdWithBrandQueryResponse response = car.ToGetByIdWithBrandResponse();
-        return response;
+        GetCarByIdWithBrandQueryResponse data = car.ToGetByIdWithBrandResponse();
+        return Result<GetCarByIdWithBrandQueryResponse>.Success(data, StatusCodes.Status200OK);
     }
 }

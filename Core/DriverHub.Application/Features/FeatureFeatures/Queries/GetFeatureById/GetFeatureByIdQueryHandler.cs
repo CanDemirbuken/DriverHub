@@ -1,19 +1,21 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.FeatureFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.FeatureFeatures.Queries.GetFeatureById;
 
-public sealed class GetFeatureByIdQueryHandler(IRepository<Feature> featureRepository) : IRequestHandler<GetFeatureByIdQuery, GetFeatureByIdQueryResponse>
+public sealed class GetFeatureByIdQueryHandler(IRepository<Feature> featureRepository) : IRequestHandler<GetFeatureByIdQuery, Result<GetFeatureByIdQueryResponse>>
 {
-    public async Task<GetFeatureByIdQueryResponse> Handle(GetFeatureByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetFeatureByIdQueryResponse>> Handle(GetFeatureByIdQuery request, CancellationToken cancellationToken)
     {
         var feature = await featureRepository.GetByIdAsync(request.Id, cancellationToken);
         if (feature is null)
-            throw new NotFoundException();
+            return Result<GetFeatureByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
-        return feature.ToGetByIdResponse();
+        var data = feature.ToGetByIdResponse();
+        return Result<GetFeatureByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
     }
 }

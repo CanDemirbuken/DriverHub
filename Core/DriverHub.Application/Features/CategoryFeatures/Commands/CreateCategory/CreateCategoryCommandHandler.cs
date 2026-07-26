@@ -1,26 +1,27 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.CategoryFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Commands.CreateCategory;
 
-public sealed class CreateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, CreateCategoryCommandResponse>
+public sealed class CreateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, Result<CreateCategoryCommandResponse>>
 {
-    public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateCategoryCommandResponse>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         bool categoryExists = await repository.AnyAsync(predicate: c => c.Name == request.Name, cancellationToken);
         if (categoryExists)
-            throw new ConflictException("Bu isimde bir kategori zaten mevcut.");
+            return Result<CreateCategoryCommandResponse>.Failure(StatusCodes.Status409Conflict, "Bu isimde bir kategori zaten mevcut.");
 
         Category category = request.ToEntity();
 
         await repository.AddAsync(category, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        CreateCategoryCommandResponse response = new CreateCategoryCommandResponse(category.Id);
-        return response;
+        CreateCategoryCommandResponse data = new CreateCategoryCommandResponse(category.Id);
+        return Result<CreateCategoryCommandResponse>.Success(data, StatusCodes.Status201Created);
     }
 }

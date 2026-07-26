@@ -1,20 +1,22 @@
-﻿using DriverHub.Application.Exceptions;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.BannerFeatures.Mappings;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.BannerFeatures.Queries.GetBannerById;
 
-public sealed class GetBannerByIdQueryHandler(IRepository<Banner> repository) : IRequestHandler<GetBannerByIdQuery, GetBannerByIdQueryResponse>
+public sealed class GetBannerByIdQueryHandler(IRepository<Banner> repository) : IRequestHandler<GetBannerByIdQuery, Result<GetBannerByIdQueryResponse>>
 {
-    public async Task<GetBannerByIdQueryResponse> Handle(GetBannerByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetBannerByIdQueryResponse>> Handle(GetBannerByIdQuery request, CancellationToken cancellationToken)
     {
+
         var banner = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (banner is null)
-            throw new NotFoundException();
+            return Result<GetBannerByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimliğine sahip kayıt bulunamadı.");
 
-        GetBannerByIdQueryResponse response = banner.ToGetByIdResponse();
-        return response;
+        GetBannerByIdQueryResponse data = banner.ToGetByIdResponse();
+        return Result<GetBannerByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
     }
 }

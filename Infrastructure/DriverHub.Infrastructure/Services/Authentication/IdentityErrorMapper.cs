@@ -1,56 +1,54 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Contracts.Authentication;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace DriverHub.Infrastructure.Services.Authentication;
 
 internal static class IdentityErrorMapper
 {
-    public static IReadOnlyCollection<Error> Map(IEnumerable<IdentityError> identityErrors)
+    public static IReadOnlyCollection<string> Map(IEnumerable<IdentityError> identityErrors)
     {
         ArgumentNullException.ThrowIfNull(identityErrors);
 
         return identityErrors
             .Select(Map)
-            .DistinctBy(error => error.Code)
+            .Distinct()
             .ToArray();
     }
 
-    private static Error Map(IdentityError identityError)
+    private static string Map(IdentityError identityError)
     {
         return identityError.Code switch
         {
             nameof(IdentityErrorDescriber.DuplicateEmail)
-                => AuthenticationErrors.EmailAlreadyExists,
+                => "Bu e-posta adresi daha önce kullanılmıştır.",
 
             nameof(IdentityErrorDescriber.DuplicateUserName)
-                => AuthenticationErrors.EmailAlreadyExists,
+                => "Bu e-posta adresi daha önce kullanılmıştır.",
 
             nameof(IdentityErrorDescriber.InvalidEmail)
-                => AuthenticationErrors.InvalidEmail,
+                => "Geçerli bir e-posta adresi girilmelidir.",
 
             nameof(IdentityErrorDescriber.InvalidUserName)
-                => AuthenticationErrors.InvalidUserName,
+                => "Geçerli bir kullanıcı adı girilmelidir.",
 
             nameof(IdentityErrorDescriber.PasswordTooShort)
-                => AuthenticationErrors.PasswordTooShort,
+                => "Şifre gerekli minimum uzunluğu karşılamamaktadır.",
 
             nameof(IdentityErrorDescriber.PasswordRequiresDigit)
-                => AuthenticationErrors.PasswordRequiresDigit,
+                => "Şifre en az bir rakam içermelidir.",
 
             nameof(IdentityErrorDescriber.PasswordRequiresLower)
-                => AuthenticationErrors.PasswordRequiresLowercase,
+                => "Şifre en az bir küçük harf içermelidir.",
 
             nameof(IdentityErrorDescriber.PasswordRequiresUpper)
-                => AuthenticationErrors.PasswordRequiresUppercase,
+                => "Şifre en az bir büyük harf içermelidir.",
 
             nameof(IdentityErrorDescriber.PasswordRequiresNonAlphanumeric)
-                => AuthenticationErrors.PasswordRequiresNonAlphanumeric,
+                => "Şifre en az bir özel karakter içermelidir.",
 
             nameof(IdentityErrorDescriber.PasswordRequiresUniqueChars)
-                => AuthenticationErrors.PasswordRequiresUniqueChars,
+                => "Şifre yeterli sayıda farklı karakter içermelidir.",
 
-            _ => AuthenticationErrors.RegistrationFailed
+            _ => "Kullanıcı kaydı gerçekleştirilemedi."
         };
     }
 }

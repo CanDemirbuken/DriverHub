@@ -34,6 +34,7 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICarRepository, CarRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         services.AddScoped<IAboutQueryService, AboutQueryService>();
         services.AddScoped<IBannerQueryService, BannerQueryService>();

@@ -1,13 +1,16 @@
 ﻿using DriverHub.Application.Common.Models;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.QueryServices;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.ContactFeatures.Queries.GetPagedContacts;
 
-public sealed class GetPagedContactsQueryHandler(IContactQueryService contactQueryService) : IRequestHandler<GetPagedContactsQuery, PagedResponse<GetPagedContactsQueryResponse>>
+public sealed class GetPagedContactsQueryHandler(IContactQueryService contactQueryService) : IRequestHandler<GetPagedContactsQuery, Result<PagedResponse<GetPagedContactsQueryResponse>>>
 {
-    public async Task<PagedResponse<GetPagedContactsQueryResponse>> Handle(GetPagedContactsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResponse<GetPagedContactsQueryResponse>>> Handle(GetPagedContactsQuery request, CancellationToken cancellationToken)
     {
-        return await contactQueryService.GetPagedAsync(request.PageNumber, request.PageSize, cancellationToken);
+        var data = await contactQueryService.GetPagedAsync(request.PageNumber, request.PageSize, cancellationToken);
+        return Result<PagedResponse<GetPagedContactsQueryResponse>>.Success(data, StatusCodes.Status200OK);
     }
 }

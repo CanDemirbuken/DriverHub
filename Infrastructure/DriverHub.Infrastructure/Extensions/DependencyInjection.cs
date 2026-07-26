@@ -110,17 +110,9 @@ public static class DependencyInjection
 
         services.AddAuthorization();
 
-        services.AddScoped<
-            IAuthenticationService,
-            AuthenticationService>();
-
-        services.AddScoped<
-            IJwtTokenService,
-            JwtTokenService>();
-
-        services.AddScoped<
-            IRefreshTokenHasher,
-            RefreshTokenHasher>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();
 
         services
             .AddOptions<IdentitySeedOptions>()

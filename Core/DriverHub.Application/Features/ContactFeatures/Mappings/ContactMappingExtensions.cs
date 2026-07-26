@@ -1,6 +1,5 @@
 ﻿using DriverHub.Application.Features.ContactFeatures.Commands.CreateContact;
 using DriverHub.Application.Features.ContactFeatures.Commands.UpdateContact;
-using DriverHub.Application.Features.ContactFeatures.Queries.GetAllContact;
 using DriverHub.Application.Features.ContactFeatures.Queries.GetContactById;
 using DriverHub.Domain.Entities;
 
@@ -8,17 +7,6 @@ namespace DriverHub.Application.Features.ContactFeatures.Mappings;
 
 public static class ContactMappingExtensions
 {
-    public static GetAllContactQueryResponse ToGetAllResponse(
-        this Contact contact)
-    {
-        return new GetAllContactQueryResponse(
-            contact.Id,
-            contact.Name,
-            contact.Email,
-            contact.Subject,
-            contact.Message);
-    }
-
     public static GetContactByIdQueryResponse ToGetByIdResponse(
         this Contact contact)
     {

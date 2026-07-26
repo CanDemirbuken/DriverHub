@@ -28,19 +28,19 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
         CancellationToken cancellationToken)
         => Ok(await _mediator.Send(new GetCarByIdWithBrandQuery(id), cancellationToken));
 
-    [HttpPost]
-    [ProducesResponseType(typeof(CreateCarCommandResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CreateAsync(
-        CreateCarCommand request,
-        CancellationToken cancellationToken)
-    {
-        CreateCarCommandResponse response = await _mediator.Send(request, cancellationToken);
+    //[HttpPost]
+    //[ProducesResponseType(typeof(CreateCarCommandResponse), StatusCodes.Status201Created)]
+    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //[ProducesResponseType(StatusCodes.Status409Conflict)]
+    //public async Task<IActionResult> CreateAsync(
+    //    CreateCarCommand request,
+    //    CancellationToken cancellationToken)
+    //{
+    //    CreateCarCommandResponse response = await _mediator.Send(request, cancellationToken);
 
-        return CreatedAtId(nameof(GetByIdAsync), response.Id, response);
-    }
+    //    return CreatedAtId(nameof(GetByIdAsync), response.Id, response);
+    //}
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
