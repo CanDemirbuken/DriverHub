@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.FeatureFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.FeatureFeatures.Queries.GetFeatureById;
 
-public sealed class GetFeatureByIdQueryHandler(IRepository<Feature> featureRepository) : IRequestHandler<GetFeatureByIdQuery, Result<GetFeatureByIdQueryResponse>>
+public sealed class GetFeatureByIdQueryHandler(IRepository<Feature> featureRepository, IMapper mapper) : IRequestHandler<GetFeatureByIdQuery, Result<GetFeatureByIdQueryResponse>>
 {
     public async Task<Result<GetFeatureByIdQueryResponse>> Handle(GetFeatureByIdQuery request, CancellationToken cancellationToken)
     {
@@ -15,7 +15,7 @@ public sealed class GetFeatureByIdQueryHandler(IRepository<Feature> featureRepos
         if (feature is null)
             return Result<GetFeatureByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
-        var data = feature.ToGetByIdResponse();
+        var data = mapper.Map<GetFeatureByIdQueryResponse>(feature);
         return Result<GetFeatureByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.AboutFeatures.Commands.CreateAbout;
 using DriverHub.Application.Features.AboutFeatures.Commands.RemoveAbout;
+using DriverHub.Application.Features.AboutFeatures.Commands.UpdateAbout;
 using DriverHub.Application.Features.AboutFeatures.Queries.GetAboutById;
 using DriverHub.Application.Features.AboutFeatures.Queries.GetAllAbout;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Mappings;
-using DriverHub.WebApi.Models.Abouts;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,17 +40,22 @@ public sealed class AboutsController(IMediator mediator) : BaseController(mediat
     }
 
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(Guid id, UpdateAboutRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateAsync(Guid id, UpdateAboutCommand request, CancellationToken cancellationToken)
     {
-        Result result = await _mediator.Send(request.ToCommand(id), cancellationToken);
+        UpdateAboutCommand command = request with
+        {
+            Id = id
+        };
+
+        Result result = await _mediator.Send(command, cancellationToken);
         return ToActionResult(result);
     }
 
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {

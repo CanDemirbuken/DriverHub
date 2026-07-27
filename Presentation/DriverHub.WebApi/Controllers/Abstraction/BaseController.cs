@@ -13,6 +13,12 @@ public abstract class BaseController(IMediator mediator) : ControllerBase
 
     protected IActionResult ToActionResult(Result result)
     {
+        if (result.IsSuccess &&
+            result.StatusCode == StatusCodes.Status204NoContent)
+        {
+            return NoContent();
+        }
+
         ApiResponse<object> response = result.IsSuccess
             ? new ApiResponse<object>(
                 true,
@@ -52,9 +58,10 @@ public abstract class BaseController(IMediator mediator) : ControllerBase
         return errors
             .Where(error =>
                 !string.IsNullOrWhiteSpace(error))
-            .Select(error => new ApiError(
-                null,
-                error))
+            .Select(error =>
+                new ApiError(
+                    null,
+                    error))
             .Distinct()
             .ToArray();
     }

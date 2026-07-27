@@ -1,6 +1,11 @@
 ﻿using DriverHub.Application.Common.Results;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Commands.UpdateCategory;
 
-public sealed record UpdateCategoryCommand(Guid Id, string Name) : IRequest<Result>;
+public sealed record UpdateCategoryCommand(string Name) : IRequest<Result>
+{
+    [JsonIgnore]
+    public Guid Id { get; init; }
+}

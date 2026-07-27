@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.CategoryFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Commands.CreateCategory;
 
-public sealed class CreateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, Result<CreateCategoryCommandResponse>>
+public sealed class CreateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateCategoryCommand, Result<CreateCategoryCommandResponse>>
 {
     public async Task<Result<CreateCategoryCommandResponse>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public sealed class CreateCategoryCommandHandler(IRepository<Category> repositor
         if (categoryExists)
             return Result<CreateCategoryCommandResponse>.Failure(StatusCodes.Status409Conflict, "Bu isimde bir kategori zaten mevcut.");
 
-        Category category = request.ToEntity();
+        Category category = mapper.Map<Category>(request);
 
         await repository.AddAsync(category, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

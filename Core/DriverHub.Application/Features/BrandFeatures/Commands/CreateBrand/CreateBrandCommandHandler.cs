@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.BrandFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.BrandFeatures.Commands.CreateBrand;
 
-public sealed class CreateBrandCommandHandler(IRepository<Brand> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateBrandCommand, Result<CreateBrandCommandResponse>>
+public sealed class CreateBrandCommandHandler(IRepository<Brand> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateBrandCommand, Result<CreateBrandCommandResponse>>
 {
     public async Task<Result<CreateBrandCommandResponse>> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public sealed class CreateBrandCommandHandler(IRepository<Brand> repository, IUn
         if (brandExists)
             return Result<CreateBrandCommandResponse>.Failure(StatusCodes.Status409Conflict, "Bu isimde bir marka zaten mevcut.");
 
-        Brand brand = request.ToEntity();
+        Brand brand = mapper.Map<Brand>(request);
 
         await repository.AddAsync(brand, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

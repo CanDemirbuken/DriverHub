@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.BrandFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.BrandFeatures.Queries.GetBrandById;
 
-public sealed class GetBrandByIdQueryHandler(IRepository<Brand> repository) : IRequestHandler<GetBrandByIdQuery, Result<GetBrandByIdQueryResponse>>
+public sealed class GetBrandByIdQueryHandler(IRepository<Brand> repository, IMapper mapper) : IRequestHandler<GetBrandByIdQuery, Result<GetBrandByIdQueryResponse>>
 {
     public async Task<Result<GetBrandByIdQueryResponse>> Handle(GetBrandByIdQuery request, CancellationToken cancellationToken)
     {
@@ -15,7 +15,7 @@ public sealed class GetBrandByIdQueryHandler(IRepository<Brand> repository) : IR
         if (brand is null)
             return Result<GetBrandByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimliğine sahip kayıt bulunamadı.");
 
-        GetBrandByIdQueryResponse response = brand.ToGetByIdResponse();
+        GetBrandByIdQueryResponse response = mapper.Map<GetBrandByIdQueryResponse>(brand);
         return Result<GetBrandByIdQueryResponse>.Success(response, StatusCodes.Status200OK);
     }
 }

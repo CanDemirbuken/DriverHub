@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.AboutFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.AboutFeatures.Commands.CreateAbout;
 
-public sealed class CreateAboutCommandHandler(IRepository<About> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateAboutCommand, Result<CreateAboutCommandResponse>>
+public sealed class CreateAboutCommandHandler(IRepository<About> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateAboutCommand, Result<CreateAboutCommandResponse>>
 {
     public async Task<Result<CreateAboutCommandResponse>> Handle(CreateAboutCommand request, CancellationToken cancellationToken)
     {
-        About about = request.ToEntity();
+        About about = mapper.Map<About>(request);
 
         await repository.AddAsync(about, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

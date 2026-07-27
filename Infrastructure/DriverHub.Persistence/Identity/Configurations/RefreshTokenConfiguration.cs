@@ -35,9 +35,5 @@ public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refresh
             .IsUnique();
 
         builder.HasIndex(refreshToken => refreshToken.UserId);
-
-        builder.Ignore(refreshToken => refreshToken.IsExpired);
-        builder.Ignore(refreshToken => refreshToken.IsRevoked);
-        builder.Ignore(refreshToken => refreshToken.IsActive);
     }
 }

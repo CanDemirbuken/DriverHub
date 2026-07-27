@@ -1,6 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.CarFeatures.Commands.CreateCar;
-using DriverHub.Application.Features.CarFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
 
-public sealed class UpdateCarCommandHandler(IRepository<Car> carRepository, IRepository<Brand> brandRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCarCommand, Result>
+public sealed class UpdateCarCommandHandler(IRepository<Car> carRepository, IRepository<Brand> brandRepository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<UpdateCarCommand, Result>
 {
     public async Task<Result> Handle(UpdateCarCommand request, CancellationToken cancellationToken)
     {
@@ -21,11 +20,11 @@ public sealed class UpdateCarCommandHandler(IRepository<Car> carRepository, IRep
         if (!brandExists)
             return Result.Failure(StatusCodes.Status404NotFound, "Marka bilgisi bulunamadı.");
 
-        bool carExists = await carRepository.AnyAsync(predicate: c => c.Model == request.Model && c.BrandId == request.BrandId, cancellationToken);
+        bool carExists = await carRepository.AnyAsync(predicate: c => c.Id != request.Id && c.Model == request.Model && c.BrandId == request.BrandId, cancellationToken);
         if (carExists)
-            return Result<CreateCarCommandResponse>.Failure(StatusCodes.Status409Conflict, "Bu marka ve model bilgisine sahip bir araç zaten mevcut.");
+            return Result.Failure(StatusCodes.Status409Conflict, "Bu marka ve model bilgisine sahip bir araç zaten mevcut.");
 
-        request.ApplyTo(car);
+        mapper.Map(request, car);
 
         carRepository.Update(car);
         await unitOfWork.SaveChangesAsync(cancellationToken);

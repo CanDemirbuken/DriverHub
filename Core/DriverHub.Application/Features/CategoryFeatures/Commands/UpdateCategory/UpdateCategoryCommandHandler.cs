@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.CategoryFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Commands.UpdateCategory;
 
-public sealed class UpdateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCategoryCommand, Result>
+public sealed class UpdateCategoryCommandHandler(IRepository<Category> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<UpdateCategoryCommand, Result>
 {
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public sealed class UpdateCategoryCommandHandler(IRepository<Category> repositor
         if (category is null)
             return Result.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
-        request.ApplyTo(category);
+        mapper.Map(request, category);
 
         repository.Update(category);
         await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,7 +1,4 @@
 ﻿using DriverHub.Application.Features.BannerFeatures.Queries.GetAllBanner;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json.Serialization;
-
 using System.Text.Json.Serialization;
 
 namespace DriverHub.Application.Common.Results;
@@ -107,10 +104,5 @@ public class Result<T> : Result
             false,
             statusCode,
             errors.ToArray());
-    }
-
-    internal static Result<IReadOnlyList<GetAllBannerQueryResponse>> Success(object statusCode)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -14,8 +14,4 @@ public sealed class RefreshToken
 
     public string UserId { get; set; } = default!;
     public AppUser User { get; set; } = default!;
-
-    public bool IsExpired => DateTime.UtcNow >= ExpiresDate;
-    public bool IsRevoked => RevokedDate.HasValue;
-    public bool IsActive => !IsExpired && !IsRevoked;
 }

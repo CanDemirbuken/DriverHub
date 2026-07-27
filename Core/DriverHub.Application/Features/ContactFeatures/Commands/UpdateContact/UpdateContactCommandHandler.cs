@@ -1,5 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.ContactFeatures.Mappings;
+﻿using AutoMapper;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.ContactFeatures.Commands.UpdateContact;
 
-public sealed class UpdateContactCommandHandler(IRepository<Contact> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateContactCommand, Result>
+public sealed class UpdateContactCommandHandler(IRepository<Contact> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<UpdateContactCommand, Result>
 {
     public async Task<Result> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public sealed class UpdateContactCommandHandler(IRepository<Contact> repository,
         if (contact is null)
             return Result.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
 
-        request.ApplyTo(contact);
+        mapper.Map(request, contact);
 
         repository.Update(contact);
         await unitOfWork.SaveChangesAsync(cancellationToken);

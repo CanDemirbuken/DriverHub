@@ -1,23 +1,24 @@
-﻿using DriverHub.Application.Contracts.Authentication.Token;
+﻿using DriverHub.Application.Contracts.Authentication.Token.AccessToken;
 using DriverHub.Application.Interfaces.Authentication;
 using DriverHub.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
-namespace DriverHub.Infrastructure.Services.Identity;
+namespace DriverHub.Infrastructure.Services.Authentication;
 
-public sealed class JwtTokenService(IOptions<JwtOptions> jwtOptions, IOptions<RefreshTokenOptions> refreshTokenOptions) : IJwtTokenService
+public sealed class JwtTokenService(IOptions<JwtOptions> jwtOptions) : IJwtTokenService
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
-    private readonly RefreshTokenOptions _refreshTokenOptions = refreshTokenOptions.Value;
 
-    public TokenResponse GenerateToken(CreateTokenRequest request)
+    public GeneratedAccessToken Generate(CreateAccessTokenRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        DateTime createdAt = DateTime.UtcNow;
+        DateTime expiresAt = createdAt.AddMinutes(_jwtOptions.ExpirationMinutes);
 
         var claims = new List<Claim>
         {
@@ -28,17 +29,9 @@ public sealed class JwtTokenService(IOptions<JwtOptions> jwtOptions, IOptions<Re
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))
         };
 
-        claims.AddRange(request.Roles.Select(
-            role => new Claim(ClaimTypes.Role, role)));
-
-        DateTime createdAt = DateTime.UtcNow;
-
-        DateTime accessTokenExpiresAt = createdAt.AddMinutes(_jwtOptions.ExpirationMinutes);
-
-        DateTime refreshTokenExpiresAt = createdAt.AddDays(_refreshTokenOptions.ExpireDays);
+        claims.AddRange(request.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
-
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var jwtToken = new JwtSecurityToken(
@@ -46,17 +39,11 @@ public sealed class JwtTokenService(IOptions<JwtOptions> jwtOptions, IOptions<Re
             audience: _jwtOptions.Audience,
             claims: claims,
             notBefore: createdAt,
-            expires: accessTokenExpiresAt,
+            expires: expiresAt,
             signingCredentials: signingCredentials);
 
-        string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-        string refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-
-        return new TokenResponse(
-            accessToken,
-            accessTokenExpiresAt,
-            refreshToken,
-            refreshTokenExpiresAt);
+        return new GeneratedAccessToken(token, expiresAt);
     }
 }
