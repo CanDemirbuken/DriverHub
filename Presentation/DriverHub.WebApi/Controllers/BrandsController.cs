@@ -23,7 +23,7 @@ public sealed class BrandsController(IMediator mediator) : BaseController(mediat
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetBrandByIdQueryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<GetBrandByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         Result<GetBrandByIdQueryResponse> result = await _mediator.Send(new GetBrandByIdQuery(id), cancellationToken);
@@ -32,12 +32,12 @@ public sealed class BrandsController(IMediator mediator) : BaseController(mediat
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateBrandCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<CreateBrandCommandResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<CreateBrandCommandResponse>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateAsync(CreateBrandCommand request, CancellationToken cancellationToken)
     {
         Result<CreateBrandCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:guid}")]
@@ -53,15 +53,16 @@ public sealed class BrandsController(IMediator mediator) : BaseController(mediat
         };
 
         Result result = await _mediator.Send(command, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveBrandCommand(id), cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

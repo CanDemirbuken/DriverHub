@@ -4,7 +4,6 @@ using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.AboutFeatures.Commands.CreateAbout;
 
@@ -18,6 +17,6 @@ public sealed class CreateAboutCommandHandler(IRepository<About> repository, IUn
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         CreateAboutCommandResponse data = new CreateAboutCommandResponse(about.Id);
-        return Result<CreateAboutCommandResponse>.Success(data, StatusCodes.Status201Created);
+        return Result<CreateAboutCommandResponse>.Success(data);
     }
 }

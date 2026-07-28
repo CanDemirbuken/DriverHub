@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.ContactFeatures.Queries.GetContactById;
 
@@ -13,9 +13,9 @@ public sealed class GetContactByIdQueryHandler(IRepository<Contact> repository, 
     {
         var contact = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (contact is null)
-            return Result<GetContactByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
+            return Result<GetContactByIdQueryResponse>.Failure(Error.NotFound($"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.", nameof(request.Id)));
 
         GetContactByIdQueryResponse data = mapper.Map<GetContactByIdQueryResponse>(contact);
-        return Result<GetContactByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
+        return Result<GetContactByIdQueryResponse>.Success(data);
     }
 }

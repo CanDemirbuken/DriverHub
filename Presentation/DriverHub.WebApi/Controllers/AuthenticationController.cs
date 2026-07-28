@@ -16,19 +16,20 @@ public sealed class AuthenticationController(IMediator mediator) : BaseControlle
 {
     [HttpPost("register")]
     [ProducesResponseType(typeof(ApiResponse<RegisterUserCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<RegisterUserCommandResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<RegisterUserCommandResponse>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RegisterAsync(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         Result<RegisterUserCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponse<LoginUserCommandResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<LoginUserCommandResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<LoginUserCommandResponse>), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse<LoginUserCommandResponse>), StatusCodes.Status423Locked)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status423Locked)]
     public async Task<IActionResult> LoginAsync(LoginUserCommand request, CancellationToken cancellationToken)
     {
         Result<LoginUserCommandResponse> result = await _mediator.Send(request, cancellationToken);
@@ -37,8 +38,8 @@ public sealed class AuthenticationController(IMediator mediator) : BaseControlle
 
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(ApiResponse<RefreshSessionResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<RefreshSessionResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<RefreshSessionResponse>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RefreshTokenAsync(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         Result<RefreshSessionResponse> result = await _mediator.Send(request, cancellationToken);

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DriverHub.Infrastructure.Services.Identity;
+namespace DriverHub.Infrastructure.Services.Authentication;
 
 public sealed class RefreshTokenHasher : IRefreshTokenHasher
 {

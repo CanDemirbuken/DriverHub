@@ -5,16 +5,18 @@ using MediatR;
 
 namespace DriverHub.Application.Features.Authentication.Commands.LoginUser;
 
-public sealed class LoginUserCommandHandler(IAuthenticationService identityService) : IRequestHandler<LoginUserCommand, Result<LoginUserCommandResponse>>
+public sealed class LoginUserCommandHandler(IAuthenticationService authenticationService) : IRequestHandler<LoginUserCommand, Result<LoginUserCommandResponse>>
 {
     public async Task<Result<LoginUserCommandResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        LoginUserRequest loginRequest = new(request.Email, request.Password);
+        LoginUserRequest loginRequest = new(
+            request.Email,
+            request.Password);
 
-        Result<LoginUserResponse> loginResult = await identityService.LoginAsync(loginRequest, cancellationToken);
+        Result<LoginUserResponse> loginResult = await authenticationService.LoginAsync(loginRequest, cancellationToken);
 
         if (loginResult.IsFailure)
-            return Result<LoginUserCommandResponse>.Failure(loginResult.StatusCode, loginResult.Errors);
+            return Result<LoginUserCommandResponse>.Failure(loginResult.Errors);
 
         LoginUserCommandResponse response = new(
             loginResult.Value.AccessToken,
@@ -22,6 +24,6 @@ public sealed class LoginUserCommandHandler(IAuthenticationService identityServi
             loginResult.Value.RefreshToken,
             loginResult.Value.RefreshTokenExpiresAt);
 
-        return Result<LoginUserCommandResponse>.Success(response, loginResult.StatusCode);
+        return Result<LoginUserCommandResponse>.Success(response);
     }
 }

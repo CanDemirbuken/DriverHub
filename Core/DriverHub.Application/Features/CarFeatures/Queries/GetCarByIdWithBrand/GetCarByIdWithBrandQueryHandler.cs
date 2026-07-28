@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
 
@@ -12,9 +12,9 @@ public sealed class GetCarByIdWithBrandQueryHandler(ICarRepository carRepository
     {
         var car = await carRepository.GetCarByIdWithBrandAsync(request.Id, cancellationToken);
         if (car is null)
-            return Result<GetCarByIdWithBrandQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
+            return Result<GetCarByIdWithBrandQueryResponse>.Failure(Error.NotFound($"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.", nameof(request.Id)));
 
         GetCarByIdWithBrandQueryResponse data = mapper.Map<GetCarByIdWithBrandQueryResponse>(car);
-        return Result<GetCarByIdWithBrandQueryResponse>.Success(data, StatusCodes.Status200OK);
+        return Result<GetCarByIdWithBrandQueryResponse>.Success(data);
     }
 }

@@ -4,7 +4,6 @@ using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.ContactFeatures.Commands.CreateContact;
 
@@ -18,6 +17,6 @@ public sealed class CreateContactCommandHandler(IRepository<Contact> repository,
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         CreateContactCommandResponse data = new CreateContactCommandResponse(contact.Id);
-        return Result<CreateContactCommandResponse>.Success(data, StatusCodes.Status201Created);
+        return Result<CreateContactCommandResponse>.Success(data);
     }
 }

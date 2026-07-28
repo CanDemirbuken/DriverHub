@@ -1,64 +1,54 @@
-﻿using DriverHub.Application.Features.BannerFeatures.Queries.GetAllBanner;
-using System.Text.Json.Serialization;
+﻿using DriverHub.Application.Common.Errors;
 
 namespace DriverHub.Application.Common.Results;
 
-public class Result
+public class Result : IFailureResult<Result>
 {
-    protected Result(bool isSuccess, int statusCode, IReadOnlyCollection<string> errors)
+    protected Result(bool isSuccess, IReadOnlyCollection<Error> errors)
     {
+        ArgumentNullException.ThrowIfNull(errors);
+
         if (isSuccess && errors.Count > 0)
-        {
-            throw new InvalidOperationException(
-                "Başarılı bir sonuç hata içeremez.");
-        }
+            throw new InvalidOperationException("Başarılı bir sonuç hata içeremez.");
 
         if (!isSuccess && errors.Count == 0)
-        {
-            throw new InvalidOperationException(
-                "Başarısız bir sonuç en az bir hata içermelidir.");
-        }
+            throw new InvalidOperationException("Başarısız bir sonuç en az bir hata içermelidir.");
 
         IsSuccess = isSuccess;
-        StatusCode = statusCode;
         Errors = errors;
     }
 
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
-    [JsonIgnore] public int StatusCode { get; }
-    public IReadOnlyCollection<string> Errors { get; }
+    public IReadOnlyCollection<Error> Errors { get; }
 
-    public static Result Success(int statusCode)
+    public static Result Success()
+        => new(true, []);
+
+    public static Result Failure(Error error)
     {
-        return new Result(
-            true,
-            statusCode,
-            []);
+        ArgumentNullException.ThrowIfNull(error);
+        return new Result(false, [error]);
     }
 
-    public static Result Failure(int statusCode, string error)
+    public static Result Failure(IEnumerable<Error> errors)
     {
-        return new Result(
-            false,
-            statusCode,
-            [error]);
-    }
+        ArgumentNullException.ThrowIfNull(errors);
 
-    public static Result Failure(int statusCode, IEnumerable<string> errors)
-    {
-        return new Result(
-            false,
-            statusCode,
-            errors.ToArray());
+        Error[] errorArray = errors
+            .Distinct()
+            .ToArray();
+
+        return new Result(false, errorArray);
     }
 }
 
-public class Result<T> : Result
+public class Result<T> : Result, IFailureResult<Result<T>>
 {
     private readonly T? _value;
 
-    private Result(T? value, bool isSuccess, int statusCode, IReadOnlyCollection<string> errors) : base(isSuccess, statusCode, errors)
+    private Result(T? value, bool isSuccess, IReadOnlyCollection<Error> errors)
+        : base(isSuccess, errors)
     {
         _value = value;
     }
@@ -68,41 +58,32 @@ public class Result<T> : Result
         get
         {
             if (IsFailure)
-            {
-                throw new InvalidOperationException(
-                    "Başarısız bir sonuçtan değer okunamaz.");
-            }
+                throw new InvalidOperationException("Başarısız bir sonuçtan değer okunamaz.");
 
             return _value!;
         }
     }
 
-    public static Result<T> Success(T value, int statusCode)
+    public static Result<T> Success(T value)
     {
         ArgumentNullException.ThrowIfNull(value);
-
-        return new Result<T>(
-            value,
-            true,
-            statusCode,
-            []);
+        return new Result<T>(value, true, []);
     }
 
-    public static Result<T> Failure(int statusCode, string error)
+    public new static Result<T> Failure(Error error)
     {
-        return new Result<T>(
-            default,
-            false,
-            statusCode,
-            [error]);
+        ArgumentNullException.ThrowIfNull(error);
+        return new Result<T>(default, false, [error]);
     }
 
-    public static Result<T> Failure(int statusCode, IEnumerable<string> errors)
+    public new static Result<T> Failure(IEnumerable<Error> errors)
     {
-        return new Result<T>(
-            default,
-            false,
-            statusCode,
-            errors.ToArray());
+        ArgumentNullException.ThrowIfNull(errors);
+
+        Error[] errorArray = errors
+            .Distinct()
+            .ToArray();
+
+        return new Result<T>(default, false, errorArray);
     }
 }

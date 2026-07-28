@@ -1,4 +1,5 @@
 ﻿using DriverHub.Application.Common.Constants;
+using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Contracts.Authentication.Login;
 using DriverHub.Application.Contracts.Authentication.Register;
@@ -7,32 +8,35 @@ using DriverHub.Application.Contracts.Authentication.Token.AccessToken;
 using DriverHub.Application.Contracts.Authentication.Token.RefreshToken;
 using DriverHub.Application.Interfaces.Authentication;
 using DriverHub.Application.Interfaces.Repositories;
+using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Persistence.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace DriverHub.Infrastructure.Services.Authentication;
 
-public sealed class AuthenticationService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService jwtTokenService, IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenHasher refreshTokenHasher, IRefreshTokenRepository refreshTokenRepository) : IAuthenticationService
+public sealed class AuthenticationService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService jwtTokenService, IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenHasher refreshTokenHasher, IRefreshTokenRepository refreshTokenRepository, IUnitOfWork unitOfWork) : IAuthenticationService
 {
     public async Task<Result<LoginUserResponse>> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken = default)
     {
         AppUser? user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null || !user.IsActive || user.IsDeleted)
-            return Result<LoginUserResponse>.Failure(StatusCodes.Status401Unauthorized, "E-mail ya da şifre hatalı.");
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
 
         SignInResult loginResult = await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
 
         if (loginResult.IsLockedOut)
-            return Result<LoginUserResponse>.Failure(StatusCodes.Status423Locked, "Kullanıcı hesabı başarısız giriş denemeleri nedeniyle geçici olarak kilitlenmiştir.");
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.UserLocked);
 
         if (!loginResult.Succeeded)
-            return Result<LoginUserResponse>.Failure(StatusCodes.Status401Unauthorized, "E-mail ya da şifre hatalı.");
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 
-        var accessTokenRequest = new CreateAccessTokenRequest(user.Id, user.Email!, roles.ToList());
+        var accessTokenRequest = new CreateAccessTokenRequest(
+            user.Id,
+            user.Email!,
+            roles.ToList());
 
         GeneratedAccessToken accessToken = jwtTokenService.Generate(accessTokenRequest);
         GeneratedRefreshToken refreshToken = refreshTokenGenerator.Generate();
@@ -47,6 +51,7 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             user.Id);
 
         await refreshTokenRepository.CreateAsync(storeRefreshTokenRequest, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new LoginUserResponse(
             accessToken.Token,
@@ -54,7 +59,7 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             refreshToken.Token,
             refreshToken.ExpiresAt);
 
-        return Result<LoginUserResponse>.Success(response, StatusCodes.Status200OK);
+        return Result<LoginUserResponse>.Success(response);
     }
 
     public async Task<Result<RegisterUserResponse>> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
@@ -62,7 +67,7 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
         AppUser? existingUser = await userManager.FindByEmailAsync(request.Email);
 
         if (existingUser is not null)
-            return Result<RegisterUserResponse>.Failure(StatusCodes.Status409Conflict, "Bu e-mail adresi ile kayıtlı bir kullanıcı bulunmaktadır.");
+            return Result<RegisterUserResponse>.Failure(AuthenticationErrors.EmailAlreadyExists);
 
         var user = new AppUser
         {
@@ -78,8 +83,14 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
 
         if (!creationResult.Succeeded)
         {
-            IReadOnlyCollection<string> errors = IdentityErrorMapper.Map(creationResult.Errors);
-            return Result<RegisterUserResponse>.Failure(StatusCodes.Status400BadRequest, errors);
+            IReadOnlyCollection<Error> errors = IdentityErrorMapper
+                .Map(creationResult.Errors)
+                .Select(message => Error.Validation(
+                    "Identity.Validation",
+                    message))
+                .ToArray();
+
+            return Result<RegisterUserResponse>.Failure(errors);
         }
 
         IdentityResult roleResult = await userManager.AddToRoleAsync(user, RoleNames.User);
@@ -89,44 +100,56 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             IdentityResult deletionResult = await userManager.DeleteAsync(user);
 
             if (!deletionResult.Succeeded)
+            {
                 throw new InvalidOperationException($"Kullanıcı oluşturuldu ancak '{RoleNames.User}' rolü atanamadı ve kullanıcı kaydı geri alınamadı.");
+            }
 
-            IReadOnlyCollection<string> errors = IdentityErrorMapper.Map(roleResult.Errors);
+            IReadOnlyCollection<Error> errors = IdentityErrorMapper
+                .Map(roleResult.Errors)
+                .Select(message => Error.Failure(message))
+                .ToArray();
 
             return Result<RegisterUserResponse>.Failure(
-                StatusCodes.Status500InternalServerError,
                 errors.Count > 0
                     ? errors
-                    : ["Kullanıcıya varsayılan rol atanamadı."]);
+                    : [AuthenticationErrors.DefaultRoleAssignmentFailed]);
         }
 
         var response = new RegisterUserResponse(user.Id);
 
-        return Result<RegisterUserResponse>.Success(response, StatusCodes.Status201Created);
+        return Result<RegisterUserResponse>.Success(response);
     }
 
     public async Task<Result<RefreshSessionResponse>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
     {
         string currentTokenHash = refreshTokenHasher.Hash(refreshToken);
+        DateTime currentDate = DateTime.UtcNow;
 
         RefreshTokenRecord? currentToken = await refreshTokenRepository.GetByHashAsync(currentTokenHash, cancellationToken);
 
         if (currentToken is null)
-            return Result<RefreshSessionResponse>.Failure(StatusCodes.Status401Unauthorized, "Refresh token geçersiz veya kullanım süresi dolmuş.");
-
-        DateTime currentDate = DateTime.UtcNow;
-
-        if (!currentToken.IsActive(currentDate))
-            return Result<RefreshSessionResponse>.Failure(StatusCodes.Status401Unauthorized, "Refresh token geçersiz veya kullanım süresi dolmuş.");
+            return InvalidRefreshTokenResult();
 
         AppUser? user = await userManager.FindByIdAsync(currentToken.UserId);
 
         if (user is null || !user.IsActive || user.IsDeleted)
-            return Result<RefreshSessionResponse>.Failure(StatusCodes.Status401Unauthorized, "Kullanıcı bilgisi geçersiz.");
+            return Result<RefreshSessionResponse>.Failure(AuthenticationErrors.InvalidUser);
+
+        if (currentToken.IsReuseDetected())
+        {
+            await refreshTokenRepository.RevokeActiveTokensByUserIdAsync(currentToken.UserId, currentDate, cancellationToken);
+            return ReusedRefreshTokenResult();
+        }
+
+        if (!currentToken.IsActive(currentDate))
+            return InvalidRefreshTokenResult();
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 
-        var accessTokenRequest = new CreateAccessTokenRequest(user.Id, user.Email!, roles.ToList());
+        var accessTokenRequest = new CreateAccessTokenRequest(
+            user.Id,
+            user.Email!,
+            roles.ToList());
 
         GeneratedAccessToken accessToken = jwtTokenService.Generate(accessTokenRequest);
         GeneratedRefreshToken newRefreshToken = refreshTokenGenerator.Generate();
@@ -139,14 +162,52 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             newRefreshToken.ExpiresAt,
             user.Id);
 
-        bool rotationSucceeded = await refreshTokenRepository.RotateAsync(
-            currentToken.Id,
-            storeRefreshTokenRequest,
-            currentDate,
-            cancellationToken);
+        bool rotationSucceeded;
+
+        await using (IUnitOfWorkTransaction transaction =
+            await unitOfWork.BeginTransactionAsync(cancellationToken))
+        {
+            try
+            {
+                rotationSucceeded = await refreshTokenRepository.RotateAsync(
+                    currentToken.Id,
+                    storeRefreshTokenRequest,
+                    currentDate,
+                    cancellationToken);
+
+                if (rotationSucceeded)
+                {
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+                }
+                else
+                {
+                    await transaction.RollbackAsync(CancellationToken.None);
+                }
+            }
+            catch
+            {
+                await transaction.RollbackAsync(CancellationToken.None);
+                throw;
+            }
+        }
 
         if (!rotationSucceeded)
-            return Result<RefreshSessionResponse>.Failure(StatusCodes.Status401Unauthorized, "Refresh token daha önce kullanılmış veya geçersiz hale getirilmiştir.");
+        {
+            RefreshTokenRecord? refreshedCurrentToken = await refreshTokenRepository.GetByHashAsync(
+                currentTokenHash,
+                cancellationToken);
+
+            if (refreshedCurrentToken?.IsReuseDetected() == true)
+            {
+                await refreshTokenRepository.RevokeActiveTokensByUserIdAsync(
+                    refreshedCurrentToken.UserId,
+                    DateTime.UtcNow,
+                    cancellationToken);
+            }
+
+            return ReusedRefreshTokenResult();
+        }
 
         var response = new RefreshSessionResponse(
             accessToken.Token,
@@ -154,6 +215,12 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
             newRefreshToken.Token,
             newRefreshToken.ExpiresAt);
 
-        return Result<RefreshSessionResponse>.Success(response, StatusCodes.Status200OK);
+        return Result<RefreshSessionResponse>.Success(response);
     }
+
+    private static Result<RefreshSessionResponse> InvalidRefreshTokenResult()
+        => Result<RefreshSessionResponse>.Failure(AuthenticationErrors.InvalidRefreshToken);
+
+    private static Result<RefreshSessionResponse> ReusedRefreshTokenResult()
+        => Result<RefreshSessionResponse>.Failure(AuthenticationErrors.ReusedRefreshToken);
 }

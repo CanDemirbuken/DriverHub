@@ -4,7 +4,6 @@ using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.BannerFeatures.Commands.CreateBanner;
 
@@ -18,6 +17,6 @@ public sealed class CreateBannerCommandHandler(IRepository<Banner> repository, I
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         CreateBannerCommandResponse data = new CreateBannerCommandResponse(banner.Id);
-        return Result<CreateBannerCommandResponse>.Success(data, StatusCodes.Status201Created);
+        return Result<CreateBannerCommandResponse>.Success(data);
     }
 }

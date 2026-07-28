@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.CategoryFeatures.Queries.GetCategoryById;
 
@@ -13,9 +13,9 @@ public sealed class GetCategoryByIdQueryHandler(IRepository<Category> repository
     {
         var category = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (category is null)
-            return Result<GetCategoryByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.");
+            return Result<GetCategoryByIdQueryResponse>.Failure(Error.NotFound($"{request.Id} kimlik bilgisine sahip kayıt bulunamadı.", nameof(request.Id)));
 
         GetCategoryByIdQueryResponse data = mapper.Map<GetCategoryByIdQueryResponse>(category);
-        return Result<GetCategoryByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
+        return Result<GetCategoryByIdQueryResponse>.Success(data);
     }
 }

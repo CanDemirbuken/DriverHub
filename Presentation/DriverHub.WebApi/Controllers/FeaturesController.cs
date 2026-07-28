@@ -23,7 +23,7 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetFeatureByIdQueryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<GetFeatureByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         Result<GetFeatureByIdQueryResponse> result = await _mediator.Send(new GetFeatureByIdQuery(id), cancellationToken);
@@ -32,12 +32,12 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateFeatureCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<CreateFeatureCommandResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<CreateFeatureCommandResponse>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateAsync(CreateFeatureCommand request, CancellationToken cancellationToken)
     {
         Result<CreateFeatureCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:guid}")]
@@ -53,15 +53,16 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
         };
 
         Result result = await _mediator.Send(command, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveFeatureCommand(id), cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

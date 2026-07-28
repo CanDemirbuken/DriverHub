@@ -23,7 +23,7 @@ public sealed class AboutsController(IMediator mediator) : BaseController(mediat
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetAboutByIdQueryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<GetAboutByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         Result<GetAboutByIdQueryResponse> result = await _mediator.Send(new GetAboutByIdQuery(id), cancellationToken);
@@ -32,11 +32,11 @@ public sealed class AboutsController(IMediator mediator) : BaseController(mediat
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateAboutCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<CreateAboutCommandResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAsync(CreateAboutCommand request, CancellationToken cancellationToken)
     {
         Result<CreateAboutCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:guid}")]
@@ -51,15 +51,16 @@ public sealed class AboutsController(IMediator mediator) : BaseController(mediat
         };
 
         Result result = await _mediator.Send(command, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveAboutCommand(id), cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

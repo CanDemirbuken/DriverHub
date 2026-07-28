@@ -16,7 +16,7 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
 {
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<PagedResponse<GetPagedContactsQueryResponse>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<PagedResponse<GetPagedContactsQueryResponse>>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPagedAsync([FromQuery] GetPagedContactsQuery request, CancellationToken cancellationToken)
     {
         Result<PagedResponse<GetPagedContactsQueryResponse>> result = await _mediator.Send(request, cancellationToken);
@@ -25,7 +25,7 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetContactByIdQueryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<GetContactByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         Result<GetContactByIdQueryResponse> result = await _mediator.Send(new GetContactByIdQuery(id), cancellationToken);
@@ -34,11 +34,11 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateContactCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<CreateContactCommandResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAsync(CreateContactCommand request, CancellationToken cancellationToken)
     {
         Result<CreateContactCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:guid}")]
@@ -53,15 +53,16 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
         };
 
         Result result = await _mediator.Send(command, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveContactCommand(id), cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

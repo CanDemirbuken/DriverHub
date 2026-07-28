@@ -23,7 +23,7 @@ public sealed class CategoriesController(IMediator mediator) : BaseController(me
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetCategoryByIdQueryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<GetCategoryByIdQueryResponse>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         Result<GetCategoryByIdQueryResponse> result = await _mediator.Send(new GetCategoryByIdQuery(id), cancellationToken);
@@ -32,12 +32,12 @@ public sealed class CategoriesController(IMediator mediator) : BaseController(me
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateCategoryCommandResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<CreateCategoryCommandResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<CreateCategoryCommandResponse>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateAsync(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         Result<CreateCategoryCommandResponse> result = await _mediator.Send(request, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:guid}")]
@@ -53,15 +53,16 @@ public sealed class CategoriesController(IMediator mediator) : BaseController(me
         };
 
         Result result = await _mediator.Send(command, cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveCategoryCommand(id), cancellationToken);
-        return ToActionResult(result);
+        return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

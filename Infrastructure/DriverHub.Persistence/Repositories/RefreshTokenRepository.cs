@@ -19,7 +19,6 @@ public sealed class RefreshTokenRepository(AppDbContext context) : IRefreshToken
         };
 
         await context.Set<RefreshToken>().AddAsync(refreshToken, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<RefreshTokenRecord?> GetByHashAsync(string tokenHash, CancellationToken cancellationToken = default)
@@ -31,14 +30,25 @@ public sealed class RefreshTokenRepository(AppDbContext context) : IRefreshToken
                 token.Id,
                 token.UserId,
                 token.ExpiresDate,
-                token.RevokedDate))
+                token.RevokedDate,
+                token.ReplacedByTokenHash))
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<int> RevokeActiveTokensByUserIdAsync(string userId, DateTime revokedDate, CancellationToken cancellationToken = default)
+    {
+        return context.Set<RefreshToken>()
+            .Where(token =>
+                token.UserId == userId &&
+                token.RevokedDate == null &&
+                token.ExpiresDate > revokedDate)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(token => token.RevokedDate, revokedDate),
+                cancellationToken);
     }
 
     public async Task<bool> RotateAsync(int currentTokenId, StoreRefreshTokenRequest newToken, DateTime revokedDate, CancellationToken cancellationToken = default)
     {
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
-
         int affectedRows = await context.Set<RefreshToken>()
             .Where(token =>
                 token.Id == currentTokenId &&
@@ -50,10 +60,7 @@ public sealed class RefreshTokenRepository(AppDbContext context) : IRefreshToken
                 cancellationToken);
 
         if (affectedRows == 0)
-        {
-            await transaction.RollbackAsync(cancellationToken);
             return false;
-        }
 
         var refreshToken = new RefreshToken
         {
@@ -64,8 +71,6 @@ public sealed class RefreshTokenRepository(AppDbContext context) : IRefreshToken
         };
 
         await context.Set<RefreshToken>().AddAsync(refreshToken, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         return true;
     }

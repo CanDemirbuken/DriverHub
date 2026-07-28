@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace DriverHub.Application.Features.AboutFeatures.Queries.GetAboutById;
 
@@ -13,9 +13,9 @@ public sealed class GetAboutByIdQueryHandler(IRepository<About> repository, IMap
     {
         var about = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (about is null)
-            return Result<GetAboutByIdQueryResponse>.Failure(StatusCodes.Status404NotFound, $"{request.Id} kimliğine sahip kayıt bulunamadı.");
+            return Result<GetAboutByIdQueryResponse>.Failure(Error.NotFound($"{request.Id} kimliğine sahip kayıt bulunamadı.", nameof(request.Id)));
 
         var data = mapper.Map<GetAboutByIdQueryResponse>(about);
-        return Result<GetAboutByIdQueryResponse>.Success(data, StatusCodes.Status200OK);
+        return Result<GetAboutByIdQueryResponse>.Success(data);
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace DriverHub.Application.Features.Authentication.Commands.RegisterUser;
 
-public sealed class RegisterUserCommandHandler(IAuthenticationService identityService) : IRequestHandler<RegisterUserCommand, Result<RegisterUserCommandResponse>>
+public sealed class RegisterUserCommandHandler(IAuthenticationService authenticationService) : IRequestHandler<RegisterUserCommand, Result<RegisterUserCommandResponse>>
 {
     public async Task<Result<RegisterUserCommandResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
@@ -16,16 +16,13 @@ public sealed class RegisterUserCommandHandler(IAuthenticationService identitySe
             request.Password);
 
         Result<RegisterUserResponse> result =
-            await identityService.RegisterAsync(
-                registerRequest,
-                cancellationToken);
+            await authenticationService.RegisterAsync(registerRequest, cancellationToken);
 
         if (result.IsFailure)
-        {
-            return Result<RegisterUserCommandResponse>.Failure(result.StatusCode, result.Errors);
-        }
+            return Result<RegisterUserCommandResponse>.Failure(result.Errors);
 
         RegisterUserCommandResponse response = new(result.Value.Id);
-        return Result<RegisterUserCommandResponse>.Success(response, result.StatusCode);
+
+        return Result<RegisterUserCommandResponse>.Success(response);
     }
 }
