@@ -28,5 +28,7 @@ public sealed class ContactConfiguration : EntityConfiguration<Contact>
             .IsRequired();
 
         builder.HasIndex(x => x.Email);
+
+        builder.HasIndex(x => x.CreatedDate);
     }
 }

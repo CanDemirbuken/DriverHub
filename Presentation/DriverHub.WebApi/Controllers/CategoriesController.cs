@@ -1,9 +1,9 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.CategoryFeatures.Commands.CreateCategory;
-using DriverHub.Application.Features.CategoryFeatures.Commands.RemoveCategory;
-using DriverHub.Application.Features.CategoryFeatures.Commands.UpdateCategory;
-using DriverHub.Application.Features.CategoryFeatures.Queries.GetAllCategory;
-using DriverHub.Application.Features.CategoryFeatures.Queries.GetCategoryById;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.CreateCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.RemoveCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.UpdateCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetAllCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetCategoryById;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;

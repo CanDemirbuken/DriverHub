@@ -1,6 +1,12 @@
-﻿using DriverHub.Application.Interfaces.Authentication;
+﻿using DriverHub.Application.Interfaces.Account;
+using DriverHub.Application.Interfaces.Authentication;
+using DriverHub.Application.Interfaces.Authentication.Token.Access;
+using DriverHub.Application.Interfaces.Authentication.Token.Refresh;
 using DriverHub.Infrastructure.Options;
+using DriverHub.Infrastructure.Services.Account;
 using DriverHub.Infrastructure.Services.Authentication;
+using DriverHub.Infrastructure.Services.Authentication.Token.Access;
+using DriverHub.Infrastructure.Services.Authentication.Token.Refresh;
 using DriverHub.Infrastructure.Services.Identity;
 using DriverHub.Persistence.Context;
 using DriverHub.Persistence.Identity;
@@ -111,6 +117,8 @@ public static class DependencyInjection
         services.AddAuthorization();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
         services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();

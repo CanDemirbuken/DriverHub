@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DriverHub.Application.Features.BannerFeatures.Commands.CreateBanner;
-using DriverHub.Application.Features.BannerFeatures.Commands.UpdateBanner;
-using DriverHub.Application.Features.BannerFeatures.Queries.GetBannerById;
+using DriverHub.Application.Features.Entities.BannerFeatures.Commands.CreateBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Commands.UpdateBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Queries.GetBannerById;
 using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Common.MappingProfiles;

@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Common.Models;
-using DriverHub.Application.Features.CarFeatures.Queries.GetPagedCarsWithBrand;
+using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetPagedCarsWithBrand;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;

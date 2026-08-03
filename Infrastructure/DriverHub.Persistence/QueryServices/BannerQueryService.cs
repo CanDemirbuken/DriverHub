@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Features.BannerFeatures.Queries.GetAllBanner;
+﻿using DriverHub.Application.Features.Entities.BannerFeatures.Queries.GetAllBanner;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;

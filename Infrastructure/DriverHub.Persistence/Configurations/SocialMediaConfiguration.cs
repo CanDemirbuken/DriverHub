@@ -22,5 +22,11 @@ public sealed class SocialMediaConfiguration : EntityConfiguration<SocialMedia>
         builder.Property(x => x.Icon)
             .HasMaxLength(150)
             .IsRequired();
+
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
+
+        builder.HasIndex(x => x.Url)
+            .IsUnique();
     }
 }

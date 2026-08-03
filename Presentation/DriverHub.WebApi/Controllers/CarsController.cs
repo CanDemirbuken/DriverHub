@@ -1,10 +1,10 @@
 ﻿using DriverHub.Application.Common.Models;
 using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.CarFeatures.Commands.CreateCar;
-using DriverHub.Application.Features.CarFeatures.Commands.RemoveCar;
-using DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
-using DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
-using DriverHub.Application.Features.CarFeatures.Queries.GetPagedCarsWithBrand;
+using DriverHub.Application.Features.Entities.CarFeatures.Commands.CreateCar;
+using DriverHub.Application.Features.Entities.CarFeatures.Commands.RemoveCar;
+using DriverHub.Application.Features.Entities.CarFeatures.Commands.UpdateCar;
+using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetCarByIdWithBrand;
+using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetPagedCarsWithBrand;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;

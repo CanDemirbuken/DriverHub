@@ -1,9 +1,9 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.BannerFeatures.Commands.CreateBanner;
-using DriverHub.Application.Features.BannerFeatures.Commands.RemoveBanner;
-using DriverHub.Application.Features.BannerFeatures.Commands.UpdateBanner;
-using DriverHub.Application.Features.BannerFeatures.Queries.GetAllBanner;
-using DriverHub.Application.Features.BannerFeatures.Queries.GetBannerById;
+using DriverHub.Application.Features.Entities.BannerFeatures.Commands.CreateBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Commands.RemoveBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Commands.UpdateBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Queries.GetAllBanner;
+using DriverHub.Application.Features.Entities.BannerFeatures.Queries.GetBannerById;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;

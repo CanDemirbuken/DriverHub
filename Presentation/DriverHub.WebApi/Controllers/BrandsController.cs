@@ -1,9 +1,9 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.BrandFeatures.Commands.CreateBrand;
-using DriverHub.Application.Features.BrandFeatures.Commands.RemoveBrand;
-using DriverHub.Application.Features.BrandFeatures.Commands.UpdateBrand;
-using DriverHub.Application.Features.BrandFeatures.Queries.GetAllBrand;
-using DriverHub.Application.Features.BrandFeatures.Queries.GetBrandById;
+using DriverHub.Application.Features.Entities.BrandFeatures.Commands.CreateBrand;
+using DriverHub.Application.Features.Entities.BrandFeatures.Commands.RemoveBrand;
+using DriverHub.Application.Features.Entities.BrandFeatures.Commands.UpdateBrand;
+using DriverHub.Application.Features.Entities.BrandFeatures.Queries.GetAllBrand;
+using DriverHub.Application.Features.Entities.BrandFeatures.Queries.GetBrandById;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;

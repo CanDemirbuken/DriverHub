@@ -9,7 +9,20 @@ public sealed class CarConfiguration : EntityConfiguration<Car>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Car> builder)
     {
-        builder.ToTable("Cars");
+        builder.ToTable("Cars", tableBuilder =>
+        {
+            tableBuilder.HasCheckConstraint(
+                "CK_Cars_Km_NonNegative",
+                "[Km] >= 0");
+
+            tableBuilder.HasCheckConstraint(
+                "CK_Cars_Seat_Range",
+                "[Seat] BETWEEN 1 AND 9");
+
+            tableBuilder.HasCheckConstraint(
+                "CK_Cars_Luggage_Positive",
+                "[Luggage] > 0");
+        });
 
         builder.Property(x => x.Model)
             .HasMaxLength(150)
@@ -40,7 +53,11 @@ public sealed class CarConfiguration : EntityConfiguration<Car>
             .HasMaxLength(500)
             .IsRequired();
 
-        builder.HasIndex(x => x.BrandId);
+        builder.HasIndex(x => new
+        {
+            x.BrandId,
+            x.Model
+        }).IsUnique();
 
         builder.HasOne(x => x.Brand)
             .WithMany(x => x.Cars)

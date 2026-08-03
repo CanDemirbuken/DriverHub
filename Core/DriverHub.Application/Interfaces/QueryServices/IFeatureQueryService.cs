@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Features.FeatureFeatures.Queries.GetAllFeature;
+﻿using DriverHub.Application.Features.Entities.FeatureFeatures.Queries.GetAllFeature;
 
 namespace DriverHub.Application.Interfaces.QueryServices;
 

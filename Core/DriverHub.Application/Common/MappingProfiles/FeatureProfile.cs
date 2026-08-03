@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DriverHub.Application.Features.FeatureFeatures.Commands.CreateFeature;
-using DriverHub.Application.Features.FeatureFeatures.Commands.UpdateFeature;
-using DriverHub.Application.Features.FeatureFeatures.Queries.GetFeatureById;
+using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.CreateFeature;
+using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.UpdateFeature;
+using DriverHub.Application.Features.Entities.FeatureFeatures.Queries.GetFeatureById;
 using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Common.MappingProfiles;

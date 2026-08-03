@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Features.BrandFeatures.Queries.GetAllBrand;
+﻿using DriverHub.Application.Features.Entities.BrandFeatures.Queries.GetAllBrand;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;

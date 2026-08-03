@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Features.AboutFeatures.Queries.GetAllAbout;
+﻿using DriverHub.Application.Features.Entities.AboutFeatures.Queries.GetAllAbout;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;

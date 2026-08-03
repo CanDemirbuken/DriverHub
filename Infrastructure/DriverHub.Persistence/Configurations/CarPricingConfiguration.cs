@@ -9,7 +9,12 @@ public sealed class CarPricingConfiguration : EntityConfiguration<CarPricing>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<CarPricing> builder)
     {
-        builder.ToTable("CarPricings");
+        builder.ToTable("CarPricings", tableBuilder =>
+        {
+            tableBuilder.HasCheckConstraint(
+                "CK_CarPricings_Amount_Positive",
+                "[Amount] > 0");
+        });
 
         builder.Property(x => x.CarId)
             .IsRequired();

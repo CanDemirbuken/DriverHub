@@ -1,10 +1,10 @@
 ﻿using DriverHub.Application.Common.Models;
 using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.ContactFeatures.Commands.CreateContact;
-using DriverHub.Application.Features.ContactFeatures.Commands.RemoveContact;
-using DriverHub.Application.Features.ContactFeatures.Commands.UpdateContact;
-using DriverHub.Application.Features.ContactFeatures.Queries.GetContactById;
-using DriverHub.Application.Features.ContactFeatures.Queries.GetPagedContacts;
+using DriverHub.Application.Features.Entities.ContactFeatures.Commands.CreateContact;
+using DriverHub.Application.Features.Entities.ContactFeatures.Commands.RemoveContact;
+using DriverHub.Application.Features.Entities.ContactFeatures.Commands.UpdateContact;
+using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetContactById;
+using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetPagedContacts;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;

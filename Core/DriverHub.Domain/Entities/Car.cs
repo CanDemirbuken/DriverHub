@@ -11,7 +11,7 @@ public sealed class Car : Entity
     public int Km { get; set; }
     public string Transmission { get; set; } = string.Empty;
     public byte Seat { get; set; }
-    public byte Luggage { get; set; }
+    public int Luggage { get; set; }
     public string Fuel { get; set; } = string.Empty;
     public string BigImageUrl { get; set; } = string.Empty;
     public ICollection<CarFeature> CarFeatures { get; set; } = [];

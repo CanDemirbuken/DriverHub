@@ -47,6 +47,20 @@ public sealed class RefreshTokenRepository(AppDbContext context) : IRefreshToken
                 cancellationToken);
     }
 
+    public async Task<bool> RevokeAsync(string tokenHash, DateTime revokedDate, CancellationToken cancellationToken = default)
+    {
+        int affectedRows = await context.Set<RefreshToken>()
+            .Where(token =>
+                token.TokenHash == tokenHash &&
+                token.RevokedDate == null &&
+                token.ExpiresDate > revokedDate)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(token => token.RevokedDate, revokedDate),
+                cancellationToken);
+
+        return affectedRows > 0;
+    }
+
     public async Task<bool> RotateAsync(int currentTokenId, StoreRefreshTokenRequest newToken, DateTime revokedDate, CancellationToken cancellationToken = default)
     {
         int affectedRows = await context.Set<RefreshToken>()

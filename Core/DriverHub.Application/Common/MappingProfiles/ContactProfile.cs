@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DriverHub.Application.Features.ContactFeatures.Commands.CreateContact;
-using DriverHub.Application.Features.ContactFeatures.Commands.UpdateContact;
-using DriverHub.Application.Features.ContactFeatures.Queries.GetContactById;
+using DriverHub.Application.Features.Entities.ContactFeatures.Commands.CreateContact;
+using DriverHub.Application.Features.Entities.ContactFeatures.Commands.UpdateContact;
+using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetContactById;
 using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Common.MappingProfiles;

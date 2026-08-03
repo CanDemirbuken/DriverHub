@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DriverHub.Application.Features.CarFeatures.Commands.CreateCar;
-using DriverHub.Application.Features.CarFeatures.Commands.UpdateCar;
-using DriverHub.Application.Features.CarFeatures.Queries.GetCarByIdWithBrand;
+using DriverHub.Application.Features.Entities.CarFeatures.Commands.CreateCar;
+using DriverHub.Application.Features.Entities.CarFeatures.Commands.UpdateCar;
+using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetCarByIdWithBrand;
 using DriverHub.Domain.Entities;
 
 namespace DriverHub.Application.Common.MappingProfiles;

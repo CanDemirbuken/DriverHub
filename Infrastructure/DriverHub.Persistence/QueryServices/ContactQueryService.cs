@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Common.Models;
-using DriverHub.Application.Features.ContactFeatures.Queries.GetPagedContacts;
+using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetPagedContacts;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;
