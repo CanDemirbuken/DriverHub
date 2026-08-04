@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Contracts.Authentication.Token.AccessToken;
+﻿using DriverHub.Application.Contracts.Identity.Token.AccessToken;
 
 namespace DriverHub.Application.Interfaces.Authentication.Token.Access;
 

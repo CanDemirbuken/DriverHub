@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Common.Models;
+﻿using DriverHub.Application.Common.Constants;
+using DriverHub.Application.Common.Models;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Entities.CarFeatures.Commands.CreateCar;
 using DriverHub.Application.Features.Entities.CarFeatures.Commands.RemoveCar;
@@ -8,6 +9,7 @@ using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetPagedCarsWi
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Controllers;
@@ -32,6 +34,7 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
         return ToActionResult(result);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateCarCommandResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -43,6 +46,7 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
         return ToActionResult(result, StatusCodes.Status201Created);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -59,6 +63,7 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
         return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

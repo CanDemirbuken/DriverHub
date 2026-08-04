@@ -3,6 +3,7 @@ using DriverHub.Infrastructure.Extensions;
 using DriverHub.Infrastructure.Services.Identity;
 using DriverHub.Persistence.Extensions;
 using DriverHub.WebApi.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +27,8 @@ try
 
     builder.Services.AddPersistence(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
+
+    builder.Services.AddApplicationAuthorization();
 
     WebApplication app = builder.Build();
 

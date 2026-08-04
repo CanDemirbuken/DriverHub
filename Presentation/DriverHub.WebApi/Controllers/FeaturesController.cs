@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Common.Results;
+﻿using DriverHub.Application.Common.Constants;
+using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.CreateFeature;
 using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.RemoveFeature;
 using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.UpdateFeature;
@@ -7,6 +8,7 @@ using DriverHub.Application.Features.Entities.FeatureFeatures.Queries.GetFeature
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Controllers;
@@ -30,6 +32,7 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
         return ToActionResult(result);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateFeatureCommandResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -40,6 +43,7 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
         return ToActionResult(result, StatusCodes.Status201Created);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -56,6 +60,7 @@ public sealed class FeaturesController(IMediator mediator) : BaseController(medi
         return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

@@ -16,6 +16,21 @@ public static class SwaggerExtensions
                 Version = "v1",
                 Description = "DriverHub araç kiralama uygulaması API servisleri."
             });
+
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Access token değerini yalnızca token olarak girin. 'Bearer' ifadesini eklemeyin."
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+            });
         });
 
         return services;

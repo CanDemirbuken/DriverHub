@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Contracts.Authentication.Login;
+using DriverHub.Application.Contracts.Identity.Authentication.Login;
 using DriverHub.Application.Interfaces.Authentication;
 using MediatR;
 

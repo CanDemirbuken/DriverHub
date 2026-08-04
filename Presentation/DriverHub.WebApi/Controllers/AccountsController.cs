@@ -3,12 +3,14 @@ using DriverHub.Application.Features.Identity.AccountFeatures.Command.RegisterUs
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Controllers
 {
     public class AccountsController(IMediator mediator) : BaseController(mediator)
     {
+        [AllowAnonymous]
         [HttpPost("register")]
         [ProducesResponseType(typeof(ApiResponse<RegisterUserCommandResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

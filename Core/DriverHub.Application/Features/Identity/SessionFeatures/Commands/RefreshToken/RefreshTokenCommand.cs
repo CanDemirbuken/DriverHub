@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Contracts.Authentication.Token.RefreshToken;
+using DriverHub.Application.Contracts.Identity.Token.RefreshToken;
 using MediatR;
 
 namespace DriverHub.Application.Features.Identity.SessionFeatures.Commands.RefreshToken;

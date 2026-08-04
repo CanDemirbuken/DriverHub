@@ -1,5 +1,5 @@
 ﻿using DriverHub.Application.Common.Results;
-using DriverHub.Application.Contracts.Authentication.Register;
+using DriverHub.Application.Contracts.Identity.Account.Register;
 
 namespace DriverHub.Application.Interfaces.Account;
 

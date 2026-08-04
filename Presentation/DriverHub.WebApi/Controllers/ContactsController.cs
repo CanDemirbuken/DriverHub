@@ -1,4 +1,5 @@
-﻿using DriverHub.Application.Common.Models;
+﻿using DriverHub.Application.Common.Constants;
+using DriverHub.Application.Common.Models;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Entities.ContactFeatures.Commands.CreateContact;
 using DriverHub.Application.Features.Entities.ContactFeatures.Commands.RemoveContact;
@@ -8,6 +9,7 @@ using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetPagedCo
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverHub.WebApi.Controllers;
@@ -32,6 +34,7 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
         return ToActionResult(result);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<CreateContactCommandResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -41,6 +44,7 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
         return ToActionResult(result, StatusCodes.Status201Created);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -56,6 +60,7 @@ public sealed class ContactsController(IMediator mediator) : BaseController(medi
         return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

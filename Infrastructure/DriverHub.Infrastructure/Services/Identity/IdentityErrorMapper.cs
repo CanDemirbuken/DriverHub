@@ -48,7 +48,22 @@ internal static class IdentityErrorMapper
             nameof(IdentityErrorDescriber.PasswordRequiresUniqueChars)
                 => "Şifre yeterli sayıda farklı karakter içermelidir.",
 
-            _ => "Kullanıcı kaydı gerçekleştirilemedi."
+            nameof(IdentityErrorDescriber.DuplicateRoleName)
+                => "Bu rol adı daha önce kullanılmıştır.",
+
+            nameof(IdentityErrorDescriber.InvalidRoleName)
+                => "Geçerli bir rol adı girilmelidir.",
+
+            nameof(IdentityErrorDescriber.UserAlreadyInRole)
+                => "Kullanıcı ilgili role zaten sahiptir.",
+
+            nameof(IdentityErrorDescriber.UserNotInRole)
+                => "Kullanıcı ilgili role sahip değildir.",
+
+            nameof(IdentityErrorDescriber.ConcurrencyFailure)
+                => "Kayıt başka bir işlem tarafından değiştirilmiştir. Lütfen tekrar deneyiniz.",
+
+            _ => "Kimlik yönetimi işlemi gerçekleştirilemedi."
         };
     }
 }

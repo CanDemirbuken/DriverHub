@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using DriverHub.Application.Common.Results;
-using DriverHub.Application.Contracts.Authentication.Token.RefreshToken;
+using DriverHub.Application.Contracts.Identity.Token.RefreshToken;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RefreshToken;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RevokeAllSessions;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RevokeSession;
@@ -14,6 +14,7 @@ namespace DriverHub.WebApi.Controllers;
 
 public sealed class SessionsController(IMediator mediator) : BaseController(mediator)
 {
+    [AllowAnonymous]
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(ApiResponse<RefreshSessionResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -24,6 +25,7 @@ public sealed class SessionsController(IMediator mediator) : BaseController(medi
         return ToActionResult(result);
     }
 
+    [AllowAnonymous]
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -34,7 +36,6 @@ public sealed class SessionsController(IMediator mediator) : BaseController(medi
         return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 
-    //[Authorize]
     [HttpPost("logout-all")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

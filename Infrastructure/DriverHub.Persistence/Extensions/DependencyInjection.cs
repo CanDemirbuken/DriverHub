@@ -1,9 +1,11 @@
 ﻿using DriverHub.Application.Interfaces.QueryServices;
+using DriverHub.Application.Interfaces.QueryServices.Identity;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Persistence.Context;
 using DriverHub.Persistence.Options.Sql;
 using DriverHub.Persistence.QueryServices;
+using DriverHub.Persistence.QueryServices.Identity;
 using DriverHub.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -43,6 +45,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         services.AddScoped<IContactQueryService, ContactQueryService>();
         services.AddScoped<IFeatureQueryService, FeatureQueryService>();
+        services.AddScoped<IRoleQueryService, RoleQueryService>();
 
         services.AddScoped<IUnitOfWork>(serviceProvider =>
             serviceProvider.GetRequiredService<AppDbContext>());

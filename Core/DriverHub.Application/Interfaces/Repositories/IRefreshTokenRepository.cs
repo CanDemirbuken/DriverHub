@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Contracts.Authentication.Token.RefreshToken;
+﻿using DriverHub.Application.Contracts.Identity.Token.RefreshToken;
 
 namespace DriverHub.Application.Interfaces.Repositories;
 

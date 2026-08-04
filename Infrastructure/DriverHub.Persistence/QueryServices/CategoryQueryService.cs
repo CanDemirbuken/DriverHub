@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DriverHub.Persistence.QueryServices;
 
-public sealed class CategoryQueryService(AppDbContext context)
-    : ICategoryQueryService
+public sealed class CategoryQueryService(AppDbContext context) : ICategoryQueryService
 {
     public async Task<IReadOnlyList<GetAllCategoryQueryResponse>> GetAllAsync(
         CancellationToken cancellationToken = default)
