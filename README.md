@@ -492,7 +492,7 @@ GitHub
 
 LinkedIn
 
-> https://www.linkedin.com/in/yasarcandemirbuken
+> [https://www.linkedin.com/in/yasarcandemirbuken](https://www.linkedin.com/in/ya%C5%9Farcan-demirb%C3%BCken-09095b205/)
 
 ---
 
