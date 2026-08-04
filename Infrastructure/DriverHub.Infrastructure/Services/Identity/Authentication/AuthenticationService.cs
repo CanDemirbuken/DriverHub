@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Common.Errors;
+﻿using DriverHub.Application.Common.Errors.Identity;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Contracts.Identity.Authentication.Login;
 using DriverHub.Application.Contracts.Identity.Session;
@@ -27,6 +27,9 @@ public sealed class AuthenticationService(UserManager<AppUser> userManager, Sign
 
         if (!loginResult.Succeeded)
             return Result<LoginUserResponse>.Failure(AuthenticationErrors.InvalidCredentials);
+
+        if (!user.EmailConfirmed)
+            return Result<LoginUserResponse>.Failure(AuthenticationErrors.EmailNotConfirmed);
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 

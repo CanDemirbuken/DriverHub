@@ -2,8 +2,10 @@
 using DriverHub.Application.Interfaces.Authentication;
 using DriverHub.Application.Interfaces.Authentication.Token.Access;
 using DriverHub.Application.Interfaces.Authentication.Token.Refresh;
+using DriverHub.Application.Interfaces.Communication;
 using DriverHub.Application.Interfaces.Identity;
 using DriverHub.Infrastructure.Options;
+using DriverHub.Infrastructure.Services.Communication.Mail;
 using DriverHub.Infrastructure.Services.Identity;
 using DriverHub.Infrastructure.Services.Identity.Account;
 using DriverHub.Infrastructure.Services.Identity.Authentication;
@@ -19,6 +21,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using System.Text;
 
 namespace DriverHub.Infrastructure.Extensions;
@@ -128,6 +131,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
+        services.AddScoped<IMailService, MailService>();
 
         services
             .AddOptions<IdentitySeedOptions>()
@@ -146,6 +150,34 @@ public static class DependencyInjection
                 options => !string.IsNullOrWhiteSpace(options.AdminLastName),
                 "IdentitySeed:AdminLastName alanı boş bırakılamaz.")
             .ValidateOnStart();
+
+        services
+            .AddOptions<SmtpOptions>()
+            .Bind(configuration.GetSection(SmtpOptions.SectionName))
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.Host),
+                "Smtp:Host alanı boş bırakılamaz.")
+            .Validate(
+                options => options.Port is > 0 and <= 65535,
+                "Smtp:Port 1 ile 65535 arasında olmalıdır.")
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.UserName),
+                "Smtp:UserName alanı boş bırakılamaz.")
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.Password),
+                "Smtp:Password alanı boş bırakılamaz.")
+            .Validate(
+                options => MailboxAddress.TryParse(options.FromEmail, out _),
+                "Smtp:FromEmail geçerli bir email adresi olmalıdır.")
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.FromName),
+                "Smtp:FromName alanı boş bırakılamaz.")
+            .Validate(
+                options => Enum.IsDefined(options.SecureSocketOption),
+                "Smtp:SecureSocketOption geçerli bir bağlantı seçeneği olmalıdır.")
+            .ValidateOnStart();
+
+        services.AddScoped<IMailService, MailService>();
 
         services.AddScoped<IdentitySeeder>();
 

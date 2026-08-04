@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Common.Errors;
+﻿using DriverHub.Application.Common.Errors.Identity;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Contracts.Identity.Session;
 using DriverHub.Application.Contracts.Identity.Token.AccessToken;
@@ -151,7 +151,7 @@ public sealed class SessionService(IRefreshTokenHasher refreshTokenHasher, IRefr
 
         bool revoked = await refreshTokenRepository.RevokeAsync(refreshTokenHash, revokedDate, cancellationToken);
         if (!revoked)
-            return Result.Failure(AuthenticationErrors.InvalidRefreshToken);
+            return Result.Failure(SessionErrors.InvalidRefreshToken);
 
         return Result.Success();
     }
@@ -163,8 +163,8 @@ public sealed class SessionService(IRefreshTokenHasher refreshTokenHasher, IRefr
     }
 
     private static Result<RefreshSessionResponse> InvalidRefreshTokenResult()
-        => Result<RefreshSessionResponse>.Failure(AuthenticationErrors.InvalidRefreshToken);
+        => Result<RefreshSessionResponse>.Failure(SessionErrors.InvalidRefreshToken);
 
     private static Result<RefreshSessionResponse> ReusedRefreshTokenResult()
-        => Result<RefreshSessionResponse>.Failure(AuthenticationErrors.ReusedRefreshToken);
+        => Result<RefreshSessionResponse>.Failure(SessionErrors.ReusedRefreshToken);
 }
