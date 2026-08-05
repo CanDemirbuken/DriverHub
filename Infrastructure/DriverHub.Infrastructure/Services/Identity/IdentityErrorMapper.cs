@@ -63,6 +63,9 @@ internal static class IdentityErrorMapper
             nameof(IdentityErrorDescriber.ConcurrencyFailure)
                 => "Kayıt başka bir işlem tarafından değiştirilmiştir. Lütfen tekrar deneyiniz.",
 
+            nameof(IdentityErrorDescriber.InvalidToken)
+                => "Şifre sıfırlama kodu geçersiz.",
+
             _ => "Kimlik yönetimi işlemi gerçekleştirilemedi."
         };
     }

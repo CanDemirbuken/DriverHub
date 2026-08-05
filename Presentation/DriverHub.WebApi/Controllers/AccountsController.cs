@@ -1,6 +1,8 @@
 ﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Identity.AccountFeatures.Command.ConfirmEmail;
+using DriverHub.Application.Features.Identity.AccountFeatures.Command.ForgotPassword;
 using DriverHub.Application.Features.Identity.AccountFeatures.Command.RegisterUser;
+using DriverHub.Application.Features.Identity.AccountFeatures.Command.ResetPassword;
 using DriverHub.WebApi.Controllers.Abstraction;
 using DriverHub.WebApi.Models.Common;
 using MediatR;
@@ -29,6 +31,26 @@ namespace DriverHub.WebApi.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ConfirmEmailAsync(ConfirmEmailCommand request, CancellationToken cancellationToken)
+        {
+            Result result = await _mediator.Send(request, cancellationToken);
+            return ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordCommand request, CancellationToken cancellationToken)
+        {
+            Result result = await _mediator.Send(request, cancellationToken);
+            return ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             Result result = await _mediator.Send(request, cancellationToken);
             return ToActionResult(result);

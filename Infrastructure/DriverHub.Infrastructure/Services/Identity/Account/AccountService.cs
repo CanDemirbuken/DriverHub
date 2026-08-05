@@ -5,6 +5,7 @@ using DriverHub.Application.Common.Errors.Identity;
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Contracts.Communication.Mail;
 using DriverHub.Application.Contracts.Identity.Account.EmailConfirmation;
+using DriverHub.Application.Contracts.Identity.Account.Password;
 using DriverHub.Application.Contracts.Identity.Account.Register;
 using DriverHub.Application.Interfaces.Account;
 using DriverHub.Application.Interfaces.Communication;
@@ -18,42 +19,6 @@ namespace DriverHub.Infrastructure.Services.Identity.Account;
 
 public sealed class AccountService(UserManager<AppUser> userManager, IMailService mailService, ILogger<AccountService> logger) : IAccountService
 {
-    public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken = default)
-    {
-        var user = await userManager.FindByIdAsync(request.UserId);
-        if (user is null)
-            return Result.Failure(Error.NotFound($"{request.UserId} kimlik bilgisine sahip kayıt bulunamadı."));
-
-        if (user.EmailConfirmed)
-            return Result.Success();
-
-        string decodedToken;
-
-        try
-        {
-            decodedToken = Encoding.UTF8.GetString(
-                WebEncoders.Base64UrlDecode(request.ConfirmationToken));
-        }
-        catch (FormatException)
-        {
-            return Result.Failure(AccountErrors.InvalidEmailConfirmationToken);
-        }
-
-        IdentityResult confirmationResult = await userManager.ConfirmEmailAsync(user, decodedToken);
-        if (!confirmationResult.Succeeded)
-        {
-            IReadOnlyCollection<Error> errors = IdentityErrorMapper
-                .Map(confirmationResult.Errors)
-                .Select(message => Error.Validation(
-                    "Identity.Validation",
-                    message))
-                .ToArray();
-            return Result.Failure(errors);
-        }
-
-        return Result.Success();
-    }
-
     public async Task<Result<RegisterUserResponse>> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
     {
         AppUser? existingUser = await userManager.FindByEmailAsync(request.Email);
@@ -129,6 +94,105 @@ public sealed class AccountService(UserManager<AppUser> userManager, IMailServic
         return Result<RegisterUserResponse>.Success(response);
     }
 
+    public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByIdAsync(request.UserId);
+        if (user is null)
+            return Result.Failure(Error.NotFound($"{request.UserId} kimlik bilgisine sahip kayıt bulunamadı."));
+
+        if (user.EmailConfirmed)
+            return Result.Success();
+
+        string decodedToken;
+
+        try
+        {
+            decodedToken = Encoding.UTF8.GetString(
+                WebEncoders.Base64UrlDecode(request.ConfirmationToken));
+        }
+        catch (FormatException)
+        {
+            return Result.Failure(AccountErrors.InvalidEmailConfirmationToken);
+        }
+
+        IdentityResult confirmationResult = await userManager.ConfirmEmailAsync(user, decodedToken);
+        if (!confirmationResult.Succeeded)
+        {
+            IReadOnlyCollection<Error> errors = IdentityErrorMapper
+                .Map(confirmationResult.Errors)
+                .Select(message => Error.Validation(
+                    "Identity.Validation",
+                    message))
+                .ToArray();
+            return Result.Failure(errors);
+        }
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
+            return Result.Success();
+
+        try
+        {
+            await SendForgotPasswordAsync(user, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(
+                exception,
+                "Forgot password mail could not be sent to user {UserId}.",
+                user.Id);
+
+            return Result.Success();
+        }
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
+            return Result.Success();
+
+        string decodedToken;
+
+        try
+        {
+            decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.ResetToken));
+        }
+        catch (FormatException)
+        {
+            return Result.Failure(AccountErrors.InvalidPasswordResetToken);
+        }
+
+        IdentityResult resetResult = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
+
+        if (resetResult.Succeeded)
+            return Result.Success();
+
+        if (resetResult.Errors.Any(error => error.Code == nameof(IdentityErrorDescriber.InvalidToken)))
+            return Result.Failure(AccountErrors.InvalidPasswordResetToken);
+
+        IReadOnlyCollection<Error> errors = IdentityErrorMapper
+            .Map(resetResult.Errors)
+            .Select(message => Error.Validation(
+                "Identity.Validation",
+                message,
+                "NewPassword"))
+            .ToArray();
+
+        return Result.Failure(errors);
+    }
+
     #region Private Methods
     private async Task SendEmailConfirmationAsync(AppUser user, CancellationToken cancellationToken)
     {
@@ -141,6 +205,21 @@ public sealed class AccountService(UserManager<AppUser> userManager, IMailServic
         await mailService.SendAsync(new SendMailRequest(
                 user.Email!,
                 "Confirm your DriverHub email address",
+                mailBody),
+            cancellationToken);
+    }
+
+    private async Task SendForgotPasswordAsync(AppUser user, CancellationToken cancellationToken)
+    {
+        string resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+
+        string encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
+
+        string mailBody = ForgotPasswordTemplate.Create(user.FirstName, user.Email!, encodedToken);
+
+        await mailService.SendAsync(new SendMailRequest(
+                user.Email!,
+                "Reset your DriverHub password",
                 mailBody),
             cancellationToken);
     }

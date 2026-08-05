@@ -30,4 +30,13 @@ public static class AccountErrors
     public static readonly Error EmailConfirmationDeliveryFailed = Error.Failure(
         "Account.EmailConfirmationDeliveryFailed",
         "Hesap oluşturuldu, ancak onay e-postası gönderilemedi.");
+
+    public static readonly Error ForgotPasswordEmailDeliveryFailed = Error.Failure(
+        "Account.ForgotPasswordEmailDeliveryFailed",
+        "Şifre sıfırlama e-postası gönderilemedi.");
+
+    public static readonly Error InvalidPasswordResetToken = Error.Validation(
+        "Account.InvalidPasswordResetToken",
+        "Şifre sıfırlama kodu geçersiz.",
+        "ResetToken");
 }
