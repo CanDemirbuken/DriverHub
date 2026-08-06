@@ -8,5 +8,6 @@ public enum ErrorType
     Unauthorized,
     Forbidden,
     Locked,
-    Failure
+    Failure,
+    TooManyRequests,
 }

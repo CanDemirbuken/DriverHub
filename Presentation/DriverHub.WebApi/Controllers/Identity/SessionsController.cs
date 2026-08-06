@@ -1,24 +1,28 @@
-﻿using System.Security.Claims;
-using DriverHub.Application.Common.Results;
+﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Contracts.Identity.Token.RefreshToken;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RefreshToken;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RevokeAllSessions;
 using DriverHub.Application.Features.Identity.SessionFeatures.Commands.RevokeSession;
+using DriverHub.WebApi.Common.API;
+using DriverHub.WebApi.Common.RateLimiting;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Identity;
 
 public sealed class SessionsController(IMediator mediator) : BaseController(mediator)
 {
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitPolicyNames.RefreshToken)]
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(ApiResponse<RefreshSessionResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> RefreshTokenAsync(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         Result<RefreshSessionResponse> result = await _mediator.Send(request, cancellationToken);

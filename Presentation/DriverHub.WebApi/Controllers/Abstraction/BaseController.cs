@@ -1,6 +1,6 @@
 ﻿using DriverHub.Application.Common.Errors;
 using DriverHub.Application.Common.Results;
-using DriverHub.WebApi.Models.Common;
+using DriverHub.WebApi.Common.API;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

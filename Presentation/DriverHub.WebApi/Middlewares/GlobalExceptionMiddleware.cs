@@ -1,4 +1,5 @@
-﻿using DriverHub.WebApi.Models.Common;
+﻿using DriverHub.Application.Common.Errors;
+using DriverHub.WebApi.Common.API;
 
 namespace DriverHub.WebApi.Middlewares;
 
@@ -36,15 +37,14 @@ public sealed class GlobalExceptionMiddleware(
             context.Request.Path.Value,
             context.TraceIdentifier);
 
-        var response = new ApiResponse<object>(
+        Error error = Error.Failure(
+            "Server.Unexpected",
+            "Beklenmeyen bir hata oluştu.");
+
+        ApiResponse<object> response = new(
             false,
             null,
-            [
-                new ApiError(
-                    "Server.Unexpected",
-                    null,
-                    "Beklenmeyen bir hata oluştu.")
-            ]);
+            [error.ToApiError()]);
 
         await WriteResponseAsync(
             context,

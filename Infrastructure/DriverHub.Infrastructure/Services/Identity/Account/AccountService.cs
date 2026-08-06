@@ -8,6 +8,7 @@ using DriverHub.Application.Contracts.Identity.Account.EmailConfirmation;
 using DriverHub.Application.Contracts.Identity.Account.Password;
 using DriverHub.Application.Contracts.Identity.Account.Register;
 using DriverHub.Application.Interfaces.Account;
+using DriverHub.Application.Interfaces.Authentication;
 using DriverHub.Application.Interfaces.Communication;
 using DriverHub.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +18,7 @@ using System.Text;
 
 namespace DriverHub.Infrastructure.Services.Identity.Account;
 
-public sealed class AccountService(UserManager<AppUser> userManager, IMailService mailService, ILogger<AccountService> logger) : IAccountService
+public sealed class AccountService(UserManager<AppUser> userManager, IMailService mailService, ILogger<AccountService> logger, ISessionService sessionService) : IAccountService
 {
     public async Task<Result<RegisterUserResponse>> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
     {
@@ -176,21 +177,27 @@ public sealed class AccountService(UserManager<AppUser> userManager, IMailServic
 
         IdentityResult resetResult = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
 
-        if (resetResult.Succeeded)
-            return Result.Success();
+        if (!resetResult.Succeeded)
+        {
+            if (resetResult.Errors.Any(error => error.Code == nameof(IdentityErrorDescriber.InvalidToken)))
+                return Result.Failure(AccountErrors.InvalidPasswordResetToken);
 
-        if (resetResult.Errors.Any(error => error.Code == nameof(IdentityErrorDescriber.InvalidToken)))
-            return Result.Failure(AccountErrors.InvalidPasswordResetToken);
+            IReadOnlyCollection<Error> errors = IdentityErrorMapper
+                .Map(resetResult.Errors)
+                .Select(message => Error.Validation(
+                    "Identity.Validation",
+                    message,
+                    "NewPassword"))
+                .ToArray();
 
-        IReadOnlyCollection<Error> errors = IdentityErrorMapper
-            .Map(resetResult.Errors)
-            .Select(message => Error.Validation(
-                "Identity.Validation",
-                message,
-                "NewPassword"))
-            .ToArray();
+            return Result.Failure(errors);
+        }
 
-        return Result.Failure(errors);
+        var revokeResult = await sessionService.RevokeAllAsync(user.Id, cancellationToken);
+        if (revokeResult.IsFailure)
+            return revokeResult;
+
+        return Result.Success();
     }
 
     #region Private Methods

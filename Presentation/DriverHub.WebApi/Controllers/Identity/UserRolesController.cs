@@ -2,13 +2,13 @@
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Identity.UserRoleFeatures.Commands.AssignRoleToUser;
 using DriverHub.Application.Features.Identity.UserRoleFeatures.Commands.RemoveRoleFromUser;
+using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Identity;
 
 [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 [Route("api/users/{userId}/roles")]

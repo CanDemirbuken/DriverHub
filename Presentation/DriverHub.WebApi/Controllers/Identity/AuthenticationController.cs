@@ -1,21 +1,25 @@
 ﻿using DriverHub.Application.Common.Results;
 using DriverHub.Application.Features.Identity.AuthenticationFeatures.Commands.LoginUser;
+using DriverHub.WebApi.Common.API;
+using DriverHub.WebApi.Common.RateLimiting;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Identity;
 
 public sealed class AuthenticationController(IMediator mediator) : BaseController(mediator)
 {
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitPolicyNames.Login)]
     [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponse<LoginUserCommandResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status423Locked)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> LoginAsync(LoginUserCommand request, CancellationToken cancellationToken)
     {
         Result<LoginUserCommandResponse> result = await _mediator.Send(request, cancellationToken);

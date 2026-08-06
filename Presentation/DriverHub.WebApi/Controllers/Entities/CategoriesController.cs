@@ -1,48 +1,45 @@
 ﻿using DriverHub.Application.Common.Constants;
-using DriverHub.Application.Common.Models;
 using DriverHub.Application.Common.Results;
-using DriverHub.Application.Features.Entities.CarFeatures.Commands.CreateCar;
-using DriverHub.Application.Features.Entities.CarFeatures.Commands.RemoveCar;
-using DriverHub.Application.Features.Entities.CarFeatures.Commands.UpdateCar;
-using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetCarByIdWithBrand;
-using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetPagedCarsWithBrand;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.CreateCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.RemoveCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.UpdateCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetAllCategory;
+using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetCategoryById;
+using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Entities;
 
-public sealed class CarsController(IMediator mediator) : BaseController(mediator)
+public sealed class CategoriesController(IMediator mediator) : BaseController(mediator)
 {
     [HttpGet]
-    [ProducesResponseType(typeof(ApiResponse<PagedResponse<GetPagedCarsWithBrandQueryResponse>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetPagedAsync([FromQuery] GetPagedCarsWithBrandQuery request, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<GetAllCategoryQueryResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
     {
-        Result<PagedResponse<GetPagedCarsWithBrandQueryResponse>> result = await _mediator.Send(request, cancellationToken);
+        Result<IReadOnlyList<GetAllCategoryQueryResponse>> result = await _mediator.Send(new GetAllCategoryQuery(), cancellationToken);
         return ToActionResult(result);
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<GetCarByIdWithBrandQueryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<GetCategoryByIdQueryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        Result<GetCarByIdWithBrandQueryResponse> result = await _mediator.Send(new GetCarByIdWithBrandQuery(id), cancellationToken);
+        Result<GetCategoryByIdQueryResponse> result = await _mediator.Send(new GetCategoryByIdQuery(id), cancellationToken);
         return ToActionResult(result);
     }
 
     [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponse<CreateCarCommandResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<CreateCategoryCommandResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CreateAsync(CreateCarCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateAsync(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        Result<CreateCarCommandResponse> result = await _mediator.Send(request, cancellationToken);
+        Result<CreateCategoryCommandResponse> result = await _mediator.Send(request, cancellationToken);
         return ToActionResult(result, StatusCodes.Status201Created);
     }
 
@@ -52,9 +49,9 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> UpdateAsync(Guid id, UpdateCarCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateAsync(Guid id, UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        UpdateCarCommand command = request with
+        UpdateCategoryCommand command = request with
         {
             Id = id
         };
@@ -70,7 +67,7 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
-        Result result = await _mediator.Send(new RemoveCarCommand(id), cancellationToken);
+        Result result = await _mediator.Send(new RemoveCategoryCommand(id), cancellationToken);
         return ToActionResult(result, StatusCodes.Status204NoContent);
     }
 }

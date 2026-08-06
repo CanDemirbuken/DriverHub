@@ -5,13 +5,13 @@ using DriverHub.Application.Features.Identity.RoleFeatures.Commands.RemoveRole;
 using DriverHub.Application.Features.Identity.RoleFeatures.Commands.UpdateRole;
 using DriverHub.Application.Features.Identity.RoleFeatures.Queries.GetAllRoles;
 using DriverHub.Application.Features.Identity.RoleFeatures.Queries.GetRoleById;
+using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Identity;
 
 public sealed class RolesController(IMediator mediator) : BaseController(mediator)
 {

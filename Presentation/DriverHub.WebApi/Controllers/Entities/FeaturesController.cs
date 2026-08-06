@@ -5,13 +5,13 @@ using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.RemoveFea
 using DriverHub.Application.Features.Entities.FeatureFeatures.Commands.UpdateFeature;
 using DriverHub.Application.Features.Entities.FeatureFeatures.Queries.GetAllFeature;
 using DriverHub.Application.Features.Entities.FeatureFeatures.Queries.GetFeatureById;
+using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Entities;
 
 public sealed class FeaturesController(IMediator mediator) : BaseController(mediator)
 {

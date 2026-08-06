@@ -24,11 +24,13 @@ try
     builder.Services.AddSwaggerDocumentation();
 
     builder.Services.AddApplication();
-
     builder.Services.AddPersistence(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
 
     builder.Services.AddApplicationAuthorization();
+
+    builder.Services.AddHealthCheckServices();
+    builder.Services.AddRateLimitServices();
 
     WebApplication app = builder.Build();
 
@@ -50,11 +52,13 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseRateLimiter();
 
     app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
+    app.MapHealthCheckEndpoints();
 
     app.Run();
 }

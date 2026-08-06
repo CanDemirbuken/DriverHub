@@ -6,13 +6,13 @@ using DriverHub.Application.Features.Entities.ContactFeatures.Commands.RemoveCon
 using DriverHub.Application.Features.Entities.ContactFeatures.Commands.UpdateContact;
 using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetContactById;
 using DriverHub.Application.Features.Entities.ContactFeatures.Queries.GetPagedContacts;
+using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
-using DriverHub.WebApi.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DriverHub.WebApi.Controllers;
+namespace DriverHub.WebApi.Controllers.Entities;
 
 public sealed class ContactsController(IMediator mediator) : BaseController(mediator)
 {

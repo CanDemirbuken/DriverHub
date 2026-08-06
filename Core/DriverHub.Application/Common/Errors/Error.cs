@@ -22,4 +22,7 @@ public sealed record Error(string Code, string Message, ErrorType Type, string? 
 
     public static Error Failure(string message, string? field = null)
         => new("Server.Failure", message, ErrorType.Failure, field);
+
+    public static Error TooManyRequests(string message, string? field = null)
+        => new("RateLimit.TooManyRequests", message, ErrorType.TooManyRequests, field);
 }
