@@ -1,10 +1,11 @@
 ﻿using DriverHub.Application.Common.Constants;
 using DriverHub.Application.Common.Results;
+using DriverHub.Application.Features.Entities.Categories.Commands.CreateCategory;
+using DriverHub.Application.Features.Entities.Categories.Commands.RemoveCategory;
+using DriverHub.Application.Features.Entities.Categories.Commands.UpdateCategory;
+using DriverHub.Application.Features.Entities.Categories.Queries.GetAllCategory;
+using DriverHub.Application.Features.Entities.Categories.Queries.GetCategoryById;
 using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.CreateCategory;
-using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.RemoveCategory;
-using DriverHub.Application.Features.Entities.CategoryFeatures.Commands.UpdateCategory;
-using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetAllCategory;
-using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetCategoryById;
 using DriverHub.WebApi.Common.API;
 using DriverHub.WebApi.Controllers.Abstraction;
 using MediatR;
@@ -15,6 +16,7 @@ namespace DriverHub.WebApi.Controllers.Entities;
 
 public sealed class CategoriesController(IMediator mediator) : BaseController(mediator)
 {
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<GetAllCategoryQueryResponse>>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
@@ -23,6 +25,7 @@ public sealed class CategoriesController(IMediator mediator) : BaseController(me
         return ToActionResult(result);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetCategoryByIdQueryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
@@ -65,6 +68,7 @@ public sealed class CategoriesController(IMediator mediator) : BaseController(me
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         Result result = await _mediator.Send(new RemoveCategoryCommand(id), cancellationToken);

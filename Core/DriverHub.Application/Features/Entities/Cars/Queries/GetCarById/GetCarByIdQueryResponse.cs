@@ -1,4 +1,5 @@
 ﻿using DriverHub.Domain.Enums;
+using static DriverHub.Application.Features.Entities.Cars.Queries.GetCarById.GetCarByIdQueryResponse;
 
 namespace DriverHub.Application.Features.Entities.Cars.Queries.GetCarById;
 
@@ -22,5 +23,18 @@ public sealed record GetCarByIdQueryResponse(
     string Fuel,
     string Color,
     CarStatus Status,
-    string BigImageUrl
-);
+    string BigImageUrl,
+    IReadOnlyCollection<FeatureItem> Features,
+    IReadOnlyCollection<PricingItem> Pricings
+)
+{
+    public sealed record FeatureItem(
+        Guid FeatureId,
+        string FeatureName
+    );
+
+    public sealed record PricingItem(
+        PricingType Type,
+        decimal Amount
+    );
+}

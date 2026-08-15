@@ -20,6 +20,7 @@ namespace DriverHub.WebApi.Controllers.Entities;
 
 public sealed class CarsController(IMediator mediator) : BaseController(mediator)
 {
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<PagedResponse<GetPagedCarsQueryResponse>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -29,6 +30,7 @@ public sealed class CarsController(IMediator mediator) : BaseController(mediator
         return ToActionResult(result);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetCarByIdQueryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]

@@ -1,4 +1,4 @@
-﻿using DriverHub.Application.Features.Entities.CategoryFeatures.Queries.GetAllCategory;
+﻿using DriverHub.Application.Features.Entities.Categories.Queries.GetAllCategory;
 
 namespace DriverHub.Application.Interfaces.QueryServices;
 

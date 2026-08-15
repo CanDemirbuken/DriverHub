@@ -17,5 +17,10 @@ public sealed class CategoryConfiguration : EntityConfiguration<Category>
 
         builder.HasIndex(x => x.Name)
             .IsUnique();
+
+        builder.HasMany(x => x.Cars)
+            .WithOne(x => x.Category)
+            .HasForeignKey(x => x.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

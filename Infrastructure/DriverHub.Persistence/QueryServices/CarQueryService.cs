@@ -36,7 +36,17 @@ public sealed class CarQueryService(AppDbContext context) : ICarQueryService
                 car.Fuel,
                 car.Color,
                 car.Status,
-                car.BigImageUrl))
+                car.BigImageUrl,
+                car.CarFeatures
+                .Select(carFeature => new GetCarByIdQueryResponse.FeatureItem(
+                    carFeature.FeatureId,
+                    carFeature.Feature!.Name))
+                .ToList(),
+                car.CarPricings
+                .Select(carPricing => new GetCarByIdQueryResponse.PricingItem(
+                    carPricing.Type,
+                    carPricing.Amount))
+               .ToList()))
             .FirstOrDefaultAsync(cancellationToken);
     }
 

@@ -17,5 +17,10 @@ public sealed class LocationConfiguration : EntityConfiguration<Location>
 
         builder.HasIndex(x => x.Name)
             .IsUnique();
+
+        builder.HasMany(x => x.Cars)
+            .WithOne(x => x.CurrentLocation)
+            .HasForeignKey(x => x.CurrentLocationId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
