@@ -74,6 +74,7 @@ public abstract class BaseController(IMediator mediator) : ControllerBase
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Locked => StatusCodes.Status423Locked,
+            ErrorType.TooManyRequests => StatusCodes.Status429TooManyRequests,
             ErrorType.Failure => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };

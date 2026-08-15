@@ -1,0 +1,54 @@
+<div class="admin-login">
+  <div class="admin-login__card">
+    <div class="admin-login__header">
+      <div class="admin-login__logo">
+        DH
+      </div>
+
+      <h1>DriverHub</h1>
+      <p>Yönetim paneline giriş yapın.</p>
+    </div>
+
+    <form class="admin-login__form" (ngSubmit)="login()">
+      <div class="admin-login__field">
+        <label for="email">E-Mail</label>
+
+        <input
+          id="email"
+          name="email"
+          type="text"
+          [(ngModel)]="email"
+          placeholder="E-Mail girin"
+          autocomplete="email" />
+      </div>
+
+      <div class="admin-login__field">
+        <label for="password">Şifre</label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          placeholder="Şifrenizi girin"
+          autocomplete="current-password" />
+      </div>
+
+      @if (errorMessage) {
+        <div class="admin-login__error">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <div class="admin-login__actions">
+        <a [routerLink]="forgotPasswordLink">
+          Şifremi Unuttum
+        </a>
+      </div>
+
+      <button type="submit" class="admin-login__button">
+        Giriş Yap
+      </button>
+    </form>
+  </div>
+</div>

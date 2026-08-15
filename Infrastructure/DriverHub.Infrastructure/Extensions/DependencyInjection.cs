@@ -177,8 +177,6 @@ public static class DependencyInjection
                 "Smtp:SecureSocketOption geçerli bir bağlantı seçeneği olmalıdır.")
             .ValidateOnStart();
 
-        services.AddScoped<IMailService, MailService>();
-
         services.AddScoped<IdentitySeeder>();
 
         return services;

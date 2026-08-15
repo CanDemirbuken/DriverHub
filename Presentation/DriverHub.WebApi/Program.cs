@@ -27,6 +27,8 @@ try
     builder.Services.AddPersistence(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);
 
+    builder.Services.AddCorsConfiguration();
+
     builder.Services.AddApplicationAuthorization();
 
     builder.Services.AddHealthCheckServices();
@@ -52,6 +54,8 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseCorsConfiguration();
+
     app.UseRateLimiter();
 
     app.UseAuthentication();

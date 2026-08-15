@@ -1,0 +1,43 @@
+<header class="admin-topbar">
+  <div>
+    <h1>DriverHub Yönetim Paneli</h1>
+    <p>Yönetim işlemlerinizi buradan gerçekleştirebilirsiniz.</p>
+  </div>
+
+  <div class="admin-topbar__user-menu">
+    <button
+      type="button"
+      class="admin-topbar__user"
+      (click)="toggleUserMenu()">
+
+      <span class="admin-topbar__avatar">
+        {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+      </span>
+
+      <span class="admin-topbar__user-info">
+        <span class="admin-topbar__user-name">
+          {{ user.firstName }} {{ user.lastName }}
+        </span>
+
+        <span class="admin-topbar__user-role">
+          {{ user.role }}
+        </span>
+      </span>
+
+      <span class="admin-topbar__user-arrow">
+        {{ isUserMenuOpen ? '▲' : '▼' }}
+      </span>
+    </button>
+
+    @if (isUserMenuOpen) {
+      <div class="admin-topbar__dropdown">
+        <button
+          type="button"
+          class="admin-topbar__dropdown-item"
+          (click)="logout()">
+          Oturumu Kapat
+        </button>
+      </div>
+    }
+  </div>
+</header>
