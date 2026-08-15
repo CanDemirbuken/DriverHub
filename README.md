@@ -4,8 +4,7 @@
 
 <img src="https://img.shields.io/badge/.NET-10-512BD4?style=for-the-badge&logo=dotnet" />
 <img src="https://img.shields.io/badge/ASP.NET_Core-10-512BD4?style=for-the-badge&logo=dotnet" />
-<img src="https://img.shields.io/badge/Entity_Framework_Core-6DB33F?style=for-the-badge" />
-<img src="https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoftsqlserver" />
+<img src="https://img.shields.io/badge/EF_Core-SQL_Server-6DB33F?style=for-the-badge" />
 <img src="https://img.shields.io/badge/CQRS-MediatR-orange?style=for-the-badge" />
 <img src="https://img.shields.io/badge/Clean_Architecture-✔-0A66C2?style=for-the-badge" />
 <img src="https://img.shields.io/badge/JWT-Authentication-success?style=for-the-badge" />
@@ -15,26 +14,29 @@
 <p align="center">
 
 <strong>
-Production-oriented ASP.NET Core Web API built with Clean Architecture, CQRS, JWT Authentication, Refresh Token Rotation and Policy-Based Authorization.
+A production-oriented car rental backend built with ASP.NET Core, Clean Architecture, CQRS and secure identity management.
 </strong>
 
 </p>
 
 ---
 
-# 📖 About
+## 📖 About
 
-DriverHub is a **production-oriented backend Web API** developed to demonstrate modern .NET backend architecture and enterprise software development practices.
+DriverHub is a **car rental backend API** designed as a portfolio project around modern .NET backend architecture and real-world application patterns.
 
-Instead of focusing only on CRUD operations, the project emphasizes scalable architecture, maintainability, clean code principles and secure authentication mechanisms.
+The project originally started as a CRUD-focused learning project, but evolved into a more focused rental domain centered around **physical vehicles, fleet management, locations, pricing and reservations**.
 
-The application is built around **Clean Architecture**, **CQRS**, **ASP.NET Core Identity**, **JWT Authentication**, **Refresh Token Rotation**, **Policy-Based Authorization**, and several production-ready backend patterns.
+Instead of implementing repetitive CRUD operations for unrelated entities, DriverHub focuses on a smaller domain with deeper business behavior.
 
-DriverHub is continuously evolving by introducing new security features, architectural improvements and production-level best practices.
+Current development is divided into two main areas:
+
+- **Admin Fleet Management**
+- **Public Rental & Reservation Flow**
 
 ---
 
-# 🚀 Technology Stack
+## 🚀 Technology Stack
 
 ### Backend
 
@@ -46,18 +48,19 @@ DriverHub is continuously evolving by introducing new security features, archite
 ### Architecture
 
 - Clean Architecture
-- CQRS
-- MediatR
+- CQRS + MediatR
 - Repository Pattern
 - Unit of Work
 - Query Services
 - Result Pattern
+- Dependency Injection
 
 ### Security
 
 - ASP.NET Core Identity
 - JWT Authentication
 - Refresh Token Rotation
+- Refresh Token Hashing
 - Refresh Token Reuse Detection
 - Role-Based Authorization
 - Policy-Based Authorization
@@ -68,438 +71,395 @@ DriverHub is continuously evolving by introducing new security features, archite
 - AutoMapper
 - Serilog
 - Swagger / OpenAPI
+- Rate Limiting
+- Health Checks
+- MailKit
 
 ---
 
-# 🏗️ Architecture
+## 🏗️ Architecture
 
-DriverHub follows **Clean Architecture** to separate business rules from infrastructure concerns.
+DriverHub follows Clean Architecture principles and keeps application rules independent from infrastructure concerns.
 
-```
-Presentation
-      │
-      ▼
-Application
-      │
-      ▼
-Domain
-      │
-      ▼
-Persistence
-      │
-      ▼
-Infrastructure
+```text
+                    ┌──────────────────────┐
+                    │     Presentation     │
+                    │      Web API         │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │     Application      │
+                    │ CQRS / Use Cases     │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │        Domain        │
+                    │ Entities / Enums     │
+                    └──────────────────────┘
+
+          ┌────────────────────┐   ┌────────────────────┐
+          │    Persistence     │   │   Infrastructure   │
+          │ EF Core / Queries  │   │ Identity / JWT     │
+          └─────────┬──────────┘   └─────────┬──────────┘
+                    │                        │
+                    └──────────► Application
 ```
 
 ### Layer Responsibilities
 
 | Layer | Responsibility |
-|--------|----------------|
-| Presentation | HTTP endpoints, Controllers, Middleware |
-| Application | Business use cases, CQRS, Validation, Contracts |
-| Domain | Core business entities and domain rules |
-| Persistence | Entity Framework Core, Repositories, Query Services |
-| Infrastructure | Identity, JWT, Mail, External Services |
+|---|---|
+| Domain | Core rental and fleet entities |
+| Application | CQRS use cases, validation, contracts and business rules |
+| Persistence | EF Core, repositories, database queries and transactions |
+| Infrastructure | Identity, JWT, refresh tokens and mail services |
+| Presentation | Controllers, middleware, Swagger and HTTP pipeline |
 
 ---
 
-## Architectural Highlights
+## 🚗 Fleet Domain
 
-- Clean Architecture
-- CQRS with MediatR
-- Repository Pattern
-- Unit of Work
-- Query Services
-- Result Pattern-based Error Handling
-- Global Exception Middleware
-- FluentValidation Pipeline
-- AutoMapper
-- Dependency Injection
+The current core domain is centered around physical rental vehicles.
 
----
+```text
+Brand
+  │
+  ▼
+Car ───── Category
+ │
+ ├───── Current Location
+ │
+ ├───── Car Features
+ │
+ ├───── Pricing
+ │
+ └───── Description
+```
 
-# ✨ Features
+A `Car` represents a **physical vehicle**, not only a model.
 
-## 🔐 Authentication
+Example:
 
-- ✅ User Registration
-- ✅ User Login
-- ✅ JWT Authentication
-- ✅ Refresh Token Support
-- ✅ Refresh Token Rotation
-- ✅ Refresh Token Revocation
-- ✅ Refresh Token Reuse Detection
-- ✅ Logout
-- ✅ Logout From All Sessions
+```text
+Toyota Corolla
+Plate: 34 ABC 123
+VIN: ...
+Current Location: Bostancı
+Status: Active
+```
 
----
-
-## 🛡️ Authorization
-
-- ✅ ASP.NET Core Identity
-- ✅ Role-Based Authorization
-- ✅ Policy-Based Authorization
-- ✅ Fallback Authorization Policy
-- ✅ AllowAnonymous Support
-- ✅ Admin Policy
+This allows the system to support real rental scenarios such as vehicle location, status, availability and reservations.
 
 ---
 
-## 👥 Role Management
+## ✨ Admin Fleet Management
 
-- ✅ Role CRUD
-- ✅ Role Query Service
-- ✅ Duplicate Role Validation
-- ✅ System Role Protection
+Admin-only CQRS operations are currently implemented for:
 
----
+### Cars
 
-## 👤 User Role Management
+- Create vehicle
+- Update vehicle
+- Get vehicle details
+- Paginated vehicle listing
+- Change vehicle status
+- Change current location
+- Assign vehicle features
+- Configure daily / weekly / monthly pricing
 
-- ✅ Assign Role to User
-- ✅ Remove Role from User
-- ✅ Last Administrator Protection
-- ✅ Last User Role Protection
+### Supporting Data
 
----
+- Brand management
+- Category management
+- Location management
+- Feature management
 
-## 🚗 Entity Management
-
-Implemented using **CQRS** and **MediatR**.
-
-- Cars
-- Brands
-- Categories
-- Features
-- Banners
-- Contacts
-- About
+Delete operations contain relationship-aware business rules.  
+For example, a Brand, Category, Location or Feature cannot be removed while it is actively referenced by vehicles.
 
 ---
 
-## ⚙️ Infrastructure
+## 🔐 Identity & Security
 
-- Global Exception Middleware
-- Result Pattern-based Error Handling
-- FluentValidation Pipeline
-- AutoMapper Profiles
-- Query Services
-- Standardized API Responses
-- Swagger Documentation
-- Serilog Logging
+DriverHub includes a complete authentication and authorization foundation.
 
----
+### Authentication
 
-# 🔒 Security
-
-DriverHub focuses on secure authentication and authorization mechanisms commonly used in modern backend applications.
-
-## Authentication
-
-- JWT Access Token
-- Refresh Token
-- Refresh Token Hashing
+- User Registration
+- User Login
+- Email Confirmation
+- Forgot Password
+- Password Reset
+- JWT Access Tokens
+- Refresh Tokens
 - Refresh Token Rotation
 - Refresh Token Revocation
 - Refresh Token Reuse Detection
+- Logout
+- Logout From All Sessions
 
----
+### Authorization
 
-## Authorization
-
-- Policy-Based Authorization
+- ASP.NET Core Identity
+- Role Management
+- User Role Management
+- Admin Policy
 - Role-Based Authorization
-- Admin-Only Endpoints
-- Secure Refresh Token Lifecycle
+- Policy-Based Authorization
+- Fallback Authorization Policy
 
----
+### Identity Business Rules
 
-## Business Rules
-
-- At least one administrator must always remain in the system.
-- Every user must always have at least one assigned role.
+- At least one administrator must remain in the system.
+- Every user must have at least one role.
 - Duplicate role assignments are prevented.
-- Duplicate role creation is prevented.
-- System roles are protected from invalid operations.
+- Protected system roles cannot be removed incorrectly.
 
 ---
 
-# 📂 Solution Structure
+## ⚙️ Application Patterns
+
+DriverHub uses several reusable backend patterns:
+
+- CQRS with MediatR
+- FluentValidation pipeline
+- Result Pattern
+- Standardized API responses
+- Global Exception Middleware
+- AutoMapper
+- Generic Repository
+- Unit of Work
+- Query Services
+- Database transactions
+- EF Core configurations
+- User Secrets for local sensitive configuration
+
+---
+
+## 📂 Solution Structure
 
 ```text
-src
+DriverHub
 
-├── DriverHub.Domain
+├── Core
+│   ├── DriverHub.Domain
+│   └── DriverHub.Application
+│       ├── Behaviors
+│       ├── Common
+│       ├── Interfaces
+│       └── Features
+│           ├── Entities
+│           │   ├── Brands
+│           │   ├── Cars
+│           │   ├── Categories
+│           │   ├── Features
+│           │   └── Locations
+│           │
+│           └── Identity
+│               ├── AccountFeatures
+│               ├── AuthenticationFeatures
+│               ├── RoleFeatures
+│               ├── SessionFeatures
+│               └── UserRoleFeatures
 │
-├── DriverHub.Application
+├── Infrastructure
+│   ├── DriverHub.Persistence
+│   └── DriverHub.Infrastructure
 │
-│   ├── Behaviors
-│   ├── Common
-│   ├── Contracts
-│   ├── Interfaces
-│   ├── Features
-│   │
-│   ├── Entities
-│   │   ├── AboutFeatures
-│   │   ├── BannerFeatures
-│   │   ├── BrandFeatures
-│   │   ├── CarFeatures
-│   │   ├── CategoryFeatures
-│   │   ├── ContactFeatures
-│   │   └── FeatureFeatures
-│   │
-│   └── Identity
-│       ├── AccountFeatures
-│       ├── AuthenticationFeatures
-│       ├── RoleFeatures
-│       ├── SessionFeatures
-│       └── UserRoleFeatures
-│
-├── DriverHub.Persistence
-│
-├── DriverHub.Infrastructure
-│
-└── DriverHub.WebApi
+└── Presentation
+    └── DriverHub.WebApi
 ```
 
 ---
 
-# ⚙️ Getting Started
+## ⚙️ Getting Started
 
-## Prerequisites
-
-Before running the project, make sure the following tools are installed:
+### Prerequisites
 
 - .NET 10 SDK
 - SQL Server
-- Visual Studio 2022 or JetBrains Rider
+- Visual Studio 2022 / Rider / VS Code
 - Git
 
----
-
-## Installation
-
-Clone the repository.
+### Clone
 
 ```bash
 git clone https://github.com/CanDemirbuken/DriverHub.git
-```
-
-Navigate to the project.
-
-```bash
 cd DriverHub
 ```
 
-Configure the database connection inside **appsettings.json**.
+### Configure Local Secrets
 
-```json
-"ConnectionStrings": {
-  "SqlServer": "YOUR_CONNECTION_STRING"
-}
+DriverHub uses **ASP.NET Core User Secrets** for local sensitive configuration.
+
+Run the commands from:
+
+```text
+Presentation/DriverHub.WebApi
 ```
 
-Apply Entity Framework migrations.
+Initialize User Secrets:
 
 ```bash
-dotnet ef database update
+dotnet user-secrets init
 ```
 
-Run the application.
+Configure the required values:
 
 ```bash
-dotnet run
+dotnet user-secrets set "SqlOptions:ConnectionString" "YOUR_CONNECTION_STRING"
+dotnet user-secrets set "Jwt:SecretKey" "YOUR_JWT_SECRET"
+dotnet user-secrets set "IdentitySeed:AdminEmail" "YOUR_ADMIN_EMAIL"
+dotnet user-secrets set "IdentitySeed:AdminPassword" "YOUR_ADMIN_PASSWORD"
+dotnet user-secrets set "Smtp:UserName" "YOUR_SMTP_USERNAME"
+dotnet user-secrets set "Smtp:Password" "YOUR_SMTP_PASSWORD"
 ```
 
-The API will be available at:
+### Apply Migrations
 
+```bash
+dotnet ef database update \
+  --project Infrastructure/DriverHub.Persistence \
+  --startup-project Presentation/DriverHub.WebApi
 ```
-https://localhost:5001/swagger
+
+### Run
+
+```bash
+dotnet run --project Presentation/DriverHub.WebApi
 ```
+
+Swagger documentation is available in the **Development** environment.
 
 ---
 
-# 📬 API Documentation
+## 📬 API Documentation
 
-Swagger/OpenAPI is enabled in the Development environment and provides:
+Swagger/OpenAPI includes:
 
-- JWT Authorization Support
-- Interactive Endpoint Testing
-- Request / Response Models
-- Authentication Integration
-- API Documentation
-
----
-
-# ⭐ Key Highlights
-
-DriverHub demonstrates many concepts commonly found in enterprise backend applications.
-
-- Production-oriented Clean Architecture
-- CQRS + MediatR
-- Repository + Unit of Work
-- Query Services
-- Result Pattern
-- JWT Authentication
-- Refresh Token Rotation
-- Refresh Token Reuse Detection
-- Secure Session Management
-- Policy-Based Authorization
-- Role-Based Authorization
-- Role Management
-- User Role Management
-- Global Exception Middleware
-- FluentValidation Pipeline
-- Standardized API Responses
+- JWT Bearer authentication
+- Organized Admin / Identity endpoints
+- Request and response contracts
+- HTTP status documentation
+- Interactive endpoint testing
 
 ---
 
-# 🧪 Current Project Status
+## 🧪 Current Status
 
-### Architecture
+### Completed
 
-- ✅ Clean Architecture
-- ✅ CQRS
-- ✅ Repository Pattern
-- ✅ Unit of Work
-- ✅ Query Services
+- ✅ Clean Architecture foundation
+- ✅ CQRS + MediatR
+- ✅ Repository + Unit of Work
 - ✅ Result Pattern
-
-### Identity
-
-- ✅ ASP.NET Core Identity
+- ✅ Validation Pipeline
+- ✅ Global Exception Handling
 - ✅ JWT Authentication
-- ✅ Refresh Token Rotation
-- ✅ Refresh Token Revocation
-- ✅ Refresh Token Reuse Detection
-- ✅ Logout
-- ✅ Logout From All Sessions
+- ✅ Refresh Token lifecycle
+- ✅ Email Confirmation
+- ✅ Forgot / Reset Password
 - ✅ Role Management
 - ✅ User Role Management
 - ✅ Policy-Based Authorization
+- ✅ Rate Limiting
+- ✅ Health Checks
+- ✅ Swagger organization
+- ✅ Admin Car Backend
+- ✅ Brand Management
+- ✅ Category Management
+- ✅ Location Management
+- ✅ Feature Management
 
-### Infrastructure
+### In Progress
 
-- ✅ FluentValidation Pipeline
-- ✅ AutoMapper
-- ✅ Global Exception Middleware
-- ✅ Swagger
-- ✅ Serilog
+- 🚧 Reservation use cases
+- 🚧 Vehicle availability checks
+- 🚧 Rental price calculation
+- 🚧 Extras and insurance flow
+- 🚧 Angular Admin Panel integration
 
----
+### Planned
 
-# 🗺️ Roadmap
-
-## Identity
-
-- [x] User Registration
-- [x] User Login
-- [x] JWT Authentication
-- [x] Refresh Token Rotation
-- [x] Refresh Token Revocation
-- [x] Refresh Token Reuse Detection
-- [x] Logout
-- [x] Logout All Sessions
-- [x] Role CRUD
-- [x] User Role Management
-- [x] Policy-Based Authorization
-
-- [ ] Email Confirmation
-- [ ] Forgot Password
-- [ ] Password Reset
-- [ ] User Profile
-- [ ] Change Password
-- [ ] Change Email
+- Public rental flow
+- Reservation lifecycle management
+- Automated tests
+- Docker
+- CI/CD
+- Monitoring / metrics
 
 ---
 
-## Testing
+## 🗺️ Domain Roadmap
 
-- [ ] Unit Tests
-- [ ] Integration Tests
-- [ ] Authentication Integration Tests
-- [ ] CRUD Integration Tests
-- [ ] AutoMapper Configuration Tests
+The next major backend milestone is the rental flow:
 
----
+```text
+Location + Rental Dates
+          │
+          ▼
+Available Vehicle Models
+          │
+          ▼
+Vehicle Selection
+          │
+          ▼
+Pricing Calculation
+          │
+          ▼
+Extras / Insurance
+          │
+          ▼
+Reservation
+```
 
-## Production
+The domain already contains the initial foundation for:
 
-- [ ] Health Checks
-- [ ] Response Caching
-- [ ] Rate Limiting
-- [ ] Monitoring & Metrics
-- [ ] Docker Support
-- [ ] CI/CD Pipeline
-- [ ] Production Hardening
+- Reservation
+- Reservation Extras
+- Insurance Packages
+- Rental Extras
 
----
-
-# 💡 Design Goals
-
-DriverHub is built with the goal of demonstrating a modern, scalable and maintainable backend architecture.
-
-The project focuses on:
-
-- Clean and maintainable code
-- Clear separation of responsibilities
-- Scalable application architecture
-- Secure authentication and authorization
-- Production-ready backend practices
-- Consistent coding standards
-- High readability
+These models will evolve together with the upcoming reservation and availability use cases.
 
 ---
 
-# 📌 Project Philosophy
+## 💡 Design Philosophy
 
-DriverHub is intentionally designed around **use-case driven architecture** rather than simple CRUD operations.
+DriverHub is intentionally built around **use cases rather than entity count**.
 
-Every feature is developed with emphasis on:
+The project prioritizes:
 
-- Single Responsibility Principle
-- Separation of Concerns
-- Dependency Inversion
-- Security First
-- Production Readiness
-- Long-term Maintainability
+- Clear domain boundaries
+- Real business behavior
+- Readable architecture
+- Secure defaults
+- Explicit validation
+- Maintainable code
+- Small and meaningful abstractions
 
----
-
-# 🤝 Contributing
-
-Contributions, suggestions and feedback are always welcome.
-
-Feel free to fork the repository and submit a Pull Request.
+The goal is not to demonstrate how many CRUD endpoints can be written, but how a backend can evolve from a simple application into a structured rental system.
 
 ---
 
-# 📄 License
+## 👨‍💻 Author
 
-This project is developed for educational, learning and portfolio purposes.
-
----
-
-# 👨‍💻 Author
-
-## Yaşarcan Demirbüken
+### Yaşarcan Demirbüken
 
 Software Engineer
 
-GitHub
-
+GitHub  
 > https://github.com/CanDemirbuken
 
-LinkedIn
-
-> [https://www.linkedin.com/in/yasarcandemirbuken](https://www.linkedin.com/in/ya%C5%9Farcan-demirb%C3%BCken-09095b205/)
+LinkedIn  
+> https://www.linkedin.com/in/ya%C5%9Farcan-demirb%C3%BCken-09095b205/
 
 ---
 
 <p align="center">
 
 Built with ❤️ using ASP.NET Core, Clean Architecture and CQRS.
-
-If you found this project helpful, consider giving it a ⭐.
 
 </p>
