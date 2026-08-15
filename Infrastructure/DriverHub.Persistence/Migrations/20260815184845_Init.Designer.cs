@@ -4,6 +4,7 @@ using DriverHub.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DriverHub.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260815184845_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,37 +371,6 @@ namespace DriverHub.Persistence.Migrations
                     b.ToTable("Contacts", (string)null);
                 });
 
-            modelBuilder.Entity("DriverHub.Domain.Entities.Extra", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("DailyPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Extras", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Extras_DailyPrice_NonNegative", "[DailyPrice] >= 0");
-                        });
-                });
-
             modelBuilder.Entity("DriverHub.Domain.Entities.Feature", b =>
                 {
                     b.Property<Guid>("Id")
@@ -459,37 +431,6 @@ namespace DriverHub.Persistence.Migrations
                     b.ToTable("FooterAddresses", (string)null);
                 });
 
-            modelBuilder.Entity("DriverHub.Domain.Entities.InsurancePackage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("DailyPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("InsurancePackages", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_InsurancePackages_DailyPrice_NonNegative", "[DailyPrice] >= 0");
-                        });
-                });
-
             modelBuilder.Entity("DriverHub.Domain.Entities.Location", b =>
                 {
                     b.Property<Guid>("Id")
@@ -512,127 +453,6 @@ namespace DriverHub.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Locations", (string)null);
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.Reservation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("BasePrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("CarId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("ExtraPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("InsurancePackageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("InsurancePrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("PickupLocationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ReturnLocationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InsurancePackageId");
-
-                    b.HasIndex("PickupLocationId");
-
-                    b.HasIndex("ReturnLocationId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("CarId", "StartDate", "EndDate", "Status");
-
-                    b.ToTable("Reservations", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Reservations_BasePrice_NonNegative", "[BasePrice] >= 0");
-
-                            t.HasCheckConstraint("CK_Reservations_DateRange_Valid", "[EndDate] > [StartDate]");
-
-                            t.HasCheckConstraint("CK_Reservations_ExtraPrice_NonNegative", "[ExtraPrice] >= 0");
-
-                            t.HasCheckConstraint("CK_Reservations_InsurancePrice_NonNegative", "[InsurancePrice] >= 0");
-
-                            t.HasCheckConstraint("CK_Reservations_Status_Valid", "[Status] BETWEEN 1 AND 4");
-
-                            t.HasCheckConstraint("CK_Reservations_TotalPrice_NonNegative", "[TotalPrice] >= 0");
-                        });
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.ReservationExtra", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ExtraId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ReservationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExtraId");
-
-                    b.HasIndex("ReservationId", "ExtraId")
-                        .IsUnique();
-
-                    b.ToTable("ReservationExtras", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_ReservationExtras_TotalPrice_NonNegative", "[TotalPrice] >= 0");
-
-                            t.HasCheckConstraint("CK_ReservationExtras_UnitPrice_NonNegative", "[UnitPrice] >= 0");
-                        });
                 });
 
             modelBuilder.Entity("DriverHub.Domain.Entities.Service", b =>
@@ -1068,61 +888,6 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("Feature");
                 });
 
-            modelBuilder.Entity("DriverHub.Domain.Entities.Reservation", b =>
-                {
-                    b.HasOne("Car", "Car")
-                        .WithMany("Reservations")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DriverHub.Domain.Entities.InsurancePackage", "InsurancePackage")
-                        .WithMany()
-                        .HasForeignKey("InsurancePackageId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("DriverHub.Domain.Entities.Location", null)
-                        .WithMany()
-                        .HasForeignKey("PickupLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DriverHub.Domain.Entities.Location", null)
-                        .WithMany()
-                        .HasForeignKey("ReturnLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DriverHub.Persistence.Identity.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-
-                    b.Navigation("InsurancePackage");
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.ReservationExtra", b =>
-                {
-                    b.HasOne("DriverHub.Domain.Entities.Extra", "Extra")
-                        .WithMany("ReservationExtras")
-                        .HasForeignKey("ExtraId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DriverHub.Domain.Entities.Reservation", "Reservation")
-                        .WithMany("ReservationExtras")
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Extra");
-
-                    b.Navigation("Reservation");
-                });
-
             modelBuilder.Entity("DriverHub.Persistence.Identity.RefreshToken", b =>
                 {
                     b.HasOne("DriverHub.Persistence.Identity.AppUser", "User")
@@ -1192,8 +957,6 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("CarFeatures");
 
                     b.Navigation("CarPricings");
-
-                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("DriverHub.Domain.Entities.Brand", b =>
@@ -1201,19 +964,9 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("Cars");
                 });
 
-            modelBuilder.Entity("DriverHub.Domain.Entities.Extra", b =>
-                {
-                    b.Navigation("ReservationExtras");
-                });
-
             modelBuilder.Entity("DriverHub.Domain.Entities.Feature", b =>
                 {
                     b.Navigation("CarFeatures");
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.Reservation", b =>
-                {
-                    b.Navigation("ReservationExtras");
                 });
 
             modelBuilder.Entity("DriverHub.Persistence.Identity.AppUser", b =>

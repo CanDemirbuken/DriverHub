@@ -1,5 +1,6 @@
 ﻿using DriverHub.Application.Common.Models;
-using DriverHub.Application.Features.Entities.CarFeatures.Queries.GetPagedCarsWithBrand;
+using DriverHub.Application.Features.Entities.Cars.Queries.GetCarById;
+using DriverHub.Application.Features.Entities.Cars.Queries.GetPagedCars;
 using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Domain.Entities;
 using DriverHub.Persistence.Context;
@@ -9,28 +10,68 @@ namespace DriverHub.Persistence.QueryServices;
 
 public sealed class CarQueryService(AppDbContext context) : ICarQueryService
 {
-    public async Task<PagedResponse<GetPagedCarsWithBrandQueryResponse>> GetPagedWithBrandAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<GetCarByIdQueryResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await context
+            .Set<Car>()
+            .AsNoTracking()
+            .Where(car => car.Id == id)
+            .Select(car => new GetCarByIdQueryResponse(
+                car.Id,
+                car.BrandId,
+                car.Brand!.Name,
+                car.CategoryId,
+                car.Category!.Name,
+                car.CurrentLocationId,
+                car.CurrentLocation!.Name,
+                car.Model,
+                car.ModelYear,
+                car.Plate,
+                car.Vin,
+                car.CoverImageUrl,
+                car.Km,
+                car.Transmission,
+                car.Seat,
+                car.Luggage,
+                car.Fuel,
+                car.Color,
+                car.Status,
+                car.BigImageUrl))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<PagedResponse<GetPagedCarsQueryResponse>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         IQueryable<Car> query = context
             .Set<Car>()
             .AsNoTracking();
 
-        var totalCount = await query.CountAsync(cancellationToken);
+        int totalCount = await query.CountAsync(cancellationToken);
 
-        var items = await query
+        List<GetPagedCarsQueryResponse> items = await query
             .OrderByDescending(car => car.CreatedDate)
             .ThenByDescending(car => car.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(car => new GetPagedCarsWithBrandQueryResponse(
+            .Select(car => new GetPagedCarsQueryResponse(
                 car.Id,
+                car.CoverImageUrl,
+                car.Plate,
                 car.Brand!.Name,
                 car.Model,
+                car.ModelYear,
+                car.Category!.Name,
+                car.CurrentLocation!.Name,
                 car.Km,
                 car.Transmission,
-                car.Fuel))
+                car.Fuel,
+                car.Status))
             .ToListAsync(cancellationToken);
 
-        return PagedResponse<GetPagedCarsWithBrandQueryResponse>.CreateResponse(items, pageNumber, pageSize, totalCount);
+        return PagedResponse<GetPagedCarsQueryResponse>.CreateResponse(
+            items,
+            pageNumber,
+            pageSize,
+            totalCount);
     }
 }

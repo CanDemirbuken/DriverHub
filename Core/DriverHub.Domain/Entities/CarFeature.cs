@@ -9,6 +9,4 @@ public sealed class CarFeature : Entity
 
     public Guid FeatureId { get; set; }
     public Feature? Feature { get; set; }
-
-    public bool IsAvailable { get; set; }
 }

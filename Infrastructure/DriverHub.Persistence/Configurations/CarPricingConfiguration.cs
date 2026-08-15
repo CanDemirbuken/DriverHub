@@ -14,12 +14,16 @@ public sealed class CarPricingConfiguration : EntityConfiguration<CarPricing>
             tableBuilder.HasCheckConstraint(
                 "CK_CarPricings_Amount_Positive",
                 "[Amount] > 0");
+
+            tableBuilder.HasCheckConstraint(
+                "CK_CarPricings_Type_Valid",
+                "[Type] BETWEEN 1 AND 3");
         });
 
         builder.Property(x => x.CarId)
             .IsRequired();
 
-        builder.Property(x => x.PricingId)
+        builder.Property(x => x.Type)
             .IsRequired();
 
         builder.Property(x => x.Amount)
@@ -29,12 +33,12 @@ public sealed class CarPricingConfiguration : EntityConfiguration<CarPricing>
         builder.HasIndex(x => new
         {
             x.CarId,
-            x.PricingId
+            x.Type
         }).IsUnique();
 
-        builder.HasOne(x => x.Pricing)
+        builder.HasOne(x => x.Car)
             .WithMany(x => x.CarPricings)
-            .HasForeignKey(x => x.PricingId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(x => x.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

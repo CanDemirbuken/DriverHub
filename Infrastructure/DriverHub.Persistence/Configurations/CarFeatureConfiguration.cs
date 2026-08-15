@@ -17,9 +17,6 @@ public sealed class CarFeatureConfiguration : EntityConfiguration<CarFeature>
         builder.Property(x => x.FeatureId)
             .IsRequired();
 
-        builder.Property(x => x.IsAvailable)
-            .IsRequired();
-
         builder.HasIndex(x => new
         {
             x.CarId,
