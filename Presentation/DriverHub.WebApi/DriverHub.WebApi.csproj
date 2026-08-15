@@ -4,7 +4,8 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+	  <UserSecretsId>9ee36946-3979-4f1e-bfa0-0e9fd2ebe2c5</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Infrastructure\DriverHub.Infrastructure\DriverHub.Infrastructure.csproj" />
