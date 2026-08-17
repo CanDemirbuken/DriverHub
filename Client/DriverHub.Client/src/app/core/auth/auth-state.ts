@@ -1,17 +1,23 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
+
+import { TokenStore } from './token-store';
+import { AuthUser } from './models/auth-user';
 
 @Injectable({
   providedIn: 'root'
 })
+export class AuthState {
+  constructor(private readonly tokenStore: TokenStore) {}
 
-export class AuthState{
-    isAuthenticated = false;
+  get isAuthenticated(): boolean {
+    return this.tokenStore.hasAccessToken();
+  }
 
-    login(): void{
-        this.isAuthenticated = true;
-    }
+  get currentUser(): AuthUser | null {
+    return this.tokenStore.getUser();
+  }
 
-    logout(): void{
-        this.isAuthenticated = false;
-    }
+  logout(): void {
+    this.tokenStore.clear();
+  }
 }

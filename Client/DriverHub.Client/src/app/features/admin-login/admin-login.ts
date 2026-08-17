@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth/auth-service';
 import { LoginRequest } from '../../core/services/auth/models/login-request';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../core/models/api/api-response';
+import { TokenStore } from '../../core/auth/token-store';
 
 @Component({
   selector: 'app-admin-login',
@@ -22,6 +23,7 @@ export class AdminLogin {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly tokenStore: TokenStore,
     private readonly router: Router
   ) {}
 
@@ -40,7 +42,8 @@ export class AdminLogin {
           return;
         }
       
-        console.log(response.data);
+        this.tokenStore.setAccessToken(response.data.accessToken);
+        this.router.navigateByUrl(RouteLinks.Admin.Dashboard);
       },
       error: (error: HttpErrorResponse) => {
         const apiResponse = error.error as ApiResponse<unknown>;

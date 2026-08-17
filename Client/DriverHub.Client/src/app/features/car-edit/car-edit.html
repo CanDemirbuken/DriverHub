@@ -1,0 +1,645 @@
+<section class="car-edit-page">
+
+  @if (isLoading()) {
+    <div class="edit-state edit-state--loading">
+      <div class="edit-state__spinner"></div>
+
+      <div>
+        <strong>Araç bilgileri hazırlanıyor</strong>
+        <p>Düzenleme ekranı yükleniyor...</p>
+      </div>
+    </div>
+  }
+  @else if (errorMessage() && !car()) {
+    <div class="edit-state edit-state--error">
+      <div class="edit-state__icon">!</div>
+
+      <div>
+        <strong>Araç bilgileri yüklenemedi</strong>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    </div>
+  }
+  @else if (car(); as currentCar) {
+
+    <!-- Toolbar -->
+
+    <div class="edit-toolbar">
+      <a
+        class="edit-toolbar__back"
+        [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
+        <span>←</span>
+        Araç Detayına Dön
+      </a>
+
+      <div class="edit-toolbar__actions">
+        <a
+          class="edit-toolbar__cancel"
+          [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
+          Vazgeç
+        </a>
+
+        <button
+          type="submit"
+          form="car-edit-form"
+          class="edit-toolbar__save"
+          [disabled]="isUpdating()">
+          @if (isUpdating()) {
+            <span class="button-spinner"></span>
+            Kaydediliyor...
+          }
+          @else {
+            Değişiklikleri Kaydet
+          }
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Page Heading -->
+
+    <header class="edit-header">
+      <div>
+        <span class="edit-header__eyebrow">
+          Filo Yönetimi
+        </span>
+
+        <h2>Araç Düzenle</h2>
+
+        <p>
+          {{ currentCar.brandName }}
+          {{ currentCar.model }}
+          aracına ait temel bilgileri güncelleyebilirsiniz.
+        </p>
+      </div>
+
+      <div class="edit-header__identity">
+        <span>Plaka</span>
+        <strong>{{ currentCar.plate }}</strong>
+      </div>
+    </header>
+
+
+    <!-- Feedback -->
+
+    @if (successMessage()) {
+      <div class="feedback feedback--success">
+        <div class="feedback__icon">✓</div>
+
+        <div>
+          <strong>Değişiklikler kaydedildi</strong>
+          <p>{{ successMessage() }}</p>
+        </div>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="feedback feedback--error">
+        <div class="feedback__icon">!</div>
+
+        <div>
+          <strong>İşlem tamamlanamadı</strong>
+          <p>{{ errorMessage() }}</p>
+        </div>
+      </div>
+    }
+
+
+    <!-- Main Layout -->
+
+    <div class="edit-layout">
+
+      <form
+        id="car-edit-form"
+        class="edit-form"
+        (ngSubmit)="updateCar()">
+
+
+        <!-- Temel Bilgiler -->
+
+        <section class="form-card">
+          <div class="form-card__header">
+            <div class="form-card__icon">
+              01
+            </div>
+
+            <div>
+              <span>Genel Bilgiler</span>
+              <h3>Temel Araç Bilgileri</h3>
+              <p>
+                Aracın model, yıl ve kimlik bilgilerini düzenleyin.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field form-field--wide">
+              <label for="model">
+                Model
+              </label>
+
+              <input
+                id="model"
+                name="model"
+                type="text"
+                [(ngModel)]="model"
+                placeholder="Örn. Corolla"
+                maxlength="150"
+                required
+              />
+
+              <span class="form-field__hint">
+                Aracın ticari model adı.
+              </span>
+            </div>
+
+
+            <div class="form-field">
+              <label for="modelYear">
+                Model Yılı
+              </label>
+
+              <input
+                id="modelYear"
+                name="modelYear"
+                type="number"
+                [(ngModel)]="modelYear"
+                min="1900"
+                required
+              />
+            </div>
+
+
+            <div class="form-field">
+              <label for="plate">
+                Plaka
+              </label>
+
+              <input
+                id="plate"
+                name="plate"
+                type="text"
+                [(ngModel)]="plate"
+                placeholder="34 DH 1001"
+                required
+              />
+            </div>
+
+
+            <div class="form-field form-field--wide">
+              <label for="vin">
+                VIN
+              </label>
+
+              <input
+                id="vin"
+                name="vin"
+                type="text"
+                [(ngModel)]="vin"
+                placeholder="Araç şasi numarası"
+                required
+              />
+
+              <span class="form-field__hint">
+                Araca ait benzersiz şasi numarası.
+              </span>
+            </div>
+
+
+            <div class="form-field">
+              <label for="color">
+                Renk
+              </label>
+
+              <input
+                id="color"
+                name="color"
+                type="text"
+                [(ngModel)]="color"
+                placeholder="Örn. Siyah"
+              />
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- Teknik Bilgiler -->
+
+        <section class="form-card">
+          <div class="form-card__header">
+            <div class="form-card__icon">
+              02
+            </div>
+
+            <div>
+              <span>Teknik Detaylar</span>
+              <h3>Araç Özellikleri</h3>
+              <p>
+                Kilometre ve kullanım özelliklerini güncelleyin.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--three">
+
+            <div class="form-field">
+              <label for="km">
+                Kilometre
+              </label>
+
+              <div class="input-suffix">
+                <input
+                  id="km"
+                  name="km"
+                  type="number"
+                  [(ngModel)]="km"
+                  min="0"
+                  required
+                />
+
+                <span>km</span>
+              </div>
+            </div>
+
+
+            <div class="form-field">
+              <label for="transmission">
+                Vites
+              </label>
+
+              <select
+                id="transmission"
+                name="transmission"
+                [(ngModel)]="transmission"
+                required>
+                <option value="">
+                  Vites seçin
+                </option>
+
+                <option value="Automatic">
+                  Automatic
+                </option>
+
+                <option value="Manual">
+                  Manual
+                </option>
+              </select>
+            </div>
+
+
+            <div class="form-field">
+              <label for="fuel">
+                Yakıt
+              </label>
+
+              <select
+                id="fuel"
+                name="fuel"
+                [(ngModel)]="fuel"
+                required>
+                <option value="">
+                  Yakıt seçin
+                </option>
+
+                <option value="Gasoline">
+                  Gasoline
+                </option>
+
+                <option value="Diesel">
+                  Diesel
+                </option>
+
+                <option value="Hybrid">
+                  Hybrid
+                </option>
+
+                <option value="Electric">
+                  Electric
+                </option>
+              </select>
+            </div>
+
+
+            <div class="form-field">
+              <label for="seat">
+                Koltuk Sayısı
+              </label>
+
+              <input
+                id="seat"
+                name="seat"
+                type="number"
+                [(ngModel)]="seat"
+                min="1"
+                max="9"
+                required
+              />
+            </div>
+
+
+            <div class="form-field">
+              <label for="luggage">
+                Bagaj Kapasitesi
+              </label>
+
+              <input
+                id="luggage"
+                name="luggage"
+                type="number"
+                [(ngModel)]="luggage"
+                min="1"
+                required
+              />
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- Görseller -->
+
+        <section class="form-card">
+          <div class="form-card__header">
+            <div class="form-card__icon">
+              03
+            </div>
+
+            <div>
+              <span>Medya</span>
+              <h3>Araç Görselleri</h3>
+              <p>
+                Liste ve detay ekranlarında kullanılacak görselleri yönetin.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field form-field--full">
+              <label for="coverImageUrl">
+                Kapak Görseli URL
+              </label>
+
+              <input
+                id="coverImageUrl"
+                name="coverImageUrl"
+                type="url"
+                [(ngModel)]="coverImageUrl"
+                placeholder="https://..."
+              />
+
+              <span class="form-field__hint">
+                Araç liste kartlarında kullanılacak görsel.
+              </span>
+            </div>
+
+
+            <div class="form-field form-field--full">
+              <label for="bigImageUrl">
+                Büyük Görsel URL
+              </label>
+
+              <input
+                id="bigImageUrl"
+                name="bigImageUrl"
+                type="url"
+                [(ngModel)]="bigImageUrl"
+                placeholder="https://..."
+              />
+
+              <span class="form-field__hint">
+                Araç detay sayfasındaki hero görseli.
+              </span>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- İlişkisel Alanlar -->
+
+        <section class="form-card">
+          <div class="form-card__header">
+            <div class="form-card__icon">
+              04
+            </div>
+
+            <div>
+              <span>Sistem Bilgileri</span>
+              <h3>İlişkisel Tanımlar</h3>
+              <p>
+                Marka, kategori ve lokasyon referanslarını yönetin.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field form-field--full">
+              <label for="brandId">
+                Marka ID
+              </label>
+
+              <input
+                id="brandId"
+                name="brandId"
+                type="text"
+                [(ngModel)]="brandId"
+                required
+              />
+            </div>
+
+
+            <div class="form-field form-field--full">
+              <label for="categoryId">
+                Kategori ID
+              </label>
+
+              <input
+                id="categoryId"
+                name="categoryId"
+                type="text"
+                [(ngModel)]="categoryId"
+                required
+              />
+            </div>
+
+
+            <div class="form-field form-field--full">
+              <label for="currentLocationId">
+                Lokasyon ID
+              </label>
+
+              <input
+                id="currentLocationId"
+                name="currentLocationId"
+                type="text"
+                [(ngModel)]="currentLocationId"
+                required
+              />
+            </div>
+
+          </div>
+
+          <div class="relation-notice">
+            <span class="relation-notice__icon">
+              i
+            </span>
+
+            <p>
+              Marka, kategori ve lokasyon alanlarını daha sonra ilgili
+              servislerden beslenen seçim listelerine dönüştüreceğiz.
+            </p>
+          </div>
+        </section>
+
+
+        <!-- Bottom Save -->
+
+        <div class="form-footer">
+          <div>
+            <strong>Değişiklikleri tamamladınız mı?</strong>
+
+            <span>
+              Kaydetmeden önce araç bilgilerini kontrol edin.
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            class="form-footer__save"
+            [disabled]="isUpdating()">
+
+            @if (isUpdating()) {
+              <span class="button-spinner"></span>
+              Kaydediliyor...
+            }
+            @else {
+              Değişiklikleri Kaydet
+            }
+
+          </button>
+        </div>
+
+      </form>
+
+
+      <!-- Right Side -->
+
+      <aside class="edit-sidebar">
+
+        <section class="preview-card">
+          <div class="preview-card__image">
+
+            @if (bigImageUrl || coverImageUrl) {
+              <img
+                [src]="bigImageUrl || coverImageUrl"
+                [alt]="model"
+              />
+            }
+            @else {
+              <div class="preview-card__placeholder">
+                <span>DH</span>
+              </div>
+            }
+
+            <div class="preview-card__overlay"></div>
+
+            <span class="preview-card__badge">
+              Canlı Önizleme
+            </span>
+
+            <div class="preview-card__identity">
+              <span>
+                {{ currentCar.brandName }}
+              </span>
+
+              <h3>
+                {{ model || currentCar.model }}
+              </h3>
+
+              <strong>
+                {{ plate || currentCar.plate }}
+              </strong>
+            </div>
+          </div>
+
+
+          <div class="preview-card__content">
+
+            <div class="preview-stat">
+              <span>Model Yılı</span>
+              <strong>{{ modelYear }}</strong>
+            </div>
+
+            <div class="preview-stat">
+              <span>Kilometre</span>
+              <strong>{{ km }} km</strong>
+            </div>
+
+            <div class="preview-stat">
+              <span>Vites</span>
+              <strong>{{ transmission }}</strong>
+            </div>
+
+            <div class="preview-stat">
+              <span>Yakıt</span>
+              <strong>{{ fuel }}</strong>
+            </div>
+
+          </div>
+        </section>
+
+
+        <section class="side-card">
+          <span class="side-card__eyebrow">
+            Mevcut Tanımlar
+          </span>
+
+          <h3>Araç Sınıflandırması</h3>
+
+          <div class="side-card__items">
+
+            <div class="side-info">
+              <span>Marka</span>
+              <strong>{{ currentCar.brandName }}</strong>
+            </div>
+
+            <div class="side-info">
+              <span>Kategori</span>
+              <strong>{{ currentCar.categoryName }}</strong>
+            </div>
+
+            <div class="side-info">
+              <span>Lokasyon</span>
+              <strong>{{ currentCar.currentLocationName }}</strong>
+            </div>
+
+          </div>
+        </section>
+
+
+        <section class="side-card side-card--warning">
+          <div class="side-warning__icon">
+            !
+          </div>
+
+          <div>
+            <strong>Operasyonel Bilgi</strong>
+
+            <p>
+              Özellikler, fiyatlandırmalar ve araç durumu bu ekrandan
+              değiştirilmez. Bu işlemler kendi operasyonları üzerinden
+              yönetilir.
+            </p>
+          </div>
+        </section>
+
+      </aside>
+
+    </div>
+  }
+
+</section>

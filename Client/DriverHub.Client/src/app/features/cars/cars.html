@@ -1,0 +1,252 @@
+<section class="cars-page">
+  <div class="cars-page__header">
+    <div>
+      <span class="cars-page__eyebrow">
+        Filo Yönetimi
+      </span>
+
+      <h2>
+        Araçlar
+      </h2>
+
+      <p>
+        Filodaki araçları, lokasyonlarını ve mevcut durumlarını
+        buradan görüntüleyebilirsiniz.
+      </p>
+    </div>
+
+    <div class="cars-page__summary">
+      <span class="cars-page__summary-label">
+        Toplam Araç
+      </span>
+
+      <strong>
+        {{ totalCount() }}
+      </strong>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="cars-state cars-state--loading">
+      <div class="cars-state__spinner"></div>
+
+      <p>
+        Araçlar yükleniyor...
+      </p>
+    </div>
+  }
+  @else if (errorMessage()) {
+    <div class="cars-state cars-state--error">
+      <div class="cars-state__icon">
+        !
+      </div>
+
+      <div>
+        <strong>
+          Araçlar yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+      </div>
+    </div>
+  }
+  @else {
+    @if (cars().length > 0) {
+      <div class="cars-grid">
+        @for (car of cars(); track car.id) {
+          <article class="car-card">
+            <div class="car-card__image-wrapper">
+              @if (car.coverImageUrl) {
+                <img
+                  class="car-card__image"
+                  [src]="car.coverImageUrl"
+                  [alt]="car.brandName + ' ' + car.model"
+                />
+              }
+              @else {
+                <div class="car-card__image-placeholder">
+                  <span>
+                    DH
+                  </span>
+                </div>
+              }
+
+              <span
+                class="car-card__status"
+                [class.car-card__status--active]="car.status === 1"
+                [class.car-card__status--inactive]="car.status !== 1">
+                {{ car.status === 1 ? 'Aktif' : 'Pasif' }}
+              </span>
+            </div>
+
+            <div class="car-card__content">
+              <div class="car-card__heading">
+                <div>
+                  <span class="car-card__brand">
+                    {{ car.brandName }}
+                  </span>
+
+                  <h3>
+                    {{ car.model }}
+                  </h3>
+                </div>
+
+                <span class="car-card__year">
+                  {{ car.modelYear }}
+                </span>
+              </div>
+
+              <div class="car-card__plate">
+                {{ car.plate }}
+              </div>
+
+              <div class="car-card__details">
+                <div class="car-card__detail">
+                  <span class="car-card__detail-label">
+                    Kategori
+                  </span>
+
+                  <strong>
+                    {{ car.categoryName }}
+                  </strong>
+                </div>
+
+                <div class="car-card__detail">
+                  <span class="car-card__detail-label">
+                    Lokasyon
+                  </span>
+
+                  <strong>
+                    {{ car.currentLocationName }}
+                  </strong>
+                </div>
+
+                <div class="car-card__detail">
+                  <span class="car-card__detail-label">
+                    Kilometre
+                  </span>
+
+                  <strong>
+                    {{ car.km }} km
+                  </strong>
+                </div>
+
+                <div class="car-card__detail">
+                  <span class="car-card__detail-label">
+                    Vites
+                  </span>
+
+                  <strong>
+                    {{ car.transmission }}
+                  </strong>
+                </div>
+
+                <div class="car-card__detail">
+                  <span class="car-card__detail-label">
+                    Yakıt
+                  </span>
+
+                  <strong>
+                    {{ car.fuel }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="car-card__actions">
+                <button 
+                  [routerLink]="routeLinks.Admin.CarDetail(car.id)" 
+                  class="car-card__action car-card__action--secondary">
+                  Detay
+                </button>
+
+                <button
+                  [routerLink]="routeLinks.Admin.CarEdit(car.id)"
+                  type="button"
+                  class="car-card__action car-card__action--primary">
+                  Düzenle
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="cars-pagination">
+        <div class="cars-pagination__info">
+          <span>
+            Sayfa
+
+            <strong>
+              {{ pageNumber() }}
+            </strong>
+
+            /
+
+            <strong>
+              {{ totalPages() }}
+            </strong>
+          </span>
+
+          <span class="cars-pagination__separator"></span>
+
+          <span>
+            Toplam
+
+            <strong>
+              {{ totalCount() }}
+            </strong>
+
+            kayıt
+          </span>
+        </div>
+
+        <div class="cars-pagination__actions">
+          <button
+            type="button"
+            class="pagination-button"
+            [disabled]="!hasPreviousPage()"
+            (click)="previousPage()">
+
+            <span>
+              ←
+            </span>
+
+            Önceki
+          </button>
+
+          <button
+            type="button"
+            class="pagination-button pagination-button--primary"
+            [disabled]="!hasNextPage()"
+            (click)="nextPage()">
+
+            Sonraki
+
+            <span>
+              →
+            </span>
+          </button>
+        </div>
+      </div>
+    }
+    @else {
+      <div class="cars-state">
+        <div class="cars-state__icon">
+          0
+        </div>
+
+        <div>
+          <strong>
+            Araç bulunamadı
+          </strong>
+
+          <p>
+            Gösterilecek herhangi bir araç kaydı mevcut değil.
+          </p>
+        </div>
+      </div>
+    }
+  }
+</section>

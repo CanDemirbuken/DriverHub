@@ -5,39 +5,41 @@
   </div>
 
   <div class="admin-topbar__user-menu">
-    <button
-      type="button"
-      class="admin-topbar__user"
-      (click)="toggleUserMenu()">
+    @if (user) {
+      <button
+        type="button"
+        class="admin-topbar__user"
+        (click)="toggleUserMenu()">
 
-      <span class="admin-topbar__avatar">
-        {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
-      </span>
-
-      <span class="admin-topbar__user-info">
-        <span class="admin-topbar__user-name">
-          {{ user.firstName }} {{ user.lastName }}
+        <span class="admin-topbar__avatar">
+          {{ user.email.charAt(0).toUpperCase() }}
         </span>
 
-        <span class="admin-topbar__user-role">
-          {{ user.role }}
+        <span class="admin-topbar__user-info">
+          <span class="admin-topbar__user-name">
+            {{ user.email }}
+          </span>
+
+          <span class="admin-topbar__user-role">
+            {{ primaryRole }}
+          </span>
         </span>
-      </span>
 
-      <span class="admin-topbar__user-arrow">
-        {{ isUserMenuOpen ? '▲' : '▼' }}
-      </span>
-    </button>
+        <span class="admin-topbar__user-arrow">
+          {{ isUserMenuOpen ? '▲' : '▼' }}
+        </span>
+      </button>
 
-    @if (isUserMenuOpen) {
-      <div class="admin-topbar__dropdown">
-        <button
-          type="button"
-          class="admin-topbar__dropdown-item"
-          (click)="logout()">
-          Oturumu Kapat
-        </button>
-      </div>
+      @if (isUserMenuOpen) {
+        <div class="admin-topbar__dropdown">
+          <button
+            type="button"
+            class="admin-topbar__dropdown-item"
+            (click)="logout()">
+            Oturumu Kapat
+          </button>
+        </div>
+      }
     }
   </div>
 </header>

@@ -8,13 +8,16 @@ public static class CorsExtensions
     {
         services.AddCors(options =>
         {
-            options.AddPolicy(CorsPolicyName, policy =>
-            {
-                policy
-                    .WithOrigins("http://localhost:4001")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
+            options.AddPolicy(
+                CorsPolicyName,
+                policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:4001")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
         });
 
         return services;

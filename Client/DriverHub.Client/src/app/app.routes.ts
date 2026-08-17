@@ -7,6 +7,10 @@ import { adminAuthGuard } from './core/guards/admin-auth-guard';
 import { AdminLogin } from './features/admin-login/admin-login';
 import { ForgotPassword } from './features/forgot-password/forgot-password';
 import { ResetPassword } from './features/reset-password/reset-password';
+import { adminGuestGuard } from './core/guards/admin-guest-guard';
+import { Cars } from './features/cars/cars';
+import { CarDetail } from './features/car-detail/car-detail';
+import { CarEdit } from './features/car-edit/car-edit';
 
 export const routes: Routes = [
   {
@@ -15,7 +19,8 @@ export const routes: Routes = [
   },
   {
     path: `${RoutePaths.Admin.Root}/${RoutePaths.Admin.Login}`,
-    component: AdminLogin
+    component: AdminLogin,
+    canActivate: [adminGuestGuard]
   },
   {
     path: `${RoutePaths.Admin.Root}/${RoutePaths.Admin.ForgotPassword}`,
@@ -38,6 +43,18 @@ export const routes: Routes = [
       {
         path: RoutePaths.Admin.Dashboard,
         component: Dashboard
+      },
+      {
+        path: RoutePaths.Admin.Cars,
+        component: Cars
+      },
+      {
+        path: `${RoutePaths.Admin.Cars}/:id`,
+        component: CarDetail
+      },
+      {
+        path: `${RoutePaths.Admin.Cars}/:id/edit`,
+        component: CarEdit
       }
     ]
   }

@@ -7,7 +7,8 @@ export const RoutePaths = {
     Login: 'login',
     ForgotPassword: 'forgot-password',
     ResetPassword: 'reset-password',
-    Dashboard: 'dashboard'
+    Dashboard: 'dashboard',
+    Cars: 'cars'
   }
 } as const;
 
@@ -17,6 +18,9 @@ export const RouteLinks = {
     Login: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Login}`,
     ForgotPassword: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.ForgotPassword}`,
     ResetPassword: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.ResetPassword}`,
-    Dashboard: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Dashboard}`
+    Dashboard: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Dashboard}`,
+    Cars: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}`,
+    CarDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}`,
+    CarEdit: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}/edit`
   }
 } as const;

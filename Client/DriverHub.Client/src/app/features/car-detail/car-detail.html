@@ -1,0 +1,411 @@
+<section class="car-detail-page">
+  @if (isLoading()) {
+    <div class="car-detail-state car-detail-state--loading">
+      <div class="car-detail-state__spinner"></div>
+      <p>Araç bilgileri yükleniyor...</p>
+    </div>
+  }
+  @else if (errorMessage()) {
+    <div class="car-detail-state car-detail-state--error">
+      <div class="car-detail-state__icon">!</div>
+
+      <div>
+        <strong>Araç bilgileri yüklenemedi</strong>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    </div>
+  }
+  @else if (car(); as currentCar) {
+
+    <div class="car-detail-toolbar">
+      <a
+        class="car-detail-toolbar__back"
+        [routerLink]="routeLinks.Admin.Cars">
+        <span>←</span>
+        Araç Listesine Dön
+      </a>
+
+      <button
+        type="button"
+        class="car-detail-toolbar__edit">
+        Düzenle
+      </button>
+    </div>
+
+    <article class="car-hero">
+      <div class="car-hero__image-wrapper">
+        @if (currentCar.bigImageUrl) {
+          <img
+            class="car-hero__image"
+            [src]="currentCar.bigImageUrl"
+            [alt]="currentCar.brandName + ' ' + currentCar.model"
+          />
+        }
+        @else if (currentCar.coverImageUrl) {
+          <img
+            class="car-hero__image"
+            [src]="currentCar.coverImageUrl"
+            [alt]="currentCar.brandName + ' ' + currentCar.model"
+          />
+        }
+        @else {
+          <div class="car-hero__placeholder">
+            <span>DH</span>
+          </div>
+        }
+
+        <div class="car-hero__overlay"></div>
+
+        <div class="car-hero__identity">
+          <span class="car-hero__brand">
+            {{ currentCar.brandName }}
+          </span>
+
+          <div class="car-hero__title-row">
+            <h2>
+              {{ currentCar.model }}
+            </h2>
+
+            <span class="car-hero__year">
+              {{ currentCar.modelYear }}
+            </span>
+          </div>
+
+          <div class="car-hero__meta">
+            <span class="car-hero__plate">
+              {{ currentCar.plate }}
+            </span>
+
+            <span class="car-hero__location">
+              {{ currentCar.currentLocationName }}
+            </span>
+          </div>
+        </div>
+
+        <span
+          class="car-hero__status"
+          [class.car-hero__status--active]="currentCar.status === 1"
+          [class.car-hero__status--inactive]="currentCar.status !== 1">
+          <span class="car-hero__status-dot"></span>
+          {{ currentCar.status === 1 ? 'Aktif' : 'Pasif' }}
+        </span>
+      </div>
+    </article>
+
+    <div class="car-detail-layout">
+      <div class="car-detail-layout__main">
+
+        <section class="detail-card">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Araç Bilgileri
+              </span>
+
+              <h3>
+                Genel Bilgiler
+              </h3>
+            </div>
+
+            <span class="detail-card__badge">
+              {{ currentCar.categoryName }}
+            </span>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Marka
+              </span>
+
+              <strong>
+                {{ currentCar.brandName }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Model
+              </span>
+
+              <strong>
+                {{ currentCar.model }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Model Yılı
+              </span>
+
+              <strong>
+                {{ currentCar.modelYear }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Plaka
+              </span>
+
+              <strong class="detail-item__mono">
+                {{ currentCar.plate }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Kilometre
+              </span>
+
+              <strong>
+                {{ currentCar.km }} km
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Renk
+              </span>
+
+              <strong>
+                {{ currentCar.color }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Vites
+              </span>
+
+              <strong>
+                {{ currentCar.transmission }}
+              </strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-item__label">
+                Yakıt
+              </span>
+
+              <strong>
+                {{ currentCar.fuel }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Donanım
+              </span>
+
+              <h3>
+                Teknik Özellikler
+              </h3>
+            </div>
+          </div>
+
+          <div class="spec-grid">
+            <div class="spec-card">
+              <span class="spec-card__value">
+                {{ currentCar.seat }}
+              </span>
+
+              <span class="spec-card__label">
+                Koltuk
+              </span>
+            </div>
+
+            <div class="spec-card">
+              <span class="spec-card__value">
+                {{ currentCar.luggage }}
+              </span>
+
+              <span class="spec-card__label">
+                Bagaj
+              </span>
+            </div>
+
+            <div class="spec-card">
+              <span class="spec-card__value">
+                {{ currentCar.transmission }}
+              </span>
+
+              <span class="spec-card__label">
+                Vites
+              </span>
+            </div>
+
+            <div class="spec-card">
+              <span class="spec-card__value">
+                {{ currentCar.fuel }}
+              </span>
+
+              <span class="spec-card__label">
+                Yakıt
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Donanımlar
+              </span>
+
+              <h3>
+                Araç Özellikleri
+              </h3>
+            </div>
+
+            <span class="detail-card__count">
+              {{ currentCar.features.length }}
+              özellik
+            </span>
+          </div>
+
+          @if (currentCar.features.length > 0) {
+            <div class="feature-list">
+              @for (
+                feature of currentCar.features;
+                track feature.featureId
+              ) {
+                <span class="feature-chip">
+                  <span class="feature-chip__check">
+                    ✓
+                  </span>
+
+                  {{ feature.featureName }}
+                </span>
+              }
+            </div>
+          }
+          @else {
+            <div class="detail-empty">
+              Bu araç için tanımlı özellik bulunmuyor.
+            </div>
+          }
+        </section>
+      </div>
+
+      <aside class="car-detail-layout__side">
+
+        <section class="detail-card detail-card--pricing">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Fiyatlandırma
+              </span>
+
+              <h3>
+                Kiralama Ücretleri
+              </h3>
+            </div>
+          </div>
+
+          @if (currentCar.pricings.length > 0) {
+            <div class="pricing-list">
+              @for (
+                pricing of currentCar.pricings;
+                track pricing.type
+              ) {
+                <div class="pricing-item">
+                  <div>
+                    <span class="pricing-item__type">
+                      {{ getPricingTypeLabel(pricing.type) }}
+                    </span>
+
+                    <span class="pricing-item__description">
+                      Kiralama bedeli
+                    </span>
+                  </div>
+
+                  <strong>
+                    {{ pricing.amount }} ₺
+                  </strong>
+                </div>
+              }
+            </div>
+          }
+          @else {
+            <div class="detail-empty">
+              Fiyat bilgisi bulunmuyor.
+            </div>
+          }
+        </section>
+
+        <section class="detail-card">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Operasyon
+              </span>
+
+              <h3>
+                Lokasyon Bilgisi
+              </h3>
+            </div>
+          </div>
+
+          <div class="location-card">
+            <span class="location-card__icon">
+              ●
+            </span>
+
+            <div>
+              <span>
+                Mevcut Lokasyon
+              </span>
+
+              <strong>
+                {{ currentCar.currentLocationName }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card">
+          <div class="detail-card__header">
+            <div>
+              <span class="detail-card__eyebrow">
+                Kimlik
+              </span>
+
+              <h3>
+                Araç Kimliği
+              </h3>
+            </div>
+          </div>
+
+          <div class="identity-list">
+            <div class="identity-item">
+              <span>
+                VIN
+              </span>
+
+              <strong>
+                {{ currentCar.vin }}
+              </strong>
+            </div>
+
+            <div class="identity-item">
+              <span>
+                Araç ID
+              </span>
+
+              <strong>
+                {{ currentCar.id }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+    </div>
+  }
+</section>

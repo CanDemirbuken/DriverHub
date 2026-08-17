@@ -2,8 +2,8 @@ using DriverHub.Application.Extensions;
 using DriverHub.Infrastructure.Extensions;
 using DriverHub.Infrastructure.Services.Identity;
 using DriverHub.Persistence.Extensions;
+using DriverHub.WebApi.Common.Cookies;
 using DriverHub.WebApi.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -20,7 +20,8 @@ try
     builder.Services.AddSerilogLogging(builder.Configuration);
 
     builder.Services.AddControllers();
-
+    builder.Services.AddSingleton<RefreshTokenCookieManager>();
+    
     builder.Services.AddSwaggerDocumentation();
 
     builder.Services.AddApplication();
