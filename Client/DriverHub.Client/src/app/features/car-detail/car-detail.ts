@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../core/models/api/api-response';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RouteLinks } from '../../core/constants/route-paths';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-car-detail',
@@ -96,5 +97,20 @@ readonly routeLinks = RouteLinks;
       default:
         return 'Fiyat';
     }
+  }
+
+  getImageUrl(path: string): string {
+    if (!path) {
+      return '';
+    }
+  
+    if (
+      path.startsWith('http://') ||
+      path.startsWith('https://')
+    ) {
+      return path;
+    }
+  
+    return `${environment.apiUrl}${path}`;
   }
 }

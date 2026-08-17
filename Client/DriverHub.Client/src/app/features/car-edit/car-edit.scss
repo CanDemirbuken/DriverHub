@@ -6,6 +6,7 @@
   padding: 28px;
 }
 
+
 /* =========================
    TOOLBAR
    ========================= */
@@ -368,7 +369,7 @@
 
 .form-field__hint {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 10px;
   line-height: 1.5;
   color: #94a3b8;
@@ -391,6 +392,115 @@
   font-weight: 700;
   color: #94a3b8;
   pointer-events: none;
+}
+
+
+/* =========================
+   IMAGE UPLOAD
+   ========================= */
+
+.image-upload-field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.image-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 0 17px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 750;
+
+  color: #334155;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.image-upload-button:hover:not(:disabled) {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.08);
+}
+
+.image-upload-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.image-upload-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.image-upload-field__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+  padding: 0 11px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+
+  background: #f0fdf4;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  color: #166534;
+}
+
+.image-upload-preview {
+  position: relative;
+
+  overflow: hidden;
+
+  width: 100%;
+  max-width: 420px;
+  height: 220px;
+
+  margin-top: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+
+  background: #f8fafc;
+
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.image-upload-preview--large {
+  max-width: 620px;
+  height: 320px;
+}
+
+.image-upload-preview img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
 }
 
 
@@ -800,6 +910,11 @@
   animation: edit-spin 0.7s linear infinite;
 }
 
+.image-upload-button .button-spinner {
+  border-color: rgba(15, 23, 42, 0.15);
+  border-top-color: #0f172a;
+}
+
 @keyframes edit-spin {
   to {
     transform: rotate(360deg);
@@ -879,5 +994,24 @@
 
   .form-footer__save {
     width: 100%;
+  }
+
+  .image-upload-field {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .image-upload-button {
+    width: 100%;
+  }
+
+  .image-upload-field__status {
+    width: fit-content;
+  }
+
+  .image-upload-preview,
+  .image-upload-preview--large {
+    max-width: none;
+    height: 220px;
   }
 }

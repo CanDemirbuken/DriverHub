@@ -37,14 +37,14 @@
         @if (currentCar.bigImageUrl) {
           <img
             class="car-hero__image"
-            [src]="currentCar.bigImageUrl"
+            [src]="getImageUrl(currentCar.bigImageUrl)"
             [alt]="currentCar.brandName + ' ' + currentCar.model"
           />
         }
         @else if (currentCar.coverImageUrl) {
           <img
             class="car-hero__image"
-            [src]="currentCar.coverImageUrl"
+            [src]="getImageUrl(currentCar.coverImageUrl)"
             [alt]="currentCar.brandName + ' ' + currentCar.model"
           />
         }

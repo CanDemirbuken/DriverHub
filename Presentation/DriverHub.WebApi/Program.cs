@@ -47,6 +47,8 @@ try
         await identitySeeder.SeedAsync();
     }
 
+    app.UseStaticFiles();
+
     app.UseGlobalExceptionMiddleware();
 
     if (app.Environment.IsDevelopment())

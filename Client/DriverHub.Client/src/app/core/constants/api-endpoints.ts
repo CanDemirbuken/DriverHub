@@ -18,5 +18,21 @@ export const ApiEndpoints = {
 
     Update: (id: string) =>
       `/api/cars/${id}`
+  },
+
+  Brands: {
+    GetBrands: `/api/brands`
+  },
+
+  Categories: {
+    GetCategories: `/api/categories`
+  },
+
+  Locations: {
+    GetLocations: `/api/locations`
+  },
+
+  Media: {
+    Upload: `/api/media/upload`
   }
 } as const;

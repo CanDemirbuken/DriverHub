@@ -4,6 +4,7 @@ using DriverHub.Application.Interfaces.Authentication.Token.Access;
 using DriverHub.Application.Interfaces.Authentication.Token.Refresh;
 using DriverHub.Application.Interfaces.Communication;
 using DriverHub.Application.Interfaces.Identity;
+using DriverHub.Application.Interfaces.Media;
 using DriverHub.Infrastructure.Options;
 using DriverHub.Infrastructure.Services.Communication.Mail;
 using DriverHub.Infrastructure.Services.Identity;
@@ -14,6 +15,7 @@ using DriverHub.Infrastructure.Services.Identity.Session;
 using DriverHub.Infrastructure.Services.Identity.Token.Access;
 using DriverHub.Infrastructure.Services.Identity.Token.Refresh;
 using DriverHub.Infrastructure.Services.Identity.UserRole;
+using DriverHub.Infrastructure.Services.Media;
 using DriverHub.Persistence.Context;
 using DriverHub.Persistence.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -132,6 +134,7 @@ public static class DependencyInjection
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddScoped<IStorageService, StorageService>();
 
         services
             .AddOptions<IdentitySeedOptions>()

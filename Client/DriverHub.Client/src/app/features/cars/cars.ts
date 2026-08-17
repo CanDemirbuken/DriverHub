@@ -9,6 +9,8 @@ import { ApiResponse } from '../../core/models/api/api-response';
 import { RouterLink } from '@angular/router';
 import { RouteLinks } from '../../core/constants/route-paths';
 
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-cars',
   imports: [RouterLink],
@@ -108,5 +110,20 @@ export class Cars implements OnInit {
           this.isLoading.set(false);
         }
       });
+  }
+
+  getImageUrl(path: string): string {
+    if (!path) {
+      return '';
+    }
+  
+    if (
+      path.startsWith('http://') ||
+      path.startsWith('https://')
+    ) {
+      return path;
+    }
+  
+    return `${environment.apiUrl}${path}`;
   }
 }

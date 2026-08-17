@@ -6,36 +6,52 @@
 
       <div>
         <strong>Araç bilgileri hazırlanıyor</strong>
-        <p>Düzenleme ekranı yükleniyor...</p>
+
+        <p>
+          Düzenleme ekranı yükleniyor...
+        </p>
       </div>
     </div>
   }
+
   @else if (errorMessage() && !car()) {
     <div class="edit-state edit-state--error">
-      <div class="edit-state__icon">!</div>
+      <div class="edit-state__icon">
+        !
+      </div>
 
       <div>
-        <strong>Araç bilgileri yüklenemedi</strong>
-        <p>{{ errorMessage() }}</p>
+        <strong>
+          Araç bilgileri yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
       </div>
     </div>
   }
+
   @else if (car(); as currentCar) {
 
-    <!-- Toolbar -->
-
     <div class="edit-toolbar">
+
       <a
         class="edit-toolbar__back"
-        [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
+        [routerLink]="
+          routeLinks.Admin.CarDetail(currentCar.id)
+        ">
         <span>←</span>
         Araç Detayına Dön
       </a>
 
       <div class="edit-toolbar__actions">
+
         <a
           class="edit-toolbar__cancel"
-          [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
+          [routerLink]="
+            routeLinks.Admin.CarDetail(currentCar.id)
+          ">
           Vazgeç
         </a>
 
@@ -43,7 +59,12 @@
           type="submit"
           form="car-edit-form"
           class="edit-toolbar__save"
-          [disabled]="isUpdating()">
+          [disabled]="
+            isUpdating() ||
+            isCoverImageUploading() ||
+            isBigImageUploading()
+          ">
+
           @if (isUpdating()) {
             <span class="button-spinner"></span>
             Kaydediliyor...
@@ -51,61 +72,75 @@
           @else {
             Değişiklikleri Kaydet
           }
+
         </button>
+
       </div>
     </div>
 
 
-    <!-- Page Heading -->
-
     <header class="edit-header">
+
       <div>
         <span class="edit-header__eyebrow">
           Filo Yönetimi
         </span>
 
-        <h2>Araç Düzenle</h2>
+        <h2>
+          Araç Düzenle
+        </h2>
 
         <p>
           {{ currentCar.brandName }}
           {{ currentCar.model }}
-          aracına ait temel bilgileri güncelleyebilirsiniz.
+          aracına ait bilgileri güncelleyebilirsiniz.
         </p>
       </div>
 
       <div class="edit-header__identity">
         <span>Plaka</span>
-        <strong>{{ currentCar.plate }}</strong>
+        <strong>{{ plate }}</strong>
       </div>
+
     </header>
 
 
-    <!-- Feedback -->
-
     @if (successMessage()) {
       <div class="feedback feedback--success">
-        <div class="feedback__icon">✓</div>
+        <div class="feedback__icon">
+          ✓
+        </div>
 
         <div>
-          <strong>Değişiklikler kaydedildi</strong>
-          <p>{{ successMessage() }}</p>
+          <strong>
+            Değişiklikler kaydedildi
+          </strong>
+
+          <p>
+            {{ successMessage() }}
+          </p>
         </div>
       </div>
     }
 
     @if (errorMessage()) {
       <div class="feedback feedback--error">
-        <div class="feedback__icon">!</div>
+        <div class="feedback__icon">
+          !
+        </div>
 
         <div>
-          <strong>İşlem tamamlanamadı</strong>
-          <p>{{ errorMessage() }}</p>
+          <strong>
+            İşlem tamamlanamadı
+          </strong>
+
+          <p>
+            {{ errorMessage() }}
+          </p>
         </div>
       </div>
     }
 
-
-    <!-- Main Layout -->
 
     <div class="edit-layout">
 
@@ -115,26 +150,36 @@
         (ngSubmit)="updateCar()">
 
 
-        <!-- Temel Bilgiler -->
+        <!-- 01 - GENERAL -->
 
         <section class="form-card">
+
           <div class="form-card__header">
+
             <div class="form-card__icon">
               01
             </div>
 
             <div>
-              <span>Genel Bilgiler</span>
-              <h3>Temel Araç Bilgileri</h3>
+              <span>
+                Genel Bilgiler
+              </span>
+
+              <h3>
+                Temel Araç Bilgileri
+              </h3>
+
               <p>
-                Aracın model, yıl ve kimlik bilgilerini düzenleyin.
+                Aracın model ve kimlik bilgilerini düzenleyin.
               </p>
             </div>
+
           </div>
+
 
           <div class="form-grid">
 
-            <div class="form-field form-field--wide">
+            <div class="form-field">
               <label for="model">
                 Model
               </label>
@@ -144,14 +189,9 @@
                 name="model"
                 type="text"
                 [(ngModel)]="model"
-                placeholder="Örn. Corolla"
                 maxlength="150"
                 required
               />
-
-              <span class="form-field__hint">
-                Aracın ticari model adı.
-              </span>
             </div>
 
 
@@ -165,7 +205,6 @@
                 name="modelYear"
                 type="number"
                 [(ngModel)]="modelYear"
-                min="1900"
                 required
               />
             </div>
@@ -181,29 +220,8 @@
                 name="plate"
                 type="text"
                 [(ngModel)]="plate"
-                placeholder="34 DH 1001"
                 required
               />
-            </div>
-
-
-            <div class="form-field form-field--wide">
-              <label for="vin">
-                VIN
-              </label>
-
-              <input
-                id="vin"
-                name="vin"
-                type="text"
-                [(ngModel)]="vin"
-                placeholder="Araç şasi numarası"
-                required
-              />
-
-              <span class="form-field__hint">
-                Araca ait benzersiz şasi numarası.
-              </span>
             </div>
 
 
@@ -217,30 +235,55 @@
                 name="color"
                 type="text"
                 [(ngModel)]="color"
-                placeholder="Örn. Siyah"
+              />
+            </div>
+
+
+            <div class="form-field form-field--full">
+              <label for="vin">
+                VIN
+              </label>
+
+              <input
+                id="vin"
+                name="vin"
+                type="text"
+                [(ngModel)]="vin"
+                required
               />
             </div>
 
           </div>
+
         </section>
 
 
-        <!-- Teknik Bilgiler -->
+        <!-- 02 - TECHNICAL -->
 
         <section class="form-card">
+
           <div class="form-card__header">
+
             <div class="form-card__icon">
               02
             </div>
 
             <div>
-              <span>Teknik Detaylar</span>
-              <h3>Araç Özellikleri</h3>
+              <span>
+                Teknik Detaylar
+              </span>
+
+              <h3>
+                Araç Özellikleri
+              </h3>
+
               <p>
                 Kilometre ve kullanım özelliklerini güncelleyin.
               </p>
             </div>
+
           </div>
+
 
           <div class="form-grid form-grid--three">
 
@@ -250,6 +293,7 @@
               </label>
 
               <div class="input-suffix">
+
                 <input
                   id="km"
                   name="km"
@@ -259,7 +303,10 @@
                   required
                 />
 
-                <span>km</span>
+                <span>
+                  km
+                </span>
+
               </div>
             </div>
 
@@ -274,9 +321,6 @@
                 name="transmission"
                 [(ngModel)]="transmission"
                 required>
-                <option value="">
-                  Vites seçin
-                </option>
 
                 <option value="Automatic">
                   Automatic
@@ -285,6 +329,7 @@
                 <option value="Manual">
                   Manual
                 </option>
+
               </select>
             </div>
 
@@ -299,9 +344,6 @@
                 name="fuel"
                 [(ngModel)]="fuel"
                 required>
-                <option value="">
-                  Yakıt seçin
-                </option>
 
                 <option value="Gasoline">
                   Gasoline
@@ -318,6 +360,7 @@
                 <option value="Electric">
                   Electric
                 </option>
+
               </select>
             </div>
 
@@ -355,152 +398,298 @@
             </div>
 
           </div>
+
         </section>
 
 
-        <!-- Görseller -->
+        <!-- 03 - MEDIA -->
 
         <section class="form-card">
+
           <div class="form-card__header">
+
             <div class="form-card__icon">
               03
             </div>
 
             <div>
-              <span>Medya</span>
-              <h3>Araç Görselleri</h3>
+              <span>
+                Medya
+              </span>
+
+              <h3>
+                Araç Görselleri
+              </h3>
+
               <p>
                 Liste ve detay ekranlarında kullanılacak görselleri yönetin.
               </p>
             </div>
+
           </div>
+
 
           <div class="form-grid">
 
+            <!-- COVER -->
+
             <div class="form-field form-field--full">
-              <label for="coverImageUrl">
-                Kapak Görseli URL
+
+              <label>
+                Kapak Görseli
               </label>
 
-              <input
-                id="coverImageUrl"
-                name="coverImageUrl"
-                type="url"
-                [(ngModel)]="coverImageUrl"
-                placeholder="https://..."
-              />
+              <div class="image-upload-field">
+
+                <input
+                  #coverImageInput
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  hidden
+                  (change)="onCoverImageSelected($event)"
+                />
+
+                <button
+                  type="button"
+                  class="image-upload-button"
+                  [disabled]="isCoverImageUploading()"
+                  (click)="coverImageInput.click()">
+
+                  @if (isCoverImageUploading()) {
+                    <span class="button-spinner"></span>
+                    Görsel yükleniyor...
+                  }
+                  @else {
+                    Kapak Görseli Seç
+                  }
+
+                </button>
+
+                @if (coverImageUrl) {
+                  <span class="image-upload-field__status">
+                    ✓ Görsel hazır
+                  </span>
+                }
+
+              </div>
+
+
+              @if (coverImageUrl) {
+                <div class="image-upload-preview">
+
+                  <img
+                    [src]="getImageUrl(coverImageUrl)"
+                    alt="Kapak görseli önizleme"
+                  />
+
+                </div>
+              }
+
 
               <span class="form-field__hint">
                 Araç liste kartlarında kullanılacak görsel.
+                JPG, JPEG, PNG veya WEBP.
               </span>
+
             </div>
 
 
+            <!-- BIG IMAGE -->
+
             <div class="form-field form-field--full">
-              <label for="bigImageUrl">
-                Büyük Görsel URL
+
+              <label>
+                Büyük Görsel
               </label>
 
-              <input
-                id="bigImageUrl"
-                name="bigImageUrl"
-                type="url"
-                [(ngModel)]="bigImageUrl"
-                placeholder="https://..."
-              />
+              <div class="image-upload-field">
+
+                <input
+                  #bigImageInput
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  hidden
+                  (change)="onBigImageSelected($event)"
+                />
+
+                <button
+                  type="button"
+                  class="image-upload-button"
+                  [disabled]="isBigImageUploading()"
+                  (click)="bigImageInput.click()">
+
+                  @if (isBigImageUploading()) {
+                    <span class="button-spinner"></span>
+                    Görsel yükleniyor...
+                  }
+                  @else {
+                    Büyük Görsel Seç
+                  }
+
+                </button>
+
+                @if (bigImageUrl) {
+                  <span class="image-upload-field__status">
+                    ✓ Görsel hazır
+                  </span>
+                }
+
+              </div>
+
+
+              @if (bigImageUrl) {
+                <div
+                  class="
+                    image-upload-preview
+                    image-upload-preview--large
+                  ">
+
+                  <img
+                    [src]="getImageUrl(bigImageUrl)"
+                    alt="Büyük görsel önizleme"
+                  />
+
+                </div>
+              }
+
 
               <span class="form-field__hint">
-                Araç detay sayfasındaki hero görseli.
+                Araç detay ekranındaki hero görseli.
+                JPG, JPEG, PNG veya WEBP.
               </span>
+
             </div>
 
           </div>
+
         </section>
 
 
-        <!-- İlişkisel Alanlar -->
+        <!-- 04 - LOOKUPS -->
 
         <section class="form-card">
+
           <div class="form-card__header">
+
             <div class="form-card__icon">
               04
             </div>
 
             <div>
-              <span>Sistem Bilgileri</span>
-              <h3>İlişkisel Tanımlar</h3>
+              <span>
+                Sistem Bilgileri
+              </span>
+
+              <h3>
+                İlişkisel Tanımlar
+              </h3>
+
               <p>
-                Marka, kategori ve lokasyon referanslarını yönetin.
+                Marka, kategori ve lokasyon bilgilerini yönetin.
               </p>
             </div>
+
           </div>
+
 
           <div class="form-grid">
 
             <div class="form-field form-field--full">
+
               <label for="brandId">
-                Marka ID
+                Marka
               </label>
 
-              <input
+              <select
                 id="brandId"
                 name="brandId"
-                type="text"
-                [(ngModel)]="brandId"
-                required
-              />
+                [(ngModel)]="brandId">
+
+                @for (
+                  brand of brands();
+                  track brand.id
+                ) {
+                  <option
+                    [value]="brand.id">
+
+                    {{ brand.name }}
+
+                  </option>
+                }
+
+              </select>
+
             </div>
 
 
             <div class="form-field form-field--full">
+
               <label for="categoryId">
-                Kategori ID
+                Kategori
               </label>
 
-              <input
+              <select
                 id="categoryId"
                 name="categoryId"
-                type="text"
-                [(ngModel)]="categoryId"
-                required
-              />
+                [(ngModel)]="categoryId">
+
+                @for (
+                  category of categories();
+                  track category.id
+                ) {
+                  <option
+                    [value]="category.id">
+
+                    {{ category.name }}
+
+                  </option>
+                }
+
+              </select>
+
             </div>
 
 
             <div class="form-field form-field--full">
+
               <label for="currentLocationId">
-                Lokasyon ID
+                Lokasyon
               </label>
 
-              <input
+              <select
                 id="currentLocationId"
                 name="currentLocationId"
-                type="text"
-                [(ngModel)]="currentLocationId"
-                required
-              />
+                [(ngModel)]="currentLocationId">
+
+                @for (
+                  location of locations();
+                  track location.id
+                ) {
+                  <option
+                    [value]="location.id">
+
+                    {{ location.name }}
+
+                  </option>
+                }
+
+              </select>
+
             </div>
 
           </div>
 
-          <div class="relation-notice">
-            <span class="relation-notice__icon">
-              i
-            </span>
-
-            <p>
-              Marka, kategori ve lokasyon alanlarını daha sonra ilgili
-              servislerden beslenen seçim listelerine dönüştüreceğiz.
-            </p>
-          </div>
         </section>
 
 
-        <!-- Bottom Save -->
+        <!-- SAVE FOOTER -->
 
         <div class="form-footer">
+
           <div>
-            <strong>Değişiklikleri tamamladınız mı?</strong>
+            <strong>
+              Değişiklikleri tamamladınız mı?
+            </strong>
 
             <span>
               Kaydetmeden önce araç bilgilerini kontrol edin.
@@ -510,7 +699,11 @@
           <button
             type="submit"
             class="form-footer__save"
-            [disabled]="isUpdating()">
+            [disabled]="
+              isUpdating() ||
+              isCoverImageUploading() ||
+              isBigImageUploading()
+            ">
 
             @if (isUpdating()) {
               <span class="button-spinner"></span>
@@ -521,21 +714,27 @@
             }
 
           </button>
+
         </div>
 
       </form>
 
 
-      <!-- Right Side -->
+      <!-- SIDEBAR -->
 
       <aside class="edit-sidebar">
 
         <section class="preview-card">
+
           <div class="preview-card__image">
 
             @if (bigImageUrl || coverImageUrl) {
               <img
-                [src]="bigImageUrl || coverImageUrl"
+                [src]="
+                  getImageUrl(
+                    bigImageUrl || coverImageUrl
+                  )
+                "
                 [alt]="model"
               />
             }
@@ -551,7 +750,9 @@
               Canlı Önizleme
             </span>
 
+
             <div class="preview-card__identity">
+
               <span>
                 {{ currentCar.brandName }}
               </span>
@@ -563,78 +764,129 @@
               <strong>
                 {{ plate || currentCar.plate }}
               </strong>
+
             </div>
+
           </div>
 
 
           <div class="preview-card__content">
 
             <div class="preview-stat">
-              <span>Model Yılı</span>
-              <strong>{{ modelYear }}</strong>
+              <span>
+                Model Yılı
+              </span>
+
+              <strong>
+                {{ modelYear }}
+              </strong>
             </div>
 
-            <div class="preview-stat">
-              <span>Kilometre</span>
-              <strong>{{ km }} km</strong>
-            </div>
 
             <div class="preview-stat">
-              <span>Vites</span>
-              <strong>{{ transmission }}</strong>
+              <span>
+                Kilometre
+              </span>
+
+              <strong>
+                {{ km }} km
+              </strong>
             </div>
 
+
             <div class="preview-stat">
-              <span>Yakıt</span>
-              <strong>{{ fuel }}</strong>
+              <span>
+                Vites
+              </span>
+
+              <strong>
+                {{ transmission }}
+              </strong>
+            </div>
+
+
+            <div class="preview-stat">
+              <span>
+                Yakıt
+              </span>
+
+              <strong>
+                {{ fuel }}
+              </strong>
             </div>
 
           </div>
+
         </section>
 
 
         <section class="side-card">
+
           <span class="side-card__eyebrow">
             Mevcut Tanımlar
           </span>
 
-          <h3>Araç Sınıflandırması</h3>
+          <h3>
+            Araç Sınıflandırması
+          </h3>
+
 
           <div class="side-card__items">
 
             <div class="side-info">
-              <span>Marka</span>
-              <strong>{{ currentCar.brandName }}</strong>
+              <span>
+                Marka
+              </span>
+
+              <strong>
+                {{ currentCar.brandName }}
+              </strong>
             </div>
 
-            <div class="side-info">
-              <span>Kategori</span>
-              <strong>{{ currentCar.categoryName }}</strong>
-            </div>
 
             <div class="side-info">
-              <span>Lokasyon</span>
-              <strong>{{ currentCar.currentLocationName }}</strong>
+              <span>
+                Kategori
+              </span>
+
+              <strong>
+                {{ currentCar.categoryName }}
+              </strong>
+            </div>
+
+
+            <div class="side-info">
+              <span>
+                Lokasyon
+              </span>
+
+              <strong>
+                {{ currentCar.currentLocationName }}
+              </strong>
             </div>
 
           </div>
+
         </section>
 
 
         <section class="side-card side-card--warning">
+
           <div class="side-warning__icon">
             !
           </div>
 
           <div>
-            <strong>Operasyonel Bilgi</strong>
+            <strong>
+              Operasyonel Bilgi
+            </strong>
 
             <p>
-              Özellikler, fiyatlandırmalar ve araç durumu bu ekrandan
-              değiştirilmez. Bu işlemler kendi operasyonları üzerinden
-              yönetilir.
+              Özellikler, fiyatlandırmalar ve araç durumu
+              bu ekrandan değiştirilmez.
             </p>
           </div>
+
         </section>
 
       </aside>
