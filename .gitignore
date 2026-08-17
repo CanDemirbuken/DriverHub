@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Runtime uploaded media
+Presentation/DriverHub.WebApi/wwwroot/uploads/images/*
