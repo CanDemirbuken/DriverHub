@@ -1,0 +1,237 @@
+<section class="brands-page">
+
+  <div class="brands-header">
+
+    <div class="brands-header__content">
+
+      <span class="brands-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Markalar
+      </h1>
+
+      <p>
+        Sistemde tanımlı araç markalarını görüntüleyebilir ve yönetebilirsiniz.
+      </p>
+
+    </div>
+
+
+    <div class="brands-header__actions">
+
+      <div class="brands-header__summary">
+
+        <span class="brands-header__summary-label">
+          Toplam Marka
+        </span>
+
+        <strong>
+          {{ brands().length }}
+        </strong>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="brands-header__add">
+
+        Marka Ekle
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  @if (isLoading()) {
+
+    <div class="brands-state brands-state--loading">
+
+      <div class="brands-state__spinner"></div>
+
+      <div>
+        <strong>
+          Markalar yükleniyor
+        </strong>
+
+        <p>
+          Marka bilgileri hazırlanıyor...
+        </p>
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="brands-state brands-state--error">
+
+      <div class="brands-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Marka bilgileri yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (brands().length === 0) {
+
+    <div class="brands-empty">
+
+      <div class="brands-empty__icon">
+        B
+      </div>
+
+      <h3>
+        Henüz marka bulunmuyor
+      </h3>
+
+      <p>
+        Sistemde görüntülenecek herhangi bir araç markası bulunmuyor.
+      </p>
+
+
+      <button
+        type="button"
+        class="brands-empty__add">
+
+        İlk Markayı Ekle
+
+      </button>
+
+    </div>
+
+  }
+
+  @else {
+
+    <section class="brands-card">
+
+      <div class="brands-card__header">
+
+        <div>
+
+          <span class="brands-card__eyebrow">
+            Marka Listesi
+          </span>
+
+          <h2>
+            Kayıtlı Markalar
+          </h2>
+
+        </div>
+
+
+        <span class="brands-card__count">
+          {{ brands().length }} kayıt
+        </span>
+
+      </div>
+
+
+      <div class="brands-list">
+
+        <div class="brands-list__header">
+
+          <span>
+            Marka
+          </span>
+
+          <span>
+            Durum
+          </span>
+
+          <span>
+            İşlemler
+          </span>
+
+        </div>
+
+
+        @for (brand of brands(); track brand.id) {
+
+          <div class="brand-item">
+
+            <div class="brand-item__identity">
+
+              <div class="brand-item__avatar">
+
+                {{ brand.name.charAt(0).toUpperCase() }}
+
+              </div>
+
+
+              <div class="brand-item__content">
+
+                <strong>
+                  {{ brand.name }}
+                </strong>
+
+                <span>
+                  Araç markası
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="brand-item__status">
+
+              <span class="brand-item__status-dot"></span>
+
+              Kayıtlı
+
+            </div>
+
+
+            <div class="brand-item__actions">
+
+            <button
+              type="button"
+              class="brand-item__edit"
+              [routerLink]="routeLinks.Admin.BrandById(brand.id)">
+            
+              Detay
+                        
+            </button>
+
+
+              <button
+                type="button"
+                class="brand-item__delete">
+
+                Sil
+
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  }
+
+</section>

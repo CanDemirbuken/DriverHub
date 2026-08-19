@@ -8,7 +8,8 @@ export const RoutePaths = {
     ForgotPassword: 'forgot-password',
     ResetPassword: 'reset-password',
     Dashboard: 'dashboard',
-    Cars: 'cars'
+    Cars: 'cars',
+    Brands: 'brands'
   }
 } as const;
 
@@ -21,6 +22,8 @@ export const RouteLinks = {
     Dashboard: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Dashboard}`,
     Cars: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}`,
     CarDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}`,
-    CarEdit: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}/edit`
+    CarEdit: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}/edit`,
+    Brands: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}`,
+    BrandById: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}/${id}`
   }
 } as const;

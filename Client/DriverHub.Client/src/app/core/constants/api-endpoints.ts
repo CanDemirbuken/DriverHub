@@ -26,11 +26,17 @@ export const ApiEndpoints = {
       `/api/cars/${id}/location`,
 
     UpdatePricings: (id: string) =>
-      `/api/cars/${id}/pricings`
+      `/api/cars/${id}/pricings`,
+
+    UpdateFeatures: (id: string) =>
+      `/api/cars/${id}/features`
   },
 
   Brands: {
-    GetBrands: `/api/brands`
+    GetBrands: `/api/brands`,
+    
+    GetById: (id: string) =>
+      `/api/brands/${id}`
   },
 
   Categories: {
@@ -43,5 +49,9 @@ export const ApiEndpoints = {
 
   Media: {
     Upload: `/api/media/upload`
+  },
+
+  Features: {
+    GetFeatures: `/api/features`
   }
 } as const;

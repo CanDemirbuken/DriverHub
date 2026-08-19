@@ -11,6 +11,8 @@ import { adminGuestGuard } from './core/guards/admin-guest-guard';
 import { Cars } from './features/cars/cars';
 import { CarDetail } from './features/car-detail/car-detail';
 import { CarEdit } from './features/car-edit/car-edit';
+import { Brands } from './features/brands/brands/brands';
+import { BrandById } from './features/brands/brand-by-id/brand-by-id';
 
 export const routes: Routes = [
   {
@@ -55,6 +57,14 @@ export const routes: Routes = [
       {
         path: `${RoutePaths.Admin.Cars}/:id/edit`,
         component: CarEdit
+      },
+      {
+        path: RoutePaths.Admin.Brands,
+        component: Brands
+      },
+      {
+        path: `${RoutePaths.Admin.Brands}/:id`,
+        component: BrandById
       }
     ]
   }

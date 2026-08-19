@@ -235,60 +235,224 @@
 
         </section>
 
-
         <!-- FEATURES -->
 
-        <section class="detail-card">
-
+        <section class="detail-card detail-card--features">
+        
           <div class="detail-card__header">
-
+          
             <div>
               <span class="detail-card__eyebrow">
                 Donanımlar
               </span>
-
+            
               <h3>
                 Araç Özellikleri
               </h3>
             </div>
-
-            <span class="detail-card__count">
-              {{ currentCar.features.length }} özellik
-            </span>
-
-          </div>
-
-
-          @if (currentCar.features.length > 0) {
-
-            <div class="feature-list">
-
-              @for (feature of currentCar.features; track feature.featureId) {
-
-                <span class="feature-chip">
-
-                  <span class="feature-chip__check">
-                    ✓
-                  </span>
-
-                  {{ feature.featureName }}
-
+          
+          
+            @if (!isFeatureEditing()) {
+            
+              <div class="feature-header-actions">
+              
+                <span class="detail-card__count">
+                  {{ currentCar.features.length }} özellik
                 </span>
+              
+                <button
+                  type="button"
+                  class="feature-edit-button"
+                  (click)="startFeatureEditing()">
 
-              }
-
-            </div>
-
+                  Özellikleri Düzenle
+              
+                </button>
+              
+              </div>
+            
+            }
+          
+            @else {
+            
+              <span class="detail-card__count">
+                {{ editableFeatures().length }} özellik
+              </span>
+            
+            }
+          
+          </div>
+        
+        
+          @if (!isFeatureEditing()) {
+          
+            @if (currentCar.features.length > 0) {
+            
+              <div class="feature-list">
+              
+                @for (feature of currentCar.features; track feature.featureId) {
+                
+                  <span class="feature-chip">
+                  
+                    <span class="feature-chip__check">
+                      ✓
+                    </span>
+                  
+                    {{ feature.featureName }}
+                  
+                  </span>
+                
+                }
+              
+              </div>
+            
+            }
+          
+            @else {
+            
+              <div class="detail-empty">
+              
+                Bu araç için tanımlı özellik bulunmuyor.
+              
+              </div>
+            
+            }
+          
           }
-
+        
           @else {
+          
+            <div class="feature-editor">
+            
+              <div class="feature-editor__header">
+              
+                <div>
+                
+                  <strong>
+                    Araç özelliklerini seçin
+                  </strong>
+                
+                  <span>
+                    Araçta bulunmasını istediğiniz özellikleri işaretleyebilirsiniz.
+                  </span>
+                
+                </div>
+              
+              
+                <span class="feature-editor__selected-count">
+                
+                  {{ currentCar.features.length }} mevcut
+                
+                </span>
+              
+              </div>
+            
+            
+              @if (editableFeatures().length > 0) {
+              
+                <div class="feature-editor__grid">
+                
+                  @for (feature of editableFeatures(); track feature.featureId) {
+                  
+                    <label
+                      class="feature-option"
+                      [class.feature-option--selected]="feature.isSelected"
+                      [class.feature-option--disabled]="isFeatureUpdating()">
 
-            <div class="detail-empty">
-              Bu araç için tanımlı özellik bulunmuyor.
+                      <input
+                        type="checkbox"
+                        [checked]="feature.isSelected"
+                        [disabled]="isFeatureUpdating()"
+                        (change)="toggleFeature(feature.featureId)"
+                      />
+
+                  
+                      <span class="feature-option__checkbox">
+                      
+                        @if (feature.isSelected) {
+                          ✓
+                        }
+                      
+                      </span>
+                    
+                    
+                      <span class="feature-option__name">
+                      
+                        {{ feature.name }}
+                      
+                      </span>
+                    
+                    </label>
+                  
+                  }
+                
+                </div>
+              
+              }
+            
+              @else {
+              
+                <div class="detail-empty">
+                
+                  Sistemde tanımlı özellik bulunmuyor.
+                
+                </div>
+              
+              }
+            
+            
+              <div class="feature-editor__footer">
+              
+                <span class="feature-editor__hint">
+                
+                  Yapılan değişiklikler yalnızca Kaydet butonuna basıldığında uygulanır.
+                
+                </span>
+              
+              
+                <div class="feature-editor__actions">
+                
+                  <button
+                    type="button"
+                    class="feature-editor__cancel"
+                    [disabled]="isFeatureUpdating()"
+                    (click)="cancelFeatureEditing()">
+
+                    Vazgeç
+                
+                  </button>
+                
+                
+                  <button
+                    type="button"
+                    class="feature-editor__save"
+                    [disabled]="isFeatureUpdating() || !hasFeatureChanges()"
+                    (click)="updateCarFeatures()">
+
+                    @if (isFeatureUpdating()) {
+                    
+                      <span class="button-spinner"></span>
+                    
+                      Güncelleniyor...
+                    
+                    }
+                  
+                    @else {
+                    
+                      Kaydet
+                    
+                    }
+                  
+                  </button>
+                
+                </div>
+              
+              </div>
+            
             </div>
-
+          
           }
-
+        
         </section>
 
       </div>

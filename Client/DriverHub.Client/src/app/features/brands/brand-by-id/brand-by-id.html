@@ -1,0 +1,202 @@
+<section class="brand-detail-page">
+
+  @if (isLoading()) {
+
+    <div class="brand-detail-state brand-detail-state--loading">
+
+      <div class="brand-detail-state__spinner"></div>
+
+      <div>
+        <strong>
+          Marka bilgisi yükleniyor
+        </strong>
+
+        <p>
+          Marka detayları hazırlanıyor...
+        </p>
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="brand-detail-state brand-detail-state--error">
+
+      <div class="brand-detail-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Marka bilgisi yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (brand(); as currentBrand) {
+
+    <div class="brand-detail-toolbar">
+
+      <button
+        type="button"
+        class="brand-detail-toolbar__back">
+
+        <span>
+          ←
+        </span>
+
+        Marka Listesine Dön
+
+      </button>
+
+
+      <button
+        type="button"
+        class="brand-detail-toolbar__edit">
+
+        Düzenle
+
+      </button>
+
+    </div>
+
+
+    <section class="brand-detail-hero">
+
+      <div class="brand-detail-hero__avatar">
+
+        {{ currentBrand.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="brand-detail-hero__content">
+
+        <span class="brand-detail-hero__eyebrow">
+          Araç Markası
+        </span>
+
+        <h1>
+          {{ currentBrand.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı marka bilgilerini buradan görüntüleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="brand-detail-hero__status">
+
+        <span class="brand-detail-hero__status-dot"></span>
+
+        Kayıtlı
+
+      </div>
+
+    </section>
+
+
+    <div class="brand-detail-layout">
+
+      <section class="brand-detail-card">
+
+        <div class="brand-detail-card__header">
+
+          <div>
+
+            <span class="brand-detail-card__eyebrow">
+              Marka Bilgileri
+            </span>
+
+            <h2>
+              Genel Bilgiler
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="brand-detail-grid">
+
+          <div class="brand-detail-item">
+
+            <span class="brand-detail-item__label">
+              Marka Adı
+            </span>
+
+            <strong>
+              {{ currentBrand.name }}
+            </strong>
+
+          </div>
+
+
+          <div class="brand-detail-item">
+
+            <span class="brand-detail-item__label">
+              Durum
+            </span>
+
+            <strong class="brand-detail-item__status">
+              Aktif Kayıt
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <aside class="brand-detail-card brand-detail-card--identity">
+
+        <div class="brand-detail-card__header">
+
+          <div>
+
+            <span class="brand-detail-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Marka Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="brand-detail-identity">
+
+          <span>
+            Marka ID
+          </span>
+
+          <strong>
+            {{ currentBrand.id }}
+          </strong>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

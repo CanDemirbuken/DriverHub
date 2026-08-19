@@ -15,6 +15,10 @@ import { LocationService } from '../../core/services/location/location-service';
 import { UpdateCarLocationRequest } from '../../core/services/car/models/update-car-location-request';
 import { PricingType, UpdateCarPricingsRequest } from '../../core/services/car/models/update-car-pricings-request';
 import { EditableCarPricing } from '../../core/services/car/models/editable-car-pricing';
+import { EditableCarFeatures } from '../../core/services/car/models/editable-car-features';
+import { FeatureService } from '../../core/services/feature/feature-service';
+import { GetFeaturesResponse } from '../../core/services/feature/models/get-features-response';
+import { UpdateCarFeaturesRequest } from '../../core/services/car/models/update-car-features-request';
 
 @Component({
   selector: 'app-car-detail',
@@ -44,11 +48,17 @@ export class CarDetail implements OnInit {
   editablePricings = signal<EditableCarPricing[]>([]);
   isPricingUpdating = signal(false);
 
+  features = signal<GetFeaturesResponse[]>([]);
+  editableFeatures = signal<EditableCarFeatures[]>([]);
+  isFeatureUpdating = signal(false);
+  isFeatureEditing = signal(false);
+
   constructor(
     private readonly carService: CarService,
     private readonly route: ActivatedRoute,
     private readonly toastService: ToastService,
-    private readonly locationService: LocationService
+    private readonly locationService: LocationService,
+    private readonly featureService: FeatureService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +73,154 @@ export class CarDetail implements OnInit {
       this.carId.set(id);
       this.getById();
       this.getLocations();
+      this.getFeatures();
     });
+  }
+
+  updateCarFeatures(): void {
+    const currentCar = this.car();
+
+    if (!currentCar) {
+      return;
+    }
+
+    if (!this.hasFeatureChanges()) {
+      return;
+    }
+
+    const featureIds = this.editableFeatures()
+      .filter(feature => feature.isSelected)
+      .map(feature => feature.featureId);
+
+    const request: UpdateCarFeaturesRequest = {
+      featureIds: featureIds
+    };
+
+    this.isFeatureUpdating.set(true);
+
+    this.carService.updateCarFeatures(this.carId(), request).subscribe({
+      next: () => {
+        const updatedFeatures = this.editableFeatures()
+          .filter(feature => feature.isSelected)
+          .map(feature => ({
+            featureId: feature.featureId,
+            featureName: feature.name
+          }));
+
+        this.car.update(car => car ? {
+          ...car,
+          features: updatedFeatures
+        } : car);
+
+        this.toastService.showSuccessMessage('Araç özellikleri başarıyla güncellendi.');
+
+        this.isFeatureUpdating.set(false);
+      },
+
+      error: (error: HttpErrorResponse) => {
+        const apiResponse = error.error as ApiResponse<unknown>;
+        const message = apiResponse?.errors?.[0]?.message ?? 'Araç özellikleri güncellenirken bir hata oluştu.';
+
+        this.toastService.showErrorMessage(message);
+
+        this.isFeatureUpdating.set(false);
+      }
+    });
+  }
+
+  startFeatureEditing(): void {
+    this.initializeEditableFeatures();
+    this.isFeatureEditing.set(true);
+  }
+  
+  cancelFeatureEditing(): void {
+    this.initializeEditableFeatures();
+    this.isFeatureEditing.set(false);
+  }
+
+  getFeatures(): void {
+    this.featureService
+      .getFeatures()
+      .subscribe({
+        next: response => {
+          if (!response.isSuccess || !response.data) {
+            this.errorMessage.set('Özellik bilgisi alınamadı.');
+            return;
+          }
+
+          this.features.set(response.data);
+
+          this.initializeEditableFeatures();
+        },
+
+        error: (error: HttpErrorResponse) => {
+          const apiResponse = error.error as ApiResponse<unknown>;
+          const message = apiResponse?.errors?.[0]?.message ?? 'Özellik bilgisi alınırken bir hata oluştu.';
+
+          this.toastService.showErrorMessage(message);
+        }
+      });
+  }
+
+  private initializeEditableFeatures(): void {
+    const currentCar = this.car();
+
+    if (!currentCar) {
+      return;
+    }
+
+    const editableFeatures: EditableCarFeatures[] = this.features()
+      .map(feature => ({
+        featureId: feature.id,
+        name: feature.name,
+        isSelected: currentCar.features.some(
+          carFeature => carFeature.featureId === feature.id
+        )
+      }));
+
+    this.editableFeatures.set(editableFeatures);
+  }
+
+  toggleFeature(featureId: string): void {
+    this.editableFeatures.update(features =>
+      features.map(feature =>
+        feature.featureId === featureId
+          ? {
+              ...feature,
+              isSelected: !feature.isSelected
+            }
+          : feature
+      )
+    );
+  }
+
+  hasFeatureChanges(): boolean {
+    const currentCar = this.car();
+
+    if (!currentCar) {
+      return false;
+    }
+
+    const currentFeatureIds = currentCar.features
+      .map(feature => feature.featureId)
+      .sort();
+
+    const editableFeatureIds = this.editableFeatures()
+      .filter(feature => feature.isSelected)
+      .map(feature => feature.featureId)
+      .sort();
+
+    if (currentFeatureIds.length !== editableFeatureIds.length) {
+      return true;
+    }
+
+    return currentFeatureIds.some(
+      (id, index) => id !== editableFeatureIds[index]
+    );
+  }
+
+  cancelFeatureChanges(): void {
+    this.initializeEditableFeatures();
   }
 
   updateCarPricings(): void {
@@ -235,6 +392,8 @@ export class CarDetail implements OnInit {
         this.car.set(data);
         this.selectedStatus.set(data.status as CarStatus);
         this.selectedLocationId.set(data.currentLocationId);
+
+        this.initializeEditableFeatures();
         
         const pricingTypes = [
           PricingType.Daily,

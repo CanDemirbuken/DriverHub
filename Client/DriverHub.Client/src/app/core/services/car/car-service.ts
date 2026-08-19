@@ -13,6 +13,7 @@ import { UpdateCarRequest } from './models/update-car-request';
 import { UpdateCarStatusRequest } from './models/update-car-status-request';
 import { UpdateCarLocationRequest } from './models/update-car-location-request';
 import { UpdateCarPricingsRequest } from './models/update-car-pricings-request';
+import { UpdateCarFeaturesRequest } from './models/update-car-features-request';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +48,11 @@ export class CarService {
 
   updateCarPricings(id: string, request: UpdateCarPricingsRequest): Observable<void>{
     const url = `${environment.apiUrl}${ApiEndpoints.Cars.UpdatePricings(id)}`;
+    return this.http.put<void>(url,request);
+  }
+
+  updateCarFeatures(id: string, request: UpdateCarFeaturesRequest): Observable<void>{
+    const url = `${environment.apiUrl}${ApiEndpoints.Cars.UpdateFeatures(id)}`;
     return this.http.put<void>(url,request);
   }
 }
