@@ -3,6 +3,7 @@
 <p align="center">
 
 <img src="https://img.shields.io/badge/.NET-10-512BD4?style=for-the-badge&logo=dotnet" />
+<img src="https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular" />
 <img src="https://img.shields.io/badge/ASP.NET_Core-10-512BD4?style=for-the-badge&logo=dotnet" />
 <img src="https://img.shields.io/badge/EF_Core-SQL_Server-6DB33F?style=for-the-badge" />
 <img src="https://img.shields.io/badge/CQRS-MediatR-orange?style=for-the-badge" />
@@ -14,7 +15,7 @@
 <p align="center">
 
 <strong>
-A production-oriented car rental backend built with ASP.NET Core, Clean Architecture, CQRS and secure identity management.
+A full-stack car rental platform built with ASP.NET Core, Angular, Clean Architecture, CQRS and secure identity management.
 </strong>
 
 </p>
@@ -23,16 +24,18 @@ A production-oriented car rental backend built with ASP.NET Core, Clean Architec
 
 ## 📖 About
 
-DriverHub is a **car rental backend API** designed as a portfolio project around modern .NET backend architecture and real-world application patterns.
+DriverHub is a **car rental platform** designed as a portfolio project around modern .NET backend architecture, Angular frontend development and real-world application patterns.
 
 The project originally started as a CRUD-focused learning project, but evolved into a more focused rental domain centered around **physical vehicles, fleet management, locations, pricing and reservations**.
 
 Instead of implementing repetitive CRUD operations for unrelated entities, DriverHub focuses on a smaller domain with deeper business behavior.
 
-Current development is divided into two main areas:
+The application is divided into two main areas:
 
 - **Admin Fleet Management**
 - **Public Rental & Reservation Flow**
+
+The backend provides the application, domain, security and persistence foundation, while the Angular client provides the administrative and future public-facing user interfaces.
 
 ---
 
@@ -44,6 +47,16 @@ Current development is divided into two main areas:
 - ASP.NET Core Web API
 - Entity Framework Core
 - SQL Server
+
+### Frontend
+
+- Angular
+- TypeScript
+- Angular Signals
+- Angular Router
+- HttpClient
+- SCSS
+- Standalone Components
 
 ### Architecture
 
@@ -77,7 +90,7 @@ Current development is divided into two main areas:
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Backend Architecture
 
 DriverHub follows Clean Architecture principles and keeps application rules independent from infrastructure concerns.
 
@@ -138,7 +151,7 @@ Car ───── Category
  └───── Description
 ```
 
-A `Car` represents a **physical vehicle**, not only a model.
+A `Car` represents a **physical vehicle**, not only a vehicle model.
 
 Example:
 
@@ -150,13 +163,13 @@ Current Location: Bostancı
 Status: Active
 ```
 
-This allows the system to support real rental scenarios such as vehicle location, status, availability and reservations.
+This allows the system to support real rental scenarios such as vehicle location, operational status, availability, pricing and reservations.
 
 ---
 
 ## ✨ Admin Fleet Management
 
-Admin-only CQRS operations are currently implemented for:
+Admin-only operations are implemented around the core fleet domain.
 
 ### Cars
 
@@ -168,6 +181,7 @@ Admin-only CQRS operations are currently implemented for:
 - Change current location
 - Assign vehicle features
 - Configure daily / weekly / monthly pricing
+- Upload and manage vehicle images
 
 ### Supporting Data
 
@@ -176,8 +190,38 @@ Admin-only CQRS operations are currently implemented for:
 - Location management
 - Feature management
 
-Delete operations contain relationship-aware business rules.  
+Delete operations contain relationship-aware business rules.
+
 For example, a Brand, Category, Location or Feature cannot be removed while it is actively referenced by vehicles.
+
+---
+
+## 🖥️ Angular Client
+
+DriverHub includes an Angular client for the Admin Panel and future public rental experience.
+
+The current Admin Panel communicates directly with the ASP.NET Core Web API and includes:
+
+- Standalone Angular architecture
+- Admin and public layouts
+- Route guards
+- API service layer
+- Standardized API response models
+- Car listing
+- Car detail screen
+- Car creation and editing
+- Vehicle image upload and preview
+- Inline vehicle status management
+- Inline vehicle location management
+- Vehicle pricing management
+- Global toast notifications
+- Shared helpers and reusable UI infrastructure
+
+Detailed frontend documentation is available in:
+
+```text
+Client/DriverHub.Client/README.md
+```
 
 ---
 
@@ -236,13 +280,26 @@ DriverHub uses several reusable backend patterns:
 - EF Core configurations
 - User Secrets for local sensitive configuration
 
+The Angular client follows similar separation principles through:
+
+- Feature components
+- Core API services
+- Shared UI components
+- Shared helpers
+- Typed request / response models
+- Centralized route definitions
+- Signal-based local UI state
+
 ---
 
-## 📂 Solution Structure
+## 📂 Repository Structure
 
 ```text
 DriverHub
 
+├── Client
+│   └── DriverHub.Client
+│
 ├── Core
 │   ├── DriverHub.Domain
 │   └── DriverHub.Application
@@ -274,7 +331,7 @@ DriverHub
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Backend Getting Started
 
 ### Prerequisites
 
@@ -325,13 +382,41 @@ dotnet ef database update \
   --startup-project Presentation/DriverHub.WebApi
 ```
 
-### Run
+### Run API
 
 ```bash
 dotnet run --project Presentation/DriverHub.WebApi
 ```
 
 Swagger documentation is available in the **Development** environment.
+
+---
+
+## 🌐 Frontend Getting Started
+
+Navigate to the Angular client:
+
+```bash
+cd Client/DriverHub.Client
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+ng serve
+```
+
+For detailed Angular client documentation, see:
+
+```text
+Client/DriverHub.Client/README.md
+```
 
 ---
 
@@ -349,7 +434,7 @@ Swagger/OpenAPI includes:
 
 ## 🧪 Current Status
 
-### Completed
+### Backend Completed
 
 - ✅ Clean Architecture foundation
 - ✅ CQRS + MediatR
@@ -373,13 +458,30 @@ Swagger/OpenAPI includes:
 - ✅ Location Management
 - ✅ Feature Management
 
+### Angular Admin Panel
+
+- ✅ Admin layout and navigation
+- ✅ Angular routing foundation
+- ✅ Route guards
+- ✅ API integration foundation
+- ✅ Car listing
+- ✅ Car details
+- ✅ Car creation
+- ✅ Car editing
+- ✅ Vehicle media upload
+- ✅ Global toast notifications
+- ✅ Vehicle status management
+- ✅ Vehicle location management
+- ✅ Vehicle pricing management
+- 🚧 Vehicle feature management
+
 ### In Progress
 
+- 🚧 Angular Admin Panel
 - 🚧 Reservation use cases
 - 🚧 Vehicle availability checks
 - 🚧 Rental price calculation
 - 🚧 Extras and insurance flow
-- 🚧 Angular Admin Panel integration
 
 ### Planned
 
@@ -394,7 +496,7 @@ Swagger/OpenAPI includes:
 
 ## 🗺️ Domain Roadmap
 
-The next major backend milestone is the rental flow:
+The next major domain milestone is the rental flow:
 
 ```text
 Location + Rental Dates
@@ -439,8 +541,10 @@ The project prioritizes:
 - Explicit validation
 - Maintainable code
 - Small and meaningful abstractions
+- Clear frontend/backend separation
+- User-oriented administrative workflows
 
-The goal is not to demonstrate how many CRUD endpoints can be written, but how a backend can evolve from a simple application into a structured rental system.
+The goal is not to demonstrate how many CRUD endpoints or screens can be written, but how an application can evolve from a simple project into a structured rental platform.
 
 ---
 
@@ -460,6 +564,6 @@ LinkedIn
 
 <p align="center">
 
-Built with ❤️ using ASP.NET Core, Clean Architecture and CQRS.
+Built with ❤️ using ASP.NET Core, Angular, Clean Architecture and CQRS.
 
 </p>
