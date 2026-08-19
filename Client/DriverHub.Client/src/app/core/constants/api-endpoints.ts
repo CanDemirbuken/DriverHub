@@ -17,7 +17,16 @@ export const ApiEndpoints = {
       `/api/cars/${id}`,
 
     Update: (id: string) =>
-      `/api/cars/${id}`
+      `/api/cars/${id}`,
+
+    UpdateStatus: (id: string) =>
+      `/api/cars/${id}/status`,
+
+    UpdateLocation: (id: string) => 
+      `/api/cars/${id}/location`,
+
+    UpdatePricings: (id: string) =>
+      `/api/cars/${id}/pricings`
   },
 
   Brands: {

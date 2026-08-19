@@ -10,6 +10,9 @@ import { ApiEndpoints } from '../../constants/api-endpoints';
 import { GetCarByIdResponse } from './models/get-car-by-id-response';
 import { GetCarByIdRequest } from './models/get-car-by-id-request';
 import { UpdateCarRequest } from './models/update-car-request';
+import { UpdateCarStatusRequest } from './models/update-car-status-request';
+import { UpdateCarLocationRequest } from './models/update-car-location-request';
+import { UpdateCarPricingsRequest } from './models/update-car-pricings-request';
 
 @Injectable({
   providedIn: 'root',
@@ -22,13 +25,28 @@ export class CarService {
     return this.http.get<ApiResponse<PagedResponse<GetPagedCarResponse>>>(url);
   }
 
-  getCarById(request: GetCarByIdRequest) : Observable<ApiResponse<GetCarByIdResponse>>{
+  getCarById(request: GetCarByIdRequest): Observable<ApiResponse<GetCarByIdResponse>>{
     const url = `${environment.apiUrl}${ApiEndpoints.Cars.GetById(request.carId)}`;
     return this.http.get<ApiResponse<GetCarByIdResponse>>(url);
   }
 
-  updateCar(id: string, request: UpdateCarRequest) : Observable<void>{
+  updateCar(id: string, request: UpdateCarRequest): Observable<void>{
     const url = `${environment.apiUrl}${ApiEndpoints.Cars.Update(id)}`;
     return this.http.put<void>(url, request);
+  }
+
+  updateCarStatus(id: string, request: UpdateCarStatusRequest): Observable<void>{
+    const url = `${environment.apiUrl}${ApiEndpoints.Cars.UpdateStatus(id)}`;
+    return this.http.patch<void>(url, request);
+  }
+
+  updateCarLocation(id: string, request: UpdateCarLocationRequest): Observable<void>{
+    const url = `${environment.apiUrl}${ApiEndpoints.Cars.UpdateLocation(id)}`;
+    return this.http.patch<void>(url,request);
+  }
+
+  updateCarPricings(id: string, request: UpdateCarPricingsRequest): Observable<void>{
+    const url = `${environment.apiUrl}${ApiEndpoints.Cars.UpdatePricings(id)}`;
+    return this.http.put<void>(url,request);
   }
 }

@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { RouteLinks } from '../../core/constants/route-paths';
 
 import { environment } from '../../../environments/environment';
+import { ImageUrlHelper } from '../../shared/helpers/image-url-helper';
 
 @Component({
   selector: 'app-cars',
@@ -34,7 +35,9 @@ export class Cars implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
 
-  constructor(private readonly carService: CarService) {}
+  imageUrlHelper = ImageUrlHelper;
+
+  constructor(private readonly carService: CarService,) {}
 
   ngOnInit(): void {
     this.get();
@@ -110,20 +113,5 @@ export class Cars implements OnInit {
           this.isLoading.set(false);
         }
       });
-  }
-
-  getImageUrl(path: string): string {
-    if (!path) {
-      return '';
-    }
-  
-    if (
-      path.startsWith('http://') ||
-      path.startsWith('https://')
-    ) {
-      return path;
-    }
-  
-    return `${environment.apiUrl}${path}`;
   }
 }

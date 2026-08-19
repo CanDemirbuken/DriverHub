@@ -1,10 +1,12 @@
 <section class="car-detail-page">
+
   @if (isLoading()) {
     <div class="car-detail-state car-detail-state--loading">
       <div class="car-detail-state__spinner"></div>
       <p>Araç bilgileri yükleniyor...</p>
     </div>
   }
+
   @else if (errorMessage()) {
     <div class="car-detail-state car-detail-state--error">
       <div class="car-detail-state__icon">!</div>
@@ -15,9 +17,11 @@
       </div>
     </div>
   }
+
   @else if (car(); as currentCar) {
 
     <div class="car-detail-toolbar">
+
       <a
         class="car-detail-toolbar__back"
         [routerLink]="routeLinks.Admin.Cars">
@@ -27,24 +31,29 @@
 
       <button
         type="button"
-        class="car-detail-toolbar__edit">
+        class="car-detail-toolbar__edit"
+        [routerLink]="['/admin/cars', carId(), 'edit']">
         Düzenle
       </button>
+
     </div>
 
+
     <article class="car-hero">
+
       <div class="car-hero__image-wrapper">
+
         @if (currentCar.bigImageUrl) {
           <img
             class="car-hero__image"
-            [src]="getImageUrl(currentCar.bigImageUrl)"
+            [src]="imageUrlHelper.getImageUrl(currentCar.bigImageUrl)"
             [alt]="currentCar.brandName + ' ' + currentCar.model"
           />
         }
         @else if (currentCar.coverImageUrl) {
           <img
             class="car-hero__image"
-            [src]="getImageUrl(currentCar.coverImageUrl)"
+            [src]="imageUrlHelper.getImageUrl(currentCar.coverImageUrl)"
             [alt]="currentCar.brandName + ' ' + currentCar.model"
           />
         }
@@ -56,12 +65,15 @@
 
         <div class="car-hero__overlay"></div>
 
+
         <div class="car-hero__identity">
+
           <span class="car-hero__brand">
             {{ currentCar.brandName }}
           </span>
 
           <div class="car-hero__title-row">
+
             <h2>
               {{ currentCar.model }}
             </h2>
@@ -69,9 +81,12 @@
             <span class="car-hero__year">
               {{ currentCar.modelYear }}
             </span>
+
           </div>
 
+
           <div class="car-hero__meta">
+
             <span class="car-hero__plate">
               {{ currentCar.plate }}
             </span>
@@ -79,24 +94,38 @@
             <span class="car-hero__location">
               {{ currentCar.currentLocationName }}
             </span>
+
           </div>
+
         </div>
+
 
         <span
           class="car-hero__status"
           [class.car-hero__status--active]="currentCar.status === 1"
           [class.car-hero__status--inactive]="currentCar.status !== 1">
+
           <span class="car-hero__status-dot"></span>
-          {{ currentCar.status === 1 ? 'Aktif' : 'Pasif' }}
+
+          {{ getCarStatusLabel(currentCar.status) }}
+
         </span>
+
       </div>
+
     </article>
 
+
     <div class="car-detail-layout">
+
       <div class="car-detail-layout__main">
 
+        <!-- GENERAL -->
+
         <section class="detail-card">
+
           <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Araç Bilgileri
@@ -110,93 +139,63 @@
             <span class="detail-card__badge">
               {{ currentCar.categoryName }}
             </span>
+
           </div>
+
 
           <div class="detail-grid">
-            <div class="detail-item">
-              <span class="detail-item__label">
-                Marka
-              </span>
 
-              <strong>
-                {{ currentCar.brandName }}
-              </strong>
+            <div class="detail-item">
+              <span class="detail-item__label">Marka</span>
+              <strong>{{ currentCar.brandName }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Model
-              </span>
-
-              <strong>
-                {{ currentCar.model }}
-              </strong>
+              <span class="detail-item__label">Model</span>
+              <strong>{{ currentCar.model }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Model Yılı
-              </span>
-
-              <strong>
-                {{ currentCar.modelYear }}
-              </strong>
+              <span class="detail-item__label">Model Yılı</span>
+              <strong>{{ currentCar.modelYear }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Plaka
-              </span>
-
-              <strong class="detail-item__mono">
-                {{ currentCar.plate }}
-              </strong>
+              <span class="detail-item__label">Plaka</span>
+              <strong class="detail-item__mono">{{ currentCar.plate }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Kilometre
-              </span>
-
-              <strong>
-                {{ currentCar.km }} km
-              </strong>
+              <span class="detail-item__label">Kilometre</span>
+              <strong>{{ currentCar.km }} km</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Renk
-              </span>
-
-              <strong>
-                {{ currentCar.color }}
-              </strong>
+              <span class="detail-item__label">Renk</span>
+              <strong>{{ currentCar.color }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Vites
-              </span>
-
-              <strong>
-                {{ currentCar.transmission }}
-              </strong>
+              <span class="detail-item__label">Vites</span>
+              <strong>{{ currentCar.transmission }}</strong>
             </div>
 
             <div class="detail-item">
-              <span class="detail-item__label">
-                Yakıt
-              </span>
-
-              <strong>
-                {{ currentCar.fuel }}
-              </strong>
+              <span class="detail-item__label">Yakıt</span>
+              <strong>{{ currentCar.fuel }}</strong>
             </div>
+
           </div>
+
         </section>
 
+
+        <!-- TECHNICAL -->
+
         <section class="detail-card">
+
           <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Donanım
@@ -206,53 +205,43 @@
                 Teknik Özellikler
               </h3>
             </div>
+
           </div>
+
 
           <div class="spec-grid">
-            <div class="spec-card">
-              <span class="spec-card__value">
-                {{ currentCar.seat }}
-              </span>
 
-              <span class="spec-card__label">
-                Koltuk
-              </span>
+            <div class="spec-card">
+              <span class="spec-card__value">{{ currentCar.seat }}</span>
+              <span class="spec-card__label">Koltuk</span>
             </div>
 
             <div class="spec-card">
-              <span class="spec-card__value">
-                {{ currentCar.luggage }}
-              </span>
-
-              <span class="spec-card__label">
-                Bagaj
-              </span>
+              <span class="spec-card__value">{{ currentCar.luggage }}</span>
+              <span class="spec-card__label">Bagaj</span>
             </div>
 
             <div class="spec-card">
-              <span class="spec-card__value">
-                {{ currentCar.transmission }}
-              </span>
-
-              <span class="spec-card__label">
-                Vites
-              </span>
+              <span class="spec-card__value">{{ currentCar.transmission }}</span>
+              <span class="spec-card__label">Vites</span>
             </div>
 
             <div class="spec-card">
-              <span class="spec-card__value">
-                {{ currentCar.fuel }}
-              </span>
-
-              <span class="spec-card__label">
-                Yakıt
-              </span>
+              <span class="spec-card__value">{{ currentCar.fuel }}</span>
+              <span class="spec-card__label">Yakıt</span>
             </div>
+
           </div>
+
         </section>
 
+
+        <!-- FEATURES -->
+
         <section class="detail-card">
+
           <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Donanımlar
@@ -264,39 +253,138 @@
             </div>
 
             <span class="detail-card__count">
-              {{ currentCar.features.length }}
-              özellik
+              {{ currentCar.features.length }} özellik
             </span>
+
           </div>
 
+
           @if (currentCar.features.length > 0) {
+
             <div class="feature-list">
-              @for (
-                feature of currentCar.features;
-                track feature.featureId
-              ) {
+
+              @for (feature of currentCar.features; track feature.featureId) {
+
                 <span class="feature-chip">
+
                   <span class="feature-chip__check">
                     ✓
                   </span>
 
                   {{ feature.featureName }}
+
                 </span>
+
               }
+
             </div>
+
           }
+
           @else {
+
             <div class="detail-empty">
               Bu araç için tanımlı özellik bulunmuyor.
             </div>
+
           }
+
         </section>
+
       </div>
+
 
       <aside class="car-detail-layout__side">
 
-        <section class="detail-card detail-card--pricing">
+        <!-- STATUS -->
+
+        <section class="detail-card detail-card--operation">
+
           <div class="detail-card__header">
+
+            <div>
+              <span class="detail-card__eyebrow">
+                Operasyonel İşlemler
+              </span>
+
+              <h3>
+                Araç Durumu
+              </h3>
+            </div>
+
+          </div>
+
+
+          <div class="operation-status">
+
+            <div class="operation-status__current">
+
+              <span>
+                Mevcut Durum
+              </span>
+
+              <strong>
+                {{ getCarStatusLabel(currentCar.status) }}
+              </strong>
+
+            </div>
+
+
+            <div class="operation-status__form">
+
+              <label for="carStatus">
+                Yeni Durum
+              </label>
+
+              <select
+                id="carStatus"
+                name="carStatus"
+                [(ngModel)]="selectedStatus"
+                [disabled]="isStatusUpdating()">
+
+                <option [ngValue]="1">Aktif</option>
+                <option [ngValue]="2">Bakımda</option>
+                <option [ngValue]="3">Servis Dışı</option>
+                <option [ngValue]="4">Hasarlı</option>
+                <option [ngValue]="5">Kullanım Dışı</option>
+
+              </select>
+
+
+              <button
+                type="button"
+                class="operation-status__button"
+                [disabled]="isStatusUpdating() || selectedStatus() === currentCar.status"
+                (click)="updateCarStatus()">
+
+                @if (isStatusUpdating()) {
+                  <span class="button-spinner"></span>
+                  Güncelleniyor...
+                }
+                @else {
+                  Durumu Güncelle
+                }
+
+              </button>
+
+            </div>
+
+
+            <span class="operation-status__hint">
+              Aracın operasyonel durumunu buradan değiştirebilirsiniz.
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- PRICING -->
+
+        <section class="detail-card detail-card--pricing">
+
+          <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Fiyatlandırma
@@ -306,41 +394,87 @@
                 Kiralama Ücretleri
               </h3>
             </div>
+
           </div>
 
-          @if (currentCar.pricings.length > 0) {
-            <div class="pricing-list">
-              @for (
-                pricing of currentCar.pricings;
-                track pricing.type
-              ) {
-                <div class="pricing-item">
-                  <div>
-                    <span class="pricing-item__type">
+
+          <div class="pricing-editor">
+
+            <div class="pricing-editor__list">
+
+              @for (pricing of editablePricings(); track pricing.type) {
+
+                <div class="pricing-editor__item">
+
+                  <div class="pricing-editor__info">
+
+                    <span class="pricing-editor__type">
                       {{ getPricingTypeLabel(pricing.type) }}
                     </span>
 
-                    <span class="pricing-item__description">
+                    <span class="pricing-editor__description">
                       Kiralama bedeli
                     </span>
+
                   </div>
 
-                  <strong>
-                    {{ pricing.amount }} ₺
-                  </strong>
+
+                  <div class="pricing-editor__input-wrapper">
+
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      [name]="'pricing-' + pricing.type"
+                      [(ngModel)]="pricing.amount"
+                      [disabled]="isPricingUpdating()"
+                    />
+
+                    <span>
+                      ₺
+                    </span>
+
+                  </div>
+
                 </div>
+
               }
+
             </div>
-          }
-          @else {
-            <div class="detail-empty">
-              Fiyat bilgisi bulunmuyor.
-            </div>
-          }
+
+
+            <button
+              type="button"
+              class="pricing-editor__button"
+              [disabled]="isPricingUpdating()"
+              (click)="updateCarPricings()">
+
+              @if (isPricingUpdating()) {
+                <span class="button-spinner"></span>
+                Güncelleniyor...
+              }
+              @else {
+                Fiyatları Güncelle
+              }
+
+            </button>
+
+
+            <span class="pricing-editor__hint">
+              Günlük, haftalık ve aylık kiralama fiyatlarını buradan güncelleyebilirsiniz.
+            </span>
+
+          </div>
+
         </section>
 
-        <section class="detail-card">
+
+        <!-- LOCATION -->
+
+        <section class="detail-card detail-card--location">
+
           <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Operasyon
@@ -350,27 +484,88 @@
                 Lokasyon Bilgisi
               </h3>
             </div>
+
           </div>
 
-          <div class="location-card">
-            <span class="location-card__icon">
-              ●
-            </span>
 
-            <div>
-              <span>
-                Mevcut Lokasyon
+          <div class="location-operation">
+
+            <div class="location-card">
+
+              <span class="location-card__icon">
+                ●
               </span>
 
-              <strong>
-                {{ currentCar.currentLocationName }}
-              </strong>
+              <div>
+                <span>
+                  Mevcut Lokasyon
+                </span>
+
+                <strong>
+                  {{ currentCar.currentLocationName }}
+                </strong>
+              </div>
+
             </div>
+
+
+            <div class="location-operation__form">
+
+              <label for="carLocation">
+                Yeni Lokasyon
+              </label>
+
+              <select
+                id="carLocation"
+                name="carLocation"
+                [(ngModel)]="selectedLocationId"
+                [disabled]="isLocationUpdating()">
+
+                @for (location of locations(); track location.id) {
+
+                  <option [ngValue]="location.id">
+                    {{ location.name }}
+                  </option>
+
+                }
+
+              </select>
+
+
+              <button
+                type="button"
+                class="location-operation__button"
+                [disabled]="isLocationUpdating() || selectedLocationId() === currentCar.currentLocationId"
+                (click)="updateCarLocation()">
+
+                @if (isLocationUpdating()) {
+                  <span class="button-spinner"></span>
+                  Güncelleniyor...
+                }
+                @else {
+                  Lokasyonu Güncelle
+                }
+
+              </button>
+
+            </div>
+
+
+            <span class="location-operation__hint">
+              Aracın bulunduğu operasyon lokasyonunu buradan değiştirebilirsiniz.
+            </span>
+
           </div>
+
         </section>
 
+
+        <!-- IDENTITY -->
+
         <section class="detail-card">
+
           <div class="detail-card__header">
+
             <div>
               <span class="detail-card__eyebrow">
                 Kimlik
@@ -380,10 +575,14 @@
                 Araç Kimliği
               </h3>
             </div>
+
           </div>
 
+
           <div class="identity-list">
+
             <div class="identity-item">
+
               <span>
                 VIN
               </span>
@@ -391,9 +590,12 @@
               <strong>
                 {{ currentCar.vin }}
               </strong>
+
             </div>
 
+
             <div class="identity-item">
+
               <span>
                 Araç ID
               </span>
@@ -401,11 +603,17 @@
               <strong>
                 {{ currentCar.id }}
               </strong>
+
             </div>
+
           </div>
+
         </section>
 
       </aside>
+
     </div>
+
   }
+
 </section>

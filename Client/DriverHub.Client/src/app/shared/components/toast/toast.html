@@ -1,0 +1,38 @@
+@if (toastService.isOpenToast()) {
+
+  <div
+    class="toast"
+    [class.toast--success]="toastService.type() === 'success'"
+    [class.toast--error]="toastService.type() === 'error'">
+
+    <div class="toast__icon">
+
+      @if (toastService.type() === 'success') {
+        ✓
+      }
+      @else {
+        !
+      }
+
+    </div>
+
+    <div class="toast__content">
+
+      <strong>
+        @if (toastService.type() === 'success') {
+          İşlem Başarılı
+        }
+        @else {
+          İşlem Başarısız
+        }
+      </strong>
+
+      <span>
+        {{ toastService.message() }}
+      </span>
+
+    </div>
+
+  </div>
+
+}

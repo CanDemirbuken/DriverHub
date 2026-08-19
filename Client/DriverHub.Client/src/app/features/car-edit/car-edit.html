@@ -38,9 +38,7 @@
 
       <a
         class="edit-toolbar__back"
-        [routerLink]="
-          routeLinks.Admin.CarDetail(currentCar.id)
-        ">
+        [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
         <span>←</span>
         Araç Detayına Dön
       </a>
@@ -49,9 +47,7 @@
 
         <a
           class="edit-toolbar__cancel"
-          [routerLink]="
-            routeLinks.Admin.CarDetail(currentCar.id)
-          ">
+          [routerLink]="routeLinks.Admin.CarDetail(currentCar.id)">
           Vazgeç
         </a>
 
@@ -59,11 +55,7 @@
           type="submit"
           form="car-edit-form"
           class="edit-toolbar__save"
-          [disabled]="
-            isUpdating() ||
-            isCoverImageUploading() ||
-            isBigImageUploading()
-          ">
+          [disabled]="isUpdating() || isCoverImageUploading() || isBigImageUploading()">
 
           @if (isUpdating()) {
             <span class="button-spinner"></span>
@@ -104,24 +96,6 @@
 
     </header>
 
-
-    @if (successMessage()) {
-      <div class="feedback feedback--success">
-        <div class="feedback__icon">
-          ✓
-        </div>
-
-        <div>
-          <strong>
-            Değişiklikler kaydedildi
-          </strong>
-
-          <p>
-            {{ successMessage() }}
-          </p>
-        </div>
-      </div>
-    }
 
     @if (errorMessage()) {
       <div class="feedback feedback--error">
@@ -459,11 +433,20 @@
                     <span class="button-spinner"></span>
                     Görsel yükleniyor...
                   }
+                  @else if (coverImageUrl) {
+                    Görseli Değiştir
+                  }
                   @else {
                     Kapak Görseli Seç
                   }
 
                 </button>
+
+                @if (selectedCoverFileName()) {
+                  <span class="image-upload-field__filename">
+                    {{ selectedCoverFileName() }}
+                  </span>
+                }
 
                 @if (coverImageUrl) {
                   <span class="image-upload-field__status">
@@ -478,7 +461,7 @@
                 <div class="image-upload-preview">
 
                   <img
-                    [src]="getImageUrl(coverImageUrl)"
+                    [src]="imageUrlHelper.getImageUrl(coverImageUrl)"
                     alt="Kapak görseli önizleme"
                   />
 
@@ -522,11 +505,20 @@
                     <span class="button-spinner"></span>
                     Görsel yükleniyor...
                   }
+                  @else if (bigImageUrl) {
+                    Görseli Değiştir
+                  }
                   @else {
                     Büyük Görsel Seç
                   }
 
                 </button>
+
+                @if (selectedBigFileName()) {
+                  <span class="image-upload-field__filename">
+                    {{ selectedBigFileName() }}
+                  </span>
+                }
 
                 @if (bigImageUrl) {
                   <span class="image-upload-field__status">
@@ -538,14 +530,10 @@
 
 
               @if (bigImageUrl) {
-                <div
-                  class="
-                    image-upload-preview
-                    image-upload-preview--large
-                  ">
+                <div class="image-upload-preview image-upload-preview--large">
 
                   <img
-                    [src]="getImageUrl(bigImageUrl)"
+                    [src]="imageUrlHelper.getImageUrl(bigImageUrl)"
                     alt="Büyük görsel önizleme"
                   />
 
@@ -605,15 +593,9 @@
                 name="brandId"
                 [(ngModel)]="brandId">
 
-                @for (
-                  brand of brands();
-                  track brand.id
-                ) {
-                  <option
-                    [value]="brand.id">
-
+                @for (brand of brands(); track brand.id) {
+                  <option [value]="brand.id">
                     {{ brand.name }}
-
                   </option>
                 }
 
@@ -633,15 +615,9 @@
                 name="categoryId"
                 [(ngModel)]="categoryId">
 
-                @for (
-                  category of categories();
-                  track category.id
-                ) {
-                  <option
-                    [value]="category.id">
-
+                @for (category of categories(); track category.id) {
+                  <option [value]="category.id">
                     {{ category.name }}
-
                   </option>
                 }
 
@@ -661,15 +637,9 @@
                 name="currentLocationId"
                 [(ngModel)]="currentLocationId">
 
-                @for (
-                  location of locations();
-                  track location.id
-                ) {
-                  <option
-                    [value]="location.id">
-
+                @for (location of locations(); track location.id) {
+                  <option [value]="location.id">
                     {{ location.name }}
-
                   </option>
                 }
 
@@ -699,11 +669,7 @@
           <button
             type="submit"
             class="form-footer__save"
-            [disabled]="
-              isUpdating() ||
-              isCoverImageUploading() ||
-              isBigImageUploading()
-            ">
+            [disabled]="isUpdating() || isCoverImageUploading() || isBigImageUploading()">
 
             @if (isUpdating()) {
               <span class="button-spinner"></span>
@@ -730,11 +696,7 @@
 
             @if (bigImageUrl || coverImageUrl) {
               <img
-                [src]="
-                  getImageUrl(
-                    bigImageUrl || coverImageUrl
-                  )
-                "
+                [src]="imageUrlHelper.getImageUrl(bigImageUrl || coverImageUrl)"
                 [alt]="model"
               />
             }

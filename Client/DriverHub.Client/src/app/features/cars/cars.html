@@ -61,7 +61,7 @@
               @if (car.coverImageUrl) {
                 <img
                   class="car-card__image"
-                  [src]="getImageUrl(car.coverImageUrl)"
+                  [src]="imageUrlHelper.getImageUrl(car.coverImageUrl)"
                   [alt]="car.brandName + ' ' + car.model"
                 />
               }
