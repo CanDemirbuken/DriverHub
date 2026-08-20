@@ -35,7 +35,12 @@ export const ApiEndpoints = {
   Brands: {
     GetBrands: `/api/brands`,
     
+    CreateBrand: `/api/brands`,
+
     GetById: (id: string) =>
+      `/api/brands/${id}`,
+
+    RemoveBrand: (id: string) =>
       `/api/brands/${id}`
   },
 

@@ -1,0 +1,92 @@
+<div class="create-brand-page">
+  <div class="create-brand-card">
+
+    <div class="create-brand-card__header">
+      <div>
+        <span class="create-brand-card__eyebrow">
+          Marka Yönetimi
+        </span>
+
+        <h1 class="create-brand-card__title">
+          Yeni Marka Ekle
+        </h1>
+
+        <p class="create-brand-card__description">
+          Sisteme yeni bir araç markası ekleyebilirsiniz.
+        </p>
+      </div>
+
+      <a
+        class="create-brand-card__back"
+        [routerLink]="routeLinks.Admin.Brands">
+        Listeye Dön
+      </a>
+    </div>
+
+    <div class="create-brand-card__body">
+
+      @if (errorMessage()) {
+        <div class="create-brand-error">
+          <div class="create-brand-error__icon">
+            !
+          </div>
+
+          <div>
+            <strong>Marka eklenemedi</strong>
+            <p>{{ errorMessage() }}</p>
+          </div>
+        </div>
+      }
+
+      <form
+        class="create-brand-form"
+        (ngSubmit)="createBrand()">
+
+        <div class="form-group">
+          <label for="brandName">
+            Marka Adı
+          </label>
+
+          <input
+            id="brandName"
+            type="text"
+            name="brandName"
+            placeholder="Örn: BMW"
+            autocomplete="off"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            [disabled]="isCreating()"
+          />
+
+          <span class="form-group__hint">
+            Eklemek istediğiniz markanın adını giriniz.
+          </span>
+        </div>
+
+        <div class="create-brand-form__actions">
+          <a
+            class="button button--secondary"
+            [routerLink]="routeLinks.Admin.Brands">
+            Vazgeç
+          </a>
+
+          <button
+            class="button button--primary"
+            type="submit"
+            [disabled]="isCreating() || !name().trim()">
+
+            @if (isCreating()) {
+              Ekleniyor...
+            } @else {
+              Marka Ekle
+            }
+
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>

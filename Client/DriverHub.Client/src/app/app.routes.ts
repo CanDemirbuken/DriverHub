@@ -13,6 +13,7 @@ import { CarDetail } from './features/car-detail/car-detail';
 import { CarEdit } from './features/car-edit/car-edit';
 import { Brands } from './features/brands/brands/brands';
 import { BrandById } from './features/brands/brand-by-id/brand-by-id';
+import { CreateBrand } from './features/brands/create-brand/create-brand';
 
 export const routes: Routes = [
   {
@@ -61,6 +62,10 @@ export const routes: Routes = [
       {
         path: RoutePaths.Admin.Brands,
         component: Brands
+      },
+      {
+        path: `${RoutePaths.Admin.Brands}/create`,
+        component: CreateBrand
       },
       {
         path: `${RoutePaths.Admin.Brands}/:id`,

@@ -18,7 +18,6 @@
 
     </div>
 
-
     <div class="brands-header__actions">
 
       <div class="brands-header__summary">
@@ -33,10 +32,10 @@
 
       </div>
 
-
       <button
         type="button"
-        class="brands-header__add">
+        class="brands-header__add"
+        [routerLink]="routeLinks.Admin.CreateBrand">
 
         Marka Ekle
 
@@ -107,10 +106,10 @@
         Sistemde görüntülenecek herhangi bir araç markası bulunmuyor.
       </p>
 
-
       <button
         type="button"
-        class="brands-empty__add">
+        class="brands-empty__add"
+        [routerLink]="routeLinks.Admin.CreateBrand">
 
         İlk Markayı Ekle
 
@@ -138,13 +137,11 @@
 
         </div>
 
-
         <span class="brands-card__count">
           {{ brands().length }} kayıt
         </span>
 
       </div>
-
 
       <div class="brands-list">
 
@@ -164,7 +161,6 @@
 
         </div>
 
-
         @for (brand of brands(); track brand.id) {
 
           <div class="brand-item">
@@ -172,11 +168,8 @@
             <div class="brand-item__identity">
 
               <div class="brand-item__avatar">
-
                 {{ brand.name.charAt(0).toUpperCase() }}
-
               </div>
-
 
               <div class="brand-item__content">
 
@@ -192,7 +185,6 @@
 
             </div>
 
-
             <div class="brand-item__status">
 
               <span class="brand-item__status-dot"></span>
@@ -201,22 +193,22 @@
 
             </div>
 
-
             <div class="brand-item__actions">
-
-            <button
-              type="button"
-              class="brand-item__edit"
-              [routerLink]="routeLinks.Admin.BrandById(brand.id)">
-            
-              Detay
-                        
-            </button>
-
 
               <button
                 type="button"
-                class="brand-item__delete">
+                class="brand-item__edit"
+                [routerLink]="routeLinks.Admin.BrandById(brand.id)">
+
+                Detay
+
+              </button>
+
+              <button
+                type="button"
+                class="brand-item__delete"
+                [disabled]="isRemoving()"
+                (click)="openRemoveConfirmation(brand)">
 
                 Sil
 
@@ -235,3 +227,82 @@
   }
 
 </section>
+
+
+@if (selectedBrandForRemove(); as brand) {
+
+  <div
+    class="delete-modal-backdrop"
+    (click)="closeRemoveConfirmation()">
+
+    <div
+      class="delete-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-brand-title"
+      (click)="$event.stopPropagation()">
+
+      <div class="delete-modal__icon">
+        !
+      </div>
+
+      <div class="delete-modal__content">
+
+        <span class="delete-modal__eyebrow">
+          Silme Onayı
+        </span>
+
+        <h2 id="delete-brand-title">
+          Marka silinsin mi?
+        </h2>
+
+        <p>
+          <strong>{{ brand.name }}</strong>
+          markasını sistemden silmek üzeresiniz.
+        </p>
+
+        <p class="delete-modal__warning">
+          Bu işlem geri alınamaz.
+        </p>
+
+      </div>
+
+      <div class="delete-modal__actions">
+
+        <button
+          type="button"
+          class="delete-modal__cancel"
+          [disabled]="isRemoving()"
+          (click)="closeRemoveConfirmation()">
+
+          Vazgeç
+
+        </button>
+
+        <button
+          type="button"
+          class="delete-modal__confirm"
+          [disabled]="isRemoving()"
+          (click)="confirmRemoveBrand()">
+
+          @if (isRemoving()) {
+
+            <span class="delete-modal__spinner"></span>
+
+            Siliniyor...
+
+          } @else {
+
+            Markayı Sil
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

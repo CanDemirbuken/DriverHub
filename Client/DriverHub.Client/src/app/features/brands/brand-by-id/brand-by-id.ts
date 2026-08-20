@@ -1,14 +1,15 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { BrandService } from '../../../core/services/brand/brand-service';
 import { GetBrandByIdResponse } from '../../../core/services/brand/models/get-brand-by-id-response';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GetBrandByIdRequest } from '../../../core/services/brand/models/get-brand-by-id-request';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../core/models/api/api-response';
+import { RouteLinks } from '../../../core/constants/route-paths';
 
 @Component({
   selector: 'app-brand-by-id',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './brand-by-id.html',
   styleUrl: './brand-by-id.scss',
 })
@@ -17,6 +18,8 @@ export class BrandById implements OnInit {
     private readonly brandService: BrandService,
     private readonly route: ActivatedRoute
   ){}
+
+  routeLinks = RouteLinks
 
   brandId = signal('');
   brand = signal<GetBrandByIdResponse | null>(null);
