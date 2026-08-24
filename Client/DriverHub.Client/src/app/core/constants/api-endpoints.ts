@@ -41,15 +41,40 @@ export const ApiEndpoints = {
       `/api/brands/${id}`,
 
     RemoveBrand: (id: string) =>
+      `/api/brands/${id}`,
+
+    EditBrand: (id: string) =>
       `/api/brands/${id}`
   },
 
   Categories: {
-    GetCategories: `/api/categories`
+    GetCategories: `/api/categories`,
+
+    RemoveCategory: (id: string) =>
+      `/api/categories/${id}`,
+
+    CreateCategory:  `/api/categories`,
+
+    GetCategoryById: (id: string) =>
+      `/api/categories/${id}`,
+
+    EditCategory: (id: string) =>
+      `/api/categories/${id}`
   },
 
   Locations: {
-    GetLocations: `/api/locations`
+    GetLocations: `/api/locations`,
+
+    GetLocationById: (id: string) => 
+      `/api/locations/${id}`,
+
+    CreateLocation: '/api/locations',
+
+    RemoveLocation: (id: string) =>
+      `/api/locations/${id}`,
+
+    EditLocation: (id: string) => 
+      `/api/locations/${id}`
   },
 
   Media: {

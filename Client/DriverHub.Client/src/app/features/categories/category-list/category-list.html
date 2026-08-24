@@ -1,0 +1,309 @@
+<section class="categories-page">
+
+  <div class="categories-header">
+
+    <div class="categories-header__content">
+
+      <span class="categories-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Kategoriler
+      </h1>
+
+      <p>
+        Sistemde tanımlı araç kategorilerini görüntüleyebilir ve yönetebilirsiniz.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="categories-header__add"
+      [routerLink]="routeLinks.Admin.CreateCategory"
+    >
+      <span class="material-symbols-rounded">
+        add
+      </span>
+
+      Kategori Ekle
+    </button>
+
+  </div>
+
+
+  @if (isLoading()) {
+
+    <div class="state-card">
+
+      <div class="state-card__loader"></div>
+
+      <h3>
+        Kategoriler yükleniyor
+      </h3>
+
+      <p>
+        Lütfen kısa bir süre bekleyin.
+      </p>
+
+    </div>
+
+  }
+  @else if (errorMessage()) {
+
+    <div class="state-card state-card--error">
+
+      <div class="state-card__icon">
+
+        <span class="material-symbols-rounded">
+          error
+        </span>
+
+      </div>
+
+      <h3>
+        Kategoriler alınamadı
+      </h3>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+    </div>
+
+  }
+  @else {
+
+    <div class="categories-summary">
+
+      <div class="categories-summary__icon">
+
+        <span class="material-symbols-rounded">
+          category
+        </span>
+
+      </div>
+
+      <div>
+
+        <span class="categories-summary__label">
+          Toplam Kategori
+        </span>
+
+        <strong>
+          {{ categories().length }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    @if (categories().length === 0) {
+
+      <div class="empty-state">
+
+        <div class="empty-state__icon">
+
+          <span class="material-symbols-rounded">
+            category
+          </span>
+
+        </div>
+
+        <h3>
+          Henüz kategori bulunmuyor
+        </h3>
+
+        <p>
+          Sisteme ilk araç kategorisini ekleyerek başlayabilirsiniz.
+        </p>
+
+        <button
+          type="button"
+          class="empty-state__button"
+        >
+          <span class="material-symbols-rounded">
+            add
+          </span>
+
+          Kategori Ekle
+        </button>
+
+      </div>
+
+    }
+    @else {
+
+      <div class="categories-grid">
+
+        @for (category of categories(); track category.id) {
+
+          <article class="category-card">
+
+            <div class="category-card__top">
+
+              <div class="category-card__icon">
+
+                <span class="material-symbols-rounded">
+                  directions_car
+                </span>
+
+              </div>
+
+              <span class="category-card__badge">
+                Kategori
+              </span>
+
+            </div>
+
+
+            <div class="category-card__content">
+
+              <span class="category-card__label">
+                Araç Kategorisi
+              </span>
+
+              <h2>
+                {{ category.name }}
+              </h2>
+
+              <p>
+                Bu kategori sistemdeki araçların sınıflandırılmasında kullanılmaktadır.
+              </p>
+
+            </div>
+
+
+            <div class="category-card__actions">
+
+              <button
+                type="button"
+                class="action-button action-button--detail"
+                [routerLink]="routeLinks.Admin.CategoryDetail(category.id)"
+              >
+                <span class="material-symbols-rounded">
+                  visibility
+                </span>
+
+                Detay
+              </button>
+
+              <button
+                type="button"
+                class="action-button action-button--remove"
+                (click)="openRemoveConfirmation(category)"
+              >
+                <span class="material-symbols-rounded">
+                  delete
+                </span>
+
+                Sil
+              </button>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+  }
+
+
+  @if (selectedCategoryForRemove()) {
+
+    <div
+      class="remove-dialog-backdrop"
+      (click)="closeRemoveConfirmation()"
+    >
+
+      <div
+        class="remove-dialog"
+        (click)="$event.stopPropagation()"
+      >
+
+        <div class="remove-dialog__icon">
+
+          <span class="material-symbols-rounded">
+            delete
+          </span>
+
+        </div>
+
+
+        <div class="remove-dialog__content">
+
+          <span class="remove-dialog__eyebrow">
+            Kategori Silme
+          </span>
+
+          <h2>
+            Kategoriyi silmek istediğinize emin misiniz?
+          </h2>
+
+          <p>
+
+            <strong>
+              {{ selectedCategoryForRemove()?.name }}
+            </strong>
+
+            kategorisi sistemden kalıcı olarak silinecektir.
+            Bu işlem geri alınamaz.
+
+          </p>
+
+        </div>
+
+
+        <div class="remove-dialog__actions">
+
+          <button
+            type="button"
+            class="remove-dialog__button remove-dialog__button--cancel"
+            [disabled]="isRemoving()"
+            (click)="closeRemoveConfirmation()"
+          >
+            Vazgeç
+          </button>
+
+
+          <button
+            type="button"
+            class="remove-dialog__button remove-dialog__button--remove"
+            [disabled]="isRemoving()"
+            (click)="confirmRemoveCategory()"
+          >
+
+            @if (isRemoving()) {
+
+              <span class="remove-dialog__loader"></span>
+
+              Siliniyor...
+
+            }
+            @else {
+
+              <span class="material-symbols-rounded">
+                delete
+              </span>
+
+              Kategoriyi Sil
+
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</section>

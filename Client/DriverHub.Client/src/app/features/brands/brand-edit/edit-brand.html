@@ -1,0 +1,232 @@
+<section class="edit-brand-page">
+
+  <div class="edit-brand-header">
+
+    <div class="edit-brand-header__content">
+
+      <span class="edit-brand-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Marka Düzenle
+      </h1>
+
+      <p>
+        Sistemde tanımlı marka bilgisini güncelleyebilirsiniz.
+      </p>
+
+    </div>
+
+    <a
+      class="edit-brand-header__back"
+      [routerLink]="routeLinks.Admin.Brands"
+    >
+      <span class="material-symbols-rounded">
+        arrow_back
+      </span>
+
+      Markalara Dön
+    </a>
+
+  </div>
+
+
+  @if (isLoading()) {
+
+    <div class="state-card">
+
+      <div class="state-card__loader"></div>
+
+      <h3>
+        Marka bilgisi yükleniyor
+      </h3>
+
+      <p>
+        Lütfen kısa bir süre bekleyin.
+      </p>
+
+    </div>
+
+  }
+  @else if (errorMessage()) {
+
+    <div class="state-card state-card--error">
+
+      <div class="state-card__icon">
+
+        <span class="material-symbols-rounded">
+          error
+        </span>
+
+      </div>
+
+      <h3>
+        Marka bilgisi alınamadı
+      </h3>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+      <a
+        class="state-card__button"
+        [routerLink]="routeLinks.Admin.Brands"
+      >
+        Marka Listesine Dön
+      </a>
+
+    </div>
+
+  }
+  @else if (brand()) {
+
+    <div class="edit-brand-layout">
+
+      <div class="edit-brand-card">
+
+        <div class="edit-brand-card__header">
+
+          <div class="edit-brand-card__icon">
+
+            <span class="material-symbols-rounded">
+              edit
+            </span>
+
+          </div>
+
+          <div class="edit-brand-card__title">
+
+            <span>
+              Marka Bilgileri
+            </span>
+
+            <h2>
+              {{ brand()?.name }}
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="edit-brand-card__body">
+
+          <div class="form-group">
+
+            <label for="brandName">
+              Marka Adı
+            </label>
+
+            <div class="input-wrapper">
+
+              <span class="material-symbols-rounded input-wrapper__icon">
+                directions_car
+              </span>
+
+              <input
+                id="brandName"
+                type="text"
+                name="brandName"
+                autocomplete="off"
+                placeholder="Marka adını giriniz"
+                [ngModel]="name()"
+                (ngModelChange)="name.set($event)"
+                [disabled]="isEditing()"
+              >
+
+            </div>
+
+            <span class="form-group__hint">
+              Marka adı sistem genelinde araç tanımlarında kullanılacaktır.
+            </span>
+
+          </div>
+
+
+          <div class="edit-brand-card__actions">
+
+            <a
+              class="button button--secondary"
+              [routerLink]="routeLinks.Admin.Brands"
+              [class.button--disabled]="isEditing()"
+            >
+              Vazgeç
+            </a>
+
+            <button
+              type="button"
+              class="button button--primary"
+              [disabled]="isEditing() || !name().trim()"
+              (click)="editBrand()"
+            >
+
+              @if (isEditing()) {
+
+                <span class="button__loader"></span>
+
+                Güncelleniyor...
+
+              }
+              @else {
+
+                <span class="material-symbols-rounded">
+                  save
+                </span>
+
+                Değişiklikleri Kaydet
+
+              }
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <aside class="brand-preview-card">
+
+        <span class="brand-preview-card__label">
+          Önizleme
+        </span>
+
+        <div class="brand-preview-card__logo">
+          {{ name().trim().charAt(0).toUpperCase() || '?' }}
+        </div>
+
+        <h3>
+          {{ name().trim() || 'Marka Adı' }}
+        </h3>
+
+        <p>
+          Düzenleme tamamlandığında marka bilgisi sistem genelinde
+          bu isimle görüntülenecektir.
+        </p>
+
+        <div class="brand-preview-card__info">
+
+          <div class="brand-preview-card__info-icon">
+
+            <span class="material-symbols-rounded">
+              info
+            </span>
+
+          </div>
+
+          <span>
+            Yapılan değişiklik araç kayıtlarında kullanılan marka
+            bilgisini etkileyebilir.
+          </span>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

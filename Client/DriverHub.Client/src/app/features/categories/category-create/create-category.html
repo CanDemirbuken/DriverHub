@@ -1,0 +1,215 @@
+<section class="create-category-page">
+
+  <div class="create-category-header">
+
+    <div class="create-category-header__content">
+
+      <span class="create-category-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Kategori Ekle
+      </h1>
+
+      <p>
+        Sistemde kullanılacak yeni araç kategorisini oluşturabilirsiniz.
+      </p>
+
+    </div>
+
+    <a
+      class="create-category-header__back"
+      [routerLink]="routeLinks.Admin.Categories"
+    >
+      <span class="material-symbols-rounded">
+        arrow_back
+      </span>
+
+      Kategorilere Dön
+    </a>
+
+  </div>
+
+
+  @if (errorMessage()) {
+
+    <div class="state-card state-card--error">
+
+      <div class="state-card__icon">
+
+        <span class="material-symbols-rounded">
+          error
+        </span>
+
+      </div>
+
+      <div>
+
+        <h3>
+          Kategori oluşturulamadı
+        </h3>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <div class="create-category-layout">
+
+    <div class="create-category-card">
+
+      <div class="create-category-card__header">
+
+        <div class="create-category-card__icon">
+
+          <span class="material-symbols-rounded">
+            add_circle
+          </span>
+
+        </div>
+
+        <div class="create-category-card__title">
+
+          <span>
+            Yeni Kategori
+          </span>
+
+          <h2>
+            Kategori Bilgileri
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="create-category-card__body">
+
+        <div class="form-group">
+
+          <label for="categoryName">
+            Kategori Adı
+          </label>
+
+          <div class="input-wrapper">
+
+            <span class="material-symbols-rounded input-wrapper__icon">
+              category
+            </span>
+
+            <input
+              id="categoryName"
+              type="text"
+              name="categoryName"
+              autocomplete="off"
+              placeholder="Örn. SUV"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+              [disabled]="isAdding()"
+            >
+
+          </div>
+
+          <span class="form-group__hint">
+            Kategori adı araçların sınıflandırılmasında kullanılacaktır.
+          </span>
+
+        </div>
+
+
+        <div class="create-category-card__actions">
+
+          <button
+            type="button"
+            class="button button--secondary"
+            [disabled]="isAdding()"
+            (click)="name.set('')"
+          >
+            Temizle
+          </button>
+
+          <button
+            type="button"
+            class="button button--primary"
+            [disabled]="isAdding() || !name().trim()"
+            (click)="createCategory()"
+          >
+
+            @if (isAdding()) {
+
+              <span class="button__loader"></span>
+
+              Ekleniyor...
+
+            }
+            @else {
+
+              <span class="material-symbols-rounded">
+                add
+              </span>
+
+              Kategoriyi Ekle
+
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <aside class="category-preview-card">
+
+      <span class="category-preview-card__label">
+        Önizleme
+      </span>
+
+      <div class="category-preview-card__icon">
+
+        <span class="material-symbols-rounded">
+          directions_car
+        </span>
+
+      </div>
+
+      <h3>
+        {{ name().trim() || 'Kategori Adı' }}
+      </h3>
+
+      <p>
+        Oluşturulan kategori araç kayıtlarında seçim yapılabilecek kategori
+        seçeneklerinden biri olacaktır.
+      </p>
+
+      <div class="category-preview-card__info">
+
+        <div class="category-preview-card__info-icon">
+
+          <span class="material-symbols-rounded">
+            info
+          </span>
+
+        </div>
+
+        <span>
+          Aynı isimde bir kategori zaten mevcutsa sistem yeni kayıt
+          oluşturulmasına izin vermeyebilir.
+        </span>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</section>

@@ -3,25 +3,25 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
-import { CarService } from '../../core/services/car/car-service';
-import { BrandService } from '../../core/services/brand/brand-service';
-import { CategoryService } from '../../core/services/category/category-service';
-import { LocationService } from '../../core/services/location/location-service';
-import { MediaService } from '../../core/services/media/media-service';
+import { CarService } from '../../../core/services/car/car-service';
+import { BrandService } from '../../../core/services/brand/brand-service';
+import { CategoryService } from '../../../core/services/category/category-service';
+import { LocationService } from '../../../core/services/location/location-service';
+import { MediaService } from '../../../core/services/media/media-service';
 
-import { GetCarByIdRequest } from '../../core/services/car/models/get-car-by-id-request';
-import { GetCarByIdResponse } from '../../core/services/car/models/get-car-by-id-response';
-import { UpdateCarRequest } from '../../core/services/car/models/update-car-request';
+import { GetCarByIdRequest } from '../../../core/services/car/models/get-car-by-id-request';
+import { GetCarByIdResponse } from '../../../core/services/car/models/get-car-by-id-response';
+import { UpdateCarRequest } from '../../../core/services/car/models/update-car-request';
 
-import { GetBrandsResponse } from '../../core/services/brand/models/get-brands-response';
-import { GetCategoriesResponse } from '../../core/services/category/models/get-categories-response';
-import { GetLocationsResponse } from '../../core/services/location/models/get-locations-response';
+import { GetBrandsResponse } from '../../../core/services/brand/models/get-brands-response';
+import { GetCategoriesResponse } from '../../../core/services/category/models/get-categories-response';
+import { GetLocationsResponse } from '../../../core/services/location/models/get-locations-response';
 
-import { ApiResponse } from '../../core/models/api/api-response';
-import { RouteLinks } from '../../core/constants/route-paths';
+import { ApiResponse } from '../../../core/models/api/api-response';
+import { RouteLinks } from '../../../core/constants/route-paths';
 
-import { ImageUrlHelper } from '../../shared/helpers/image-url-helper';
-import { ToastService } from '../../shared/services/toast-service';
+import { ImageUrlHelper } from '../../../shared/helpers/image-url-helper';
+import { ToastService } from '../../../shared/services/toast-service';
 
 @Component({
   selector: 'app-car-edit',

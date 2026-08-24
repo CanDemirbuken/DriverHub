@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../../constants/api-endpoints';
 import { GetBrandByIdResponse } from './models/get-brand-by-id-response';
 import { CreateBrandRequest } from './models/create-brand-request';
 import { CreateBrandResponse } from './models/create-brand-response';
+import { UpdateBrandRequest } from './models/update-brand-request';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,12 @@ export class BrandService {
   }
 
   removeBrand(id: string): Observable<void>{
-    const url = `${environment.apiUrl}${ApiEndpoints.Brands.RemoveBrand(id)}`
+    const url = `${environment.apiUrl}${ApiEndpoints.Brands.RemoveBrand(id)}`;
     return this.http.delete<void>(url);
+  }
+
+  updateBrand(id: string, request: UpdateBrandRequest): Observable<void>{
+    const url = `${environment.apiUrl}${ApiEndpoints.Brands.EditBrand(id)}`;
+    return this.http.put<void>(url, request);
   }
 }

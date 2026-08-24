@@ -1,16 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { CarService } from '../../core/services/car/car-service';
-import { GetPagedCarRequest } from '../../core/services/car/models/get-paged-car-request';
-import { GetPagedCarResponse } from '../../core/services/car/models/get-paged-car-response';
+import { CarService } from '../../../core/services/car/car-service';
+import { GetPagedCarRequest } from '../../../core/services/car/models/get-paged-car-request';
+import { GetPagedCarResponse } from '../../../core/services/car/models/get-paged-car-response';
 
-import { ApiResponse } from '../../core/models/api/api-response';
+import { ApiResponse } from '../../../core/models/api/api-response';
 import { RouterLink } from '@angular/router';
-import { RouteLinks } from '../../core/constants/route-paths';
+import { RouteLinks } from '../../../core/constants/route-paths';
 
-import { environment } from '../../../environments/environment';
-import { ImageUrlHelper } from '../../shared/helpers/image-url-helper';
+import { environment } from '../../../../environments/environment';
+import { ImageUrlHelper } from '../../../shared/helpers/image-url-helper';
 
 @Component({
   selector: 'app-cars',

@@ -1,0 +1,233 @@
+<section class="location-create-page">
+
+  <div class="location-create-toolbar">
+
+    <button
+      type="button"
+      class="location-create-toolbar__back"
+      [routerLink]="routeLinks.Admin.Locations">
+
+      <span>
+        ←
+      </span>
+
+      Şube Listesine Dön
+
+    </button>
+
+  </div>
+
+
+  <section class="location-create-hero">
+
+    <div class="location-create-hero__avatar">
+      +
+    </div>
+
+
+    <div class="location-create-hero__content">
+
+      <span class="location-create-hero__eyebrow">
+        Şube Yönetimi
+      </span>
+
+      <h1>
+        Yeni Şube Ekle
+      </h1>
+
+      <p>
+        Araçların bulunduğu ve teslim süreçlerinin yönetileceği
+        yeni bir şube oluşturabilirsiniz.
+      </p>
+
+    </div>
+
+
+    <div class="location-create-hero__status">
+
+      <span class="location-create-hero__status-dot"></span>
+
+      Yeni Kayıt
+
+    </div>
+
+  </section>
+
+
+  <div class="location-create-layout">
+
+    <section class="location-create-card">
+
+      <div class="location-create-card__header">
+
+        <div>
+
+          <span class="location-create-card__eyebrow">
+            Şube Bilgileri
+          </span>
+
+          <h2>
+            Genel Bilgiler
+          </h2>
+
+          <p>
+            Yeni şubenin sistemde görüntülenecek adını belirleyin.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <form
+        class="location-create-form"
+        (submit)="$event.preventDefault(); createLocation()">
+
+        <div class="location-create-form__group">
+
+          <label for="locationName">
+            Şube Adı
+          </label>
+
+          <input
+            id="locationName"
+            type="text"
+            name="locationName"
+            autocomplete="off"
+            placeholder="Şube adını giriniz"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            [disabled]="isAdding()">
+
+          <span class="location-create-form__hint">
+            Örneğin: İstanbul Maltepe, İstanbul Havalimanı veya Ankara Merkez.
+          </span>
+
+        </div>
+
+
+        @if (errorMessage()) {
+
+          <div class="location-create-form__error">
+
+            <div class="location-create-form__error-icon">
+              !
+            </div>
+
+            <span>
+              {{ errorMessage() }}
+            </span>
+
+          </div>
+
+        }
+
+
+        <div class="location-create-form__actions">
+
+          <button
+            type="button"
+            class="location-create-form__cancel"
+            [routerLink]="routeLinks.Admin.Locations"
+            [disabled]="isAdding()">
+
+            Vazgeç
+
+          </button>
+
+
+          <button
+            type="submit"
+            class="location-create-form__submit"
+            [disabled]="isAdding()">
+
+            @if (isAdding()) {
+
+              <span class="location-create-form__spinner"></span>
+
+              Şube Ekleniyor...
+
+            }
+
+            @else {
+
+              Şube Ekle
+
+            }
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <aside class="location-create-card location-create-card--info">
+
+      <div class="location-create-card__header">
+
+        <div>
+
+          <span class="location-create-card__eyebrow">
+            Bilgilendirme
+          </span>
+
+          <h2>
+            Şube Kaydı
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="location-create-info">
+
+        <div class="location-create-info__item">
+
+          <span>
+            Kayıt Durumu
+          </span>
+
+          <strong class="location-create-info__status">
+            Yeni Kayıt
+          </strong>
+
+        </div>
+
+
+        <div class="location-create-info__item">
+
+          <span>
+            Şube Kimliği
+          </span>
+
+          <strong>
+            Otomatik Oluşturulacak
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="location-create-note">
+
+        <strong>
+          Bilgi
+        </strong>
+
+        <p>
+          Şube oluşturulduktan sonra sistem tarafından benzersiz bir
+          kimlik atanacak ve yeni şubenin detay sayfasına yönlendirileceksiniz.
+        </p>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</section>

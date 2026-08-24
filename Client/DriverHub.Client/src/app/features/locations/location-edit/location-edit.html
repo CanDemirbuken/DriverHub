@@ -1,0 +1,250 @@
+<section class="location-edit-page">
+
+  @if (isLoading()) {
+
+    <div class="location-edit-state location-edit-state--loading">
+
+      <div class="location-edit-state__spinner"></div>
+
+      <div>
+
+        <strong>
+          Şube bilgisi yükleniyor
+        </strong>
+
+        <p>
+          Düzenleme bilgileri hazırlanıyor...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="location-edit-state location-edit-state--error">
+
+      <div class="location-edit-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Şube bilgisi yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (location(); as currentLocation) {
+
+    <div class="location-edit-toolbar">
+
+      <button
+        type="button"
+        class="location-edit-toolbar__back"
+        [routerLink]="routeLinks.Admin.LocationDetail(currentLocation.id)">
+
+        <span>
+          ←
+        </span>
+
+        Şube Detayına Dön
+
+      </button>
+
+    </div>
+
+
+    <section class="location-edit-hero">
+
+      <div class="location-edit-hero__avatar">
+
+        {{ currentLocation.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="location-edit-hero__content">
+
+        <span class="location-edit-hero__eyebrow">
+          Şube Yönetimi
+        </span>
+
+        <h1>
+          {{ currentLocation.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı şube bilgisini buradan güncelleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="location-edit-hero__status">
+
+        <span class="location-edit-hero__status-dot"></span>
+
+        Düzenlenebilir
+
+      </div>
+
+    </section>
+
+
+    <div class="location-edit-layout">
+
+      <section class="location-edit-card">
+
+        <div class="location-edit-card__header">
+
+          <div>
+
+            <span class="location-edit-card__eyebrow">
+              Şube Bilgileri
+            </span>
+
+            <h2>
+              Şubeyi Düzenle
+            </h2>
+
+            <p>
+              Şube adını değiştirerek mevcut kaydı güncelleyebilirsiniz.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form
+          class="location-edit-form"
+          (submit)="$event.preventDefault(); updateLocation()">
+
+          <div class="location-edit-form__group">
+
+            <label for="locationName">
+              Şube Adı
+            </label>
+
+            <input
+              id="locationName"
+              type="text"
+              name="locationName"
+              autocomplete="off"
+              placeholder="Şube adını giriniz"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+              [disabled]="isUpdating()">
+
+            <span class="location-edit-form__hint">
+              Şubeyi tanımlayan anlaşılır ve benzersiz bir isim kullanın.
+            </span>
+
+          </div>
+
+
+          <div class="location-edit-form__actions">
+
+            <button
+              type="button"
+              class="location-edit-form__cancel"
+              [routerLink]="routeLinks.Admin.LocationDetail(currentLocation.id)"
+              [disabled]="isUpdating()">
+
+              Vazgeç
+
+            </button>
+
+
+            <button
+              type="submit"
+              class="location-edit-form__submit"
+              [disabled]="isUpdating()">
+
+              @if (isUpdating()) {
+
+                <span class="location-edit-form__spinner"></span>
+
+                Güncelleniyor...
+
+              }
+
+              @else {
+
+                Değişiklikleri Kaydet
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <aside class="location-edit-card location-edit-card--identity">
+
+        <div class="location-edit-card__header">
+
+          <div>
+
+            <span class="location-edit-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Şube Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="location-edit-identity">
+
+          <span>
+            Şube ID
+          </span>
+
+          <strong>
+            {{ currentLocation.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="location-edit-note">
+
+          <strong>
+            Bilgilendirme
+          </strong>
+
+          <p>
+            Şube kimliği sistem tarafından oluşturulur ve düzenlenemez.
+            Yalnızca şube adı güncellenebilir.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

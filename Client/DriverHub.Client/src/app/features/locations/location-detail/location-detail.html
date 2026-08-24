@@ -1,0 +1,205 @@
+<section class="location-detail-page">
+
+  @if (isLoading()) {
+
+    <div class="location-detail-state location-detail-state--loading">
+
+      <div class="location-detail-state__spinner"></div>
+
+      <div>
+        <strong>
+          Şube bilgisi yükleniyor
+        </strong>
+
+        <p>
+          Şube detayları hazırlanıyor...
+        </p>
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="location-detail-state location-detail-state--error">
+
+      <div class="location-detail-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Şube bilgisi yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (location(); as currentLocation) {
+
+    <div class="location-detail-toolbar">
+
+      <button
+        type="button"
+        class="location-detail-toolbar__back"
+        [routerLink]="routeLinks.Admin.Locations">
+
+        <span>
+          ←
+        </span>
+
+        Şube Listesine Dön
+
+      </button>
+
+
+      <button
+        type="button"
+        class="location-detail-toolbar__edit"
+        [routerLink]="routeLinks.Admin.EditLocation(this.locationId())"
+        >
+
+        Düzenle
+
+      </button>
+
+    </div>
+
+
+    <section class="location-detail-hero">
+
+      <div class="location-detail-hero__avatar">
+
+        {{ currentLocation.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="location-detail-hero__content">
+
+        <span class="location-detail-hero__eyebrow">
+          Araç Şubesi
+        </span>
+
+        <h1>
+          {{ currentLocation.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı şube bilgilerini buradan görüntüleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="location-detail-hero__status">
+
+        <span class="location-detail-hero__status-dot"></span>
+
+        Kayıtlı
+
+      </div>
+
+    </section>
+
+
+    <div class="location-detail-layout">
+
+      <section class="location-detail-card">
+
+        <div class="location-detail-card__header">
+
+          <div>
+
+            <span class="location-detail-card__eyebrow">
+              Şube Bilgileri
+            </span>
+
+            <h2>
+              Genel Bilgiler
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="location-detail-grid">
+
+          <div class="location-detail-item">
+
+            <span class="location-detail-item__label">
+              Şube Adı
+            </span>
+
+            <strong>
+              {{ currentLocation.name }}
+            </strong>
+
+          </div>
+
+
+          <div class="location-detail-item">
+
+            <span class="location-detail-item__label">
+              Durum
+            </span>
+
+            <strong class="location-detail-item__status">
+              Aktif Kayıt
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <aside class="location-detail-card location-detail-card--identity">
+
+        <div class="location-detail-card__header">
+
+          <div>
+
+            <span class="location-detail-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Şube Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="location-detail-identity">
+
+          <span>
+            Şube ID
+          </span>
+
+          <strong>
+            {{ currentLocation.id }}
+          </strong>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

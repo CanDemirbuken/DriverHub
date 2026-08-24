@@ -1,0 +1,247 @@
+<section class="edit-category-page">
+
+  @if (isLoading()) {
+
+    <div class="edit-category-state edit-category-state--loading">
+
+      <div class="edit-category-state__spinner"></div>
+
+      <div>
+        <strong>
+          Kategori bilgisi yükleniyor
+        </strong>
+
+        <p>
+          Düzenleme bilgileri hazırlanıyor...
+        </p>
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="edit-category-state edit-category-state--error">
+
+      <div class="edit-category-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Kategori bilgisi yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (category(); as currentCategory) {
+
+    <div class="edit-category-toolbar">
+
+    <button
+      type="button"
+      class="edit-category-toolbar__back"
+      [routerLink]="routeLinks.Admin.CategoryDetail(this.categoryId())">
+
+      <span>
+        ←
+      </span>
+
+      Kategori Detayına Dön
+
+    </button>
+
+    </div>
+
+
+    <section class="edit-category-hero">
+
+      <div class="edit-category-hero__avatar">
+
+        {{ currentCategory.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="edit-category-hero__content">
+
+        <span class="edit-category-hero__eyebrow">
+          Kategori Yönetimi
+        </span>
+
+        <h1>
+          {{ currentCategory.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı kategori bilgisini buradan güncelleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="edit-category-hero__status">
+
+        <span class="edit-category-hero__status-dot"></span>
+
+        Düzenlenebilir
+
+      </div>
+
+    </section>
+
+
+    <div class="edit-category-layout">
+
+      <section class="edit-category-card">
+
+        <div class="edit-category-card__header">
+
+          <div>
+
+            <span class="edit-category-card__eyebrow">
+              Kategori Bilgileri
+            </span>
+
+            <h2>
+              Kategoriyi Düzenle
+            </h2>
+
+            <p>
+              Kategori adını değiştirerek mevcut kaydı güncelleyebilirsiniz.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form
+          class="edit-category-form"
+          (submit)="$event.preventDefault(); updateCategory()">
+
+          <div class="edit-category-form__group">
+
+            <label for="categoryName">
+              Kategori Adı
+            </label>
+
+            <input
+              id="categoryName"
+              type="text"
+              name="categoryName"
+              autocomplete="off"
+              placeholder="Kategori adını giriniz"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+              [disabled]="isUpdating()">
+
+            <span class="edit-category-form__hint">
+              Kategoriyi tanımlayan benzersiz ve anlaşılır bir isim giriniz.
+            </span>
+
+          </div>
+
+
+          <div class="edit-category-form__actions">
+
+            <button
+              type="button"
+              class="edit-category-form__cancel"
+              [routerLink]="routeLinks.Admin.Categories"
+              [disabled]="isUpdating()">
+            
+              Vazgeç
+                    
+            </button>
+
+
+            <button
+              type="submit"
+              class="edit-category-form__submit"
+              [disabled]="isUpdating()">
+
+              @if (isUpdating()) {
+
+                <span class="edit-category-form__button-spinner"></span>
+
+                Güncelleniyor...
+
+              }
+
+              @else {
+
+                Değişiklikleri Kaydet
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <aside class="edit-category-card edit-category-card--identity">
+
+        <div class="edit-category-card__header">
+
+          <div>
+
+            <span class="edit-category-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Kategori Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="edit-category-identity">
+
+          <span>
+            Kategori ID
+          </span>
+
+          <strong>
+            {{ currentCategory.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="edit-category-warning">
+
+          <strong>
+            Bilgilendirme
+          </strong>
+
+          <p>
+            Kategori kimliği sistem tarafından oluşturulur ve düzenlenemez.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

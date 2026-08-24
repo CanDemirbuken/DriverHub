@@ -8,12 +8,21 @@ import { AdminLogin } from './features/admin-login/admin-login';
 import { ForgotPassword } from './features/forgot-password/forgot-password';
 import { ResetPassword } from './features/reset-password/reset-password';
 import { adminGuestGuard } from './core/guards/admin-guest-guard';
-import { Cars } from './features/cars/cars';
-import { CarDetail } from './features/car-detail/car-detail';
-import { CarEdit } from './features/car-edit/car-edit';
-import { Brands } from './features/brands/brands/brands';
-import { BrandById } from './features/brands/brand-by-id/brand-by-id';
-import { CreateBrand } from './features/brands/create-brand/create-brand';
+import { Cars } from './features/cars/car-list/cars';
+import { CarDetail } from './features/cars/car-detail/car-detail';
+import { CarEdit } from './features/cars/car-edit/car-edit';
+import { Brands } from './features/brands/brand-list/brands';
+import { BrandById } from './features/brands/brand-detail/brand-by-id';
+import { CreateBrand } from './features/brands/brand-create/create-brand';
+import { EditBrand } from './features/brands/brand-edit/edit-brand';
+import { CategoryList } from './features/categories/category-list/category-list';
+import { CreateCategory } from './features/categories/category-create/create-category';
+import { CategoryDetail } from './features/categories/category-detail/category-detail';
+import { EditCategory } from './features/categories/category-edit/edit-category';
+import { LocationList } from './features/locations/location-list/location-list';
+import { LocationDetail } from './features/locations/location-detail/location-detail';
+import { LocationCreate } from './features/locations/location-create/location-create';
+import { LocationEdit } from './features/locations/location-edit/location-edit';
 
 export const routes: Routes = [
   {
@@ -70,6 +79,42 @@ export const routes: Routes = [
       {
         path: `${RoutePaths.Admin.Brands}/:id`,
         component: BrandById
+      },
+      {
+        path: `${RoutePaths.Admin.Brands}/:id/edit`,
+        component: EditBrand
+      },
+      {
+        path: `${RoutePaths.Admin.Categories}`,
+        component: CategoryList
+      },
+      {
+        path: `${RoutePaths.Admin.Categories}/create`,
+        component: CreateCategory
+      },
+      {
+        path: `${RoutePaths.Admin.Categories}/:id`,
+        component: CategoryDetail
+      },
+      {
+        path: `${RoutePaths.Admin.Categories}/:id/edit`,
+        component: EditCategory
+      },
+      {
+        path: `${RoutePaths.Admin.Locations}`,
+        component: LocationList
+      },
+      {
+        path: `${RoutePaths.Admin.Locations}/create`,
+        component: LocationCreate
+      },
+      {
+        path: `${RoutePaths.Admin.Locations}/:id`,
+        component: LocationDetail
+      },
+      {
+        path: `${RoutePaths.Admin.Locations}/:id/edit`,
+        component: LocationEdit
       }
     ]
   }

@@ -1,0 +1,333 @@
+<section class="locations-page">
+
+  <div class="locations-header">
+
+    <div class="locations-header__content">
+
+      <span class="locations-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Şubeler
+      </h1>
+
+      <p>
+        Sistemde tanımlı araç şubelerini görüntüleyebilir ve yönetebilirsiniz.
+      </p>
+
+    </div>
+
+
+    <div class="locations-header__actions">
+
+      <div class="locations-header__summary">
+
+        <span class="locations-header__summary-label">
+          Toplam Şube
+        </span>
+
+        <strong>
+          {{ locations().length }}
+        </strong>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="locations-header__add"
+        [routerLink]="routeLinks.Admin.CreateLocation">
+
+        Şube Ekle
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  @if (isLoading()) {
+
+    <div class="locations-state locations-state--loading">
+
+      <div class="locations-state__spinner"></div>
+
+      <div>
+
+        <strong>
+          Şubeler yükleniyor
+        </strong>
+
+        <p>
+          Şube bilgileri hazırlanıyor...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="locations-state locations-state--error">
+
+      <div class="locations-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Şube bilgileri yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (locations().length === 0) {
+
+    <div class="locations-empty">
+
+      <div class="locations-empty__icon">
+        L
+      </div>
+
+      <h3>
+        Henüz şube bulunmuyor
+      </h3>
+
+      <p>
+        Sistemde görüntülenecek herhangi bir araç şubesi bulunmuyor.
+      </p>
+
+
+      <button
+        type="button"
+        class="locations-empty__add"
+        [routerLink]="routeLinks.Admin.CreateLocation">
+
+        İlk Şubeyi Ekle
+
+      </button>
+
+    </div>
+
+  }
+
+  @else {
+
+    <section class="locations-card">
+
+      <div class="locations-card__header">
+
+        <div>
+
+          <span class="locations-card__eyebrow">
+            Şube Listesi
+          </span>
+
+          <h2>
+            Kayıtlı Şubeler
+          </h2>
+
+        </div>
+
+
+        <span class="locations-card__count">
+          {{ locations().length }} kayıt
+        </span>
+
+      </div>
+
+
+      <div class="locations-list">
+
+        <div class="locations-list__header">
+
+          <span>
+            Şube
+          </span>
+
+          <span>
+            Durum
+          </span>
+
+          <span>
+            İşlemler
+          </span>
+
+        </div>
+
+
+        @for (location of locations(); track location.id) {
+
+          <div class="location-item">
+
+            <div class="location-item__identity">
+
+              <div class="location-item__avatar">
+
+                {{ location.name.charAt(0).toUpperCase() }}
+
+              </div>
+
+
+              <div class="location-item__content">
+
+                <strong>
+                  {{ location.name }}
+                </strong>
+
+                <span>
+                  Araç şubesi
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="location-item__status">
+
+              <span class="location-item__status-dot"></span>
+
+              Kayıtlı
+
+            </div>
+
+
+            <div class="location-item__actions">
+
+              <button
+                type="button"
+                class="location-item__detail"
+                [routerLink]="routeLinks.Admin.LocationDetail(location.id)">
+
+                Detay
+
+              </button>
+
+
+              <button
+                type="button"
+                class="location-item__delete"
+                [disabled]="isRemoving()"
+                (click)="openRemoveConfirmation(location)">
+
+                Sil
+
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  }
+
+</section>
+
+
+@if (selectedLocationForRemove(); as location) {
+
+  <div
+    class="delete-modal-backdrop"
+    (click)="closeRemoveConfirmation()">
+
+    <div
+      class="delete-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-location-title"
+      (click)="$event.stopPropagation()">
+
+      <div class="delete-modal__icon">
+        !
+      </div>
+
+
+      <div class="delete-modal__content">
+
+        <span class="delete-modal__eyebrow">
+          Silme Onayı
+        </span>
+
+
+        <h2 id="delete-location-title">
+          Şube silinsin mi?
+        </h2>
+
+
+        <p>
+          <strong>
+            {{ location.name }}
+          </strong>
+
+          şubesini sistemden silmek üzeresiniz.
+        </p>
+
+
+        <p class="delete-modal__warning">
+          Bu işlem geri alınamaz.
+        </p>
+
+      </div>
+
+
+      <div class="delete-modal__actions">
+
+        <button
+          type="button"
+          class="delete-modal__cancel"
+          [disabled]="isRemoving()"
+          (click)="closeRemoveConfirmation()">
+
+          Vazgeç
+
+        </button>
+
+
+        <button
+          type="button"
+          class="delete-modal__confirm"
+          [disabled]="isRemoving()"
+          (click)="confirmRemoveLocation()">
+
+          @if (isRemoving()) {
+
+            <span class="delete-modal__spinner"></span>
+
+            Siliniyor...
+
+          }
+
+          @else {
+
+            Şubeyi Sil
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

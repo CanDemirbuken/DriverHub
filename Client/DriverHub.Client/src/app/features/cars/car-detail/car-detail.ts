@@ -1,24 +1,24 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CarService } from '../../core/services/car/car-service';
-import { GetCarByIdResponse } from '../../core/services/car/models/get-car-by-id-response';
-import { GetCarByIdRequest } from '../../core/services/car/models/get-car-by-id-request';
+import { CarService } from '../../../core/services/car/car-service';
+import { GetCarByIdResponse } from '../../../core/services/car/models/get-car-by-id-response';
+import { GetCarByIdRequest } from '../../../core/services/car/models/get-car-by-id-request';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApiResponse } from '../../core/models/api/api-response';
+import { ApiResponse } from '../../../core/models/api/api-response';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { RouteLinks } from '../../core/constants/route-paths';
-import { ImageUrlHelper } from '../../shared/helpers/image-url-helper';
-import { CarStatus, UpdateCarStatusRequest } from '../../core/services/car/models/update-car-status-request';
-import { ToastService } from '../../shared/services/toast-service';
+import { RouteLinks } from '../../../core/constants/route-paths';
+import { ImageUrlHelper } from '../../../shared/helpers/image-url-helper';
+import { CarStatus, UpdateCarStatusRequest } from '../../../core/services/car/models/update-car-status-request';
+import { ToastService } from '../../../shared/services/toast-service';
 import { FormsModule } from '@angular/forms';
-import { GetLocationsResponse } from '../../core/services/location/models/get-locations-response';
-import { LocationService } from '../../core/services/location/location-service';
-import { UpdateCarLocationRequest } from '../../core/services/car/models/update-car-location-request';
-import { PricingType, UpdateCarPricingsRequest } from '../../core/services/car/models/update-car-pricings-request';
-import { EditableCarPricing } from '../../core/services/car/models/editable-car-pricing';
-import { EditableCarFeatures } from '../../core/services/car/models/editable-car-features';
-import { FeatureService } from '../../core/services/feature/feature-service';
-import { GetFeaturesResponse } from '../../core/services/feature/models/get-features-response';
-import { UpdateCarFeaturesRequest } from '../../core/services/car/models/update-car-features-request';
+import { GetLocationsResponse } from '../../../core/services/location/models/get-locations-response';
+import { LocationService } from '../../../core/services/location/location-service';
+import { UpdateCarLocationRequest } from '../../../core/services/car/models/update-car-location-request';
+import { PricingType, UpdateCarPricingsRequest } from '../../../core/services/car/models/update-car-pricings-request';
+import { EditableCarPricing } from '../../../core/services/car/models/editable-car-pricing';
+import { EditableCarFeatures } from '../../../core/services/car/models/editable-car-features';
+import { FeatureService } from '../../../core/services/feature/feature-service';
+import { GetFeaturesResponse } from '../../../core/services/feature/models/get-features-response';
+import { UpdateCarFeaturesRequest } from '../../../core/services/car/models/update-car-features-request';
 
 @Component({
   selector: 'app-car-detail',

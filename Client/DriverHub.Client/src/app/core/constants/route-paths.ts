@@ -9,7 +9,9 @@ export const RoutePaths = {
     ResetPassword: 'reset-password',
     Dashboard: 'dashboard',
     Cars: 'cars',
-    Brands: 'brands'
+    Brands: 'brands',
+    Categories: 'categories',
+    Locations: 'locations'
   }
 } as const;
 
@@ -29,6 +31,17 @@ export const RouteLinks = {
 
     Brands: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}`,
     BrandById: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}/${id}`,
-    CreateBrand: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}/create`
+    CreateBrand: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}/create`,
+    EditBrand: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Brands}/${id}/edit`,
+
+    Categories: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Categories}`,
+    CreateCategory: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Categories}/create`,
+    CategoryDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Categories}/${id}`,
+    EditCategory: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Categories}/${id}/edit`,
+
+    Locations: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}`,
+    CreateLocation: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/create`,
+    LocationDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/${id}`,
+    EditLocation: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/${id}/edit`
   }
 } as const;
