@@ -1,0 +1,247 @@
+<section class="feature-create-page">
+
+  <div class="feature-create-toolbar">
+
+    <button
+      type="button"
+      class="feature-create-toolbar__back"
+      [routerLink]="routeLinks.Admin.Features">
+
+      <span>
+        ←
+      </span>
+
+      Özellik Listesine Dön
+
+    </button>
+
+  </div>
+
+
+  <section class="feature-create-hero">
+
+    <div class="feature-create-hero__avatar">
+      +
+    </div>
+
+
+    <div class="feature-create-hero__content">
+
+      <span class="feature-create-hero__eyebrow">
+        Özellik Yönetimi
+      </span>
+
+      <h1>
+        Yeni Araç Özelliği Ekle
+      </h1>
+
+      <p>
+        Araçlara atanabilecek yeni bir özellik tanımlayabilirsiniz.
+      </p>
+
+    </div>
+
+
+    <div class="feature-create-hero__status">
+
+      <span class="feature-create-hero__status-dot"></span>
+
+      Yeni Kayıt
+
+    </div>
+
+  </section>
+
+
+  <div class="feature-create-layout">
+
+    <section class="feature-create-card">
+
+      <div class="feature-create-card__header">
+
+        <div>
+
+          <span class="feature-create-card__eyebrow">
+            Özellik Bilgileri
+          </span>
+
+          <h2>
+            Genel Bilgiler
+          </h2>
+
+          <p>
+            Yeni araç özelliğinin sistemde görüntülenecek adını belirleyin.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <form
+        class="feature-create-form"
+        (submit)="$event.preventDefault(); createFeature()">
+
+        <div class="feature-create-form__group">
+
+          <label for="featureName">
+            Özellik Adı
+          </label>
+
+          <input
+            id="featureName"
+            type="text"
+            name="featureName"
+            autocomplete="off"
+            placeholder="Özellik adını giriniz"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            [disabled]="isAdding()">
+
+          <span class="feature-create-form__hint">
+            Örneğin: Klima, Geri Görüş Kamerası, Hız Sabitleyici veya Isıtmalı Koltuk.
+          </span>
+
+        </div>
+
+
+        @if (errorMessage()) {
+
+          <div class="feature-create-form__error">
+
+            <div class="feature-create-form__error-icon">
+              !
+            </div>
+
+            <span>
+              {{ errorMessage() }}
+            </span>
+
+          </div>
+
+        }
+
+
+        <div class="feature-create-form__actions">
+
+          <button
+            type="button"
+            class="feature-create-form__cancel"
+            [routerLink]="routeLinks.Admin.Features"
+            [disabled]="isAdding()">
+
+            Vazgeç
+
+          </button>
+
+
+          <button
+            type="submit"
+            class="feature-create-form__submit"
+            [disabled]="isAdding()">
+
+            @if (isAdding()) {
+
+              <span class="feature-create-form__spinner"></span>
+
+              Özellik Ekleniyor...
+
+            }
+
+            @else {
+
+              Özellik Ekle
+
+            }
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <aside class="feature-create-card feature-create-card--info">
+
+      <div class="feature-create-card__header">
+
+        <div>
+
+          <span class="feature-create-card__eyebrow">
+            Bilgilendirme
+          </span>
+
+          <h2>
+            Özellik Kaydı
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="feature-create-info">
+
+        <div class="feature-create-info__item">
+
+          <span>
+            Kayıt Durumu
+          </span>
+
+          <strong class="feature-create-info__status">
+            Yeni Kayıt
+          </strong>
+
+        </div>
+
+
+        <div class="feature-create-info__item">
+
+          <span>
+            Özellik Kimliği
+          </span>
+
+          <strong>
+            Otomatik Oluşturulacak
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="feature-create-note">
+
+        <strong>
+          Bilgi
+        </strong>
+
+        <p>
+          Özellik oluşturulduktan sonra sistem tarafından benzersiz bir
+          kimlik atanacak ve yeni özelliğin detay sayfasına
+          yönlendirileceksiniz.
+        </p>
+
+      </div>
+
+
+      <div class="feature-create-note">
+
+        <strong>
+          Araç Atamaları
+        </strong>
+
+        <p>
+          Oluşturulan özellik daha sonra araç detay ekranı üzerinden
+          ilgili araçlara atanabilir.
+        </p>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</section>

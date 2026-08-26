@@ -1,0 +1,220 @@
+<section class="feature-detail-page">
+
+  @if (isLoading()) {
+
+    <div class="feature-detail-state feature-detail-state--loading">
+
+      <div class="feature-detail-state__spinner"></div>
+
+      <div>
+
+        <strong>
+          Araç özelliği yükleniyor
+        </strong>
+
+        <p>
+          Özellik detayları hazırlanıyor...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="feature-detail-state feature-detail-state--error">
+
+      <div class="feature-detail-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Araç özelliği yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (feature(); as currentFeature) {
+
+    <div class="feature-detail-toolbar">
+
+      <button
+        type="button"
+        class="feature-detail-toolbar__back"
+        [routerLink]="routeLinks.Admin.Features">
+
+        <span>
+          ←
+        </span>
+
+        Özellik Listesine Dön
+
+      </button>
+
+
+      <button
+        type="button"
+        class="feature-detail-toolbar__edit"
+        [routerLink]="routeLinks.Admin.EditFeature(featureId())">
+
+        Düzenle
+
+      </button>
+
+    </div>
+
+
+    <section class="feature-detail-hero">
+
+      <div class="feature-detail-hero__avatar">
+
+        {{ currentFeature.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="feature-detail-hero__content">
+
+        <span class="feature-detail-hero__eyebrow">
+          Araç Özelliği
+        </span>
+
+        <h1>
+          {{ currentFeature.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı araç özelliği bilgilerini buradan görüntüleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="feature-detail-hero__status">
+
+        <span class="feature-detail-hero__status-dot"></span>
+
+        Kayıtlı
+
+      </div>
+
+    </section>
+
+
+    <div class="feature-detail-layout">
+
+      <section class="feature-detail-card">
+
+        <div class="feature-detail-card__header">
+
+          <div>
+
+            <span class="feature-detail-card__eyebrow">
+              Özellik Bilgileri
+            </span>
+
+            <h2>
+              Genel Bilgiler
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="feature-detail-grid">
+
+          <div class="feature-detail-item">
+
+            <span class="feature-detail-item__label">
+              Özellik Adı
+            </span>
+
+            <strong>
+              {{ currentFeature.name }}
+            </strong>
+
+          </div>
+
+
+          <div class="feature-detail-item">
+
+            <span class="feature-detail-item__label">
+              Durum
+            </span>
+
+            <strong class="feature-detail-item__status">
+              Aktif Kayıt
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <aside class="feature-detail-card feature-detail-card--identity">
+
+        <div class="feature-detail-card__header">
+
+          <div>
+
+            <span class="feature-detail-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Özellik Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="feature-detail-identity">
+
+          <span>
+            Özellik ID
+          </span>
+
+          <strong>
+            {{ currentFeature.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="feature-detail-note">
+
+          <strong>
+            Araç Atamaları
+          </strong>
+
+          <p>
+            Bu özellik araç detay ekranındaki özellik yönetimi
+            üzerinden araçlara atanabilir.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>

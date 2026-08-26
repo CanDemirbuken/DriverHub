@@ -68,7 +68,7 @@ export const ApiEndpoints = {
     GetLocationById: (id: string) => 
       `/api/locations/${id}`,
 
-    CreateLocation: '/api/locations',
+    CreateLocation: `/api/locations`,
 
     RemoveLocation: (id: string) =>
       `/api/locations/${id}`,
@@ -77,11 +77,22 @@ export const ApiEndpoints = {
       `/api/locations/${id}`
   },
 
-  Media: {
-    Upload: `/api/media/upload`
+  Features: {
+    GetFeatures: `/api/features`,
+
+    GetFeatureById: (id: string) =>
+      `/api/features/${id}`,
+
+    CreateFeature:  `/api/features`,
+
+    RemoveFeature: (id: string) =>
+      `/api/features/${id}`,
+
+    EditFeature: (id: string) =>
+      `/api/features/${id}`
   },
 
-  Features: {
-    GetFeatures: `/api/features`
+  Media: {
+    Upload: `/api/media/upload`
   }
 } as const;

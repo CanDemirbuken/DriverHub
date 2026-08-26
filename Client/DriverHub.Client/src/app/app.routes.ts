@@ -23,6 +23,10 @@ import { LocationList } from './features/locations/location-list/location-list';
 import { LocationDetail } from './features/locations/location-detail/location-detail';
 import { LocationCreate } from './features/locations/location-create/location-create';
 import { LocationEdit } from './features/locations/location-edit/location-edit';
+import { FeatureList } from './features/car-features/feature-list/feature-list';
+import { FeatureCreate } from './features/car-features/feature-create/feature-create';
+import { FeatureDetail } from './features/car-features/feature-detail/feature-detail';
+import { FeatureEdit } from './features/car-features/feature-edit/feature-edit';
 
 export const routes: Routes = [
   {
@@ -115,7 +119,23 @@ export const routes: Routes = [
       {
         path: `${RoutePaths.Admin.Locations}/:id/edit`,
         component: LocationEdit
-      }
+      },
+      {
+        path: `${RoutePaths.Admin.Features}`,
+        component: FeatureList
+      },
+      {
+        path: `${RoutePaths.Admin.Features}/create`,
+        component: FeatureCreate
+      },
+      {
+        path: `${RoutePaths.Admin.Features}/:id`,
+        component: FeatureDetail
+      },
+      {
+        path: `${RoutePaths.Admin.Features}/:id/edit`,
+        component: FeatureEdit
+      },
     ]
   }
 ];

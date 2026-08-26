@@ -1,0 +1,333 @@
+<section class="features-page">
+
+  <div class="features-header">
+
+    <div class="features-header__content">
+
+      <span class="features-header__eyebrow">
+        Araç Yönetimi
+      </span>
+
+      <h1>
+        Araç Özellikleri
+      </h1>
+
+      <p>
+        Araçlarda kullanılabilecek özellikleri görüntüleyebilir ve yönetebilirsiniz.
+      </p>
+
+    </div>
+
+
+    <div class="features-header__actions">
+
+      <div class="features-header__summary">
+
+        <span class="features-header__summary-label">
+          Toplam Özellik
+        </span>
+
+        <strong>
+          {{ features().length }}
+        </strong>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="features-header__add"
+        [routerLink]="routeLinks.Admin.CreateFeature">
+
+        Özellik Ekle
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  @if (isLoading()) {
+
+    <div class="features-state features-state--loading">
+
+      <div class="features-state__spinner"></div>
+
+      <div>
+
+        <strong>
+          Araç özellikleri yükleniyor
+        </strong>
+
+        <p>
+          Özellik bilgileri hazırlanıyor...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="features-state features-state--error">
+
+      <div class="features-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Araç özellikleri yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (features().length === 0) {
+
+    <div class="features-empty">
+
+      <div class="features-empty__icon">
+        F
+      </div>
+
+      <h3>
+        Henüz araç özelliği bulunmuyor
+      </h3>
+
+      <p>
+        Sistemde araçlara atanabilecek herhangi bir özellik bulunmuyor.
+      </p>
+
+
+      <button
+        type="button"
+        class="features-empty__add"
+        [routerLink]="routeLinks.Admin.CreateFeature">
+
+        İlk Özelliği Ekle
+
+      </button>
+
+    </div>
+
+  }
+
+  @else {
+
+    <section class="features-card">
+
+      <div class="features-card__header">
+
+        <div>
+
+          <span class="features-card__eyebrow">
+            Özellik Listesi
+          </span>
+
+          <h2>
+            Kayıtlı Araç Özellikleri
+          </h2>
+
+        </div>
+
+
+        <span class="features-card__count">
+          {{ features().length }} kayıt
+        </span>
+
+      </div>
+
+
+      <div class="features-list">
+
+        <div class="features-list__header">
+
+          <span>
+            Özellik
+          </span>
+
+          <span>
+            Durum
+          </span>
+
+          <span>
+            İşlemler
+          </span>
+
+        </div>
+
+
+        @for (feature of features(); track feature.id) {
+
+          <div class="feature-item">
+
+            <div class="feature-item__identity">
+
+              <div class="feature-item__avatar">
+
+                {{ feature.name.charAt(0).toUpperCase() }}
+
+              </div>
+
+
+              <div class="feature-item__content">
+
+                <strong>
+                  {{ feature.name }}
+                </strong>
+
+                <span>
+                  Araç özelliği
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="feature-item__status">
+
+              <span class="feature-item__status-dot"></span>
+
+              Kayıtlı
+
+            </div>
+
+
+            <div class="feature-item__actions">
+
+              <button
+                type="button"
+                class="feature-item__detail"
+                [routerLink]="routeLinks.Admin.FeatureDetail(feature.id)">
+
+                Detay
+
+              </button>
+
+
+              <button
+                type="button"
+                class="feature-item__delete"
+                [disabled]="isRemoving()"
+                (click)="openRemoveConfirmation(feature)">
+
+                Sil
+
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  }
+
+</section>
+
+
+@if (selectedFeatureForRemove(); as feature) {
+
+  <div
+    class="delete-modal-backdrop"
+    (click)="closeRemoveConfirmation()">
+
+    <div
+      class="delete-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-feature-title"
+      (click)="$event.stopPropagation()">
+
+      <div class="delete-modal__icon">
+        !
+      </div>
+
+
+      <div class="delete-modal__content">
+
+        <span class="delete-modal__eyebrow">
+          Silme Onayı
+        </span>
+
+
+        <h2 id="delete-feature-title">
+          Araç özelliği silinsin mi?
+        </h2>
+
+
+        <p>
+          <strong>
+            {{ feature.name }}
+          </strong>
+
+          özelliğini sistemden silmek üzeresiniz.
+        </p>
+
+
+        <p class="delete-modal__warning">
+          Bu özellik bir veya daha fazla araç tarafından kullanılıyorsa silme işlemi gerçekleştirilemez.
+        </p>
+
+      </div>
+
+
+      <div class="delete-modal__actions">
+
+        <button
+          type="button"
+          class="delete-modal__cancel"
+          [disabled]="isRemoving()"
+          (click)="closeRemoveConfirmation()">
+
+          Vazgeç
+
+        </button>
+
+
+        <button
+          type="button"
+          class="delete-modal__confirm"
+          [disabled]="isRemoving()"
+          (click)="confirmRemoveFeature()">
+
+          @if (isRemoving()) {
+
+            <span class="delete-modal__spinner"></span>
+
+            Siliniyor...
+
+          }
+
+          @else {
+
+            Özelliği Sil
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

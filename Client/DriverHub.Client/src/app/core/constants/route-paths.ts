@@ -11,7 +11,8 @@ export const RoutePaths = {
     Cars: 'cars',
     Brands: 'brands',
     Categories: 'categories',
-    Locations: 'locations'
+    Locations: 'locations',
+    Features: 'features'
   }
 } as const;
 
@@ -42,6 +43,11 @@ export const RouteLinks = {
     Locations: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}`,
     CreateLocation: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/create`,
     LocationDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/${id}`,
-    EditLocation: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/${id}/edit`
+    EditLocation: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Locations}/${id}/edit`,
+
+    Features: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Features}`,
+    CreateFeature: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Features}/create`,
+    FeatureDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Features}/${id}`,
+    EditFeature: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Features}/${id}/edit`
   }
 } as const;

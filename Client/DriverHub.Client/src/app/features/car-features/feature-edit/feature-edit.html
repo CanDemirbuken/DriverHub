@@ -1,0 +1,264 @@
+<section class="feature-edit-page">
+
+  @if (isLoading()) {
+
+    <div class="feature-edit-state feature-edit-state--loading">
+
+      <div class="feature-edit-state__spinner"></div>
+
+      <div>
+
+        <strong>
+          Araç özelliği yükleniyor
+        </strong>
+
+        <p>
+          Düzenleme bilgileri hazırlanıyor...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (errorMessage()) {
+
+    <div class="feature-edit-state feature-edit-state--error">
+
+      <div class="feature-edit-state__error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Araç özelliği yüklenemedi
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+  @else if (feature(); as currentFeature) {
+
+    <div class="feature-edit-toolbar">
+
+      <button
+        type="button"
+        class="feature-edit-toolbar__back"
+        [routerLink]="routeLinks.Admin.FeatureDetail(currentFeature.id)">
+
+        <span>
+          ←
+        </span>
+
+        Özellik Detayına Dön
+
+      </button>
+
+    </div>
+
+
+    <section class="feature-edit-hero">
+
+      <div class="feature-edit-hero__avatar">
+
+        {{ currentFeature.name.charAt(0).toUpperCase() }}
+
+      </div>
+
+
+      <div class="feature-edit-hero__content">
+
+        <span class="feature-edit-hero__eyebrow">
+          Özellik Yönetimi
+        </span>
+
+        <h1>
+          {{ currentFeature.name }}
+        </h1>
+
+        <p>
+          Sistemde kayıtlı araç özelliğini buradan güncelleyebilirsiniz.
+        </p>
+
+      </div>
+
+
+      <div class="feature-edit-hero__status">
+
+        <span class="feature-edit-hero__status-dot"></span>
+
+        Düzenlenebilir
+
+      </div>
+
+    </section>
+
+
+    <div class="feature-edit-layout">
+
+      <section class="feature-edit-card">
+
+        <div class="feature-edit-card__header">
+
+          <div>
+
+            <span class="feature-edit-card__eyebrow">
+              Özellik Bilgileri
+            </span>
+
+            <h2>
+              Özelliği Düzenle
+            </h2>
+
+            <p>
+              Özellik adını değiştirerek mevcut kaydı güncelleyebilirsiniz.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form
+          class="feature-edit-form"
+          (submit)="$event.preventDefault(); updateFeature()">
+
+          <div class="feature-edit-form__group">
+
+            <label for="featureName">
+              Özellik Adı
+            </label>
+
+            <input
+              id="featureName"
+              type="text"
+              name="featureName"
+              autocomplete="off"
+              placeholder="Özellik adını giriniz"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+              [disabled]="isUpdating()">
+
+            <span class="feature-edit-form__hint">
+              Araçlarda görüntülenecek anlaşılır ve benzersiz bir özellik adı kullanın.
+            </span>
+
+          </div>
+
+
+          <div class="feature-edit-form__actions">
+
+            <button
+              type="button"
+              class="feature-edit-form__cancel"
+              [routerLink]="routeLinks.Admin.FeatureDetail(currentFeature.id)"
+              [disabled]="isUpdating()">
+
+              Vazgeç
+
+            </button>
+
+
+            <button
+              type="submit"
+              class="feature-edit-form__submit"
+              [disabled]="isUpdating()">
+
+              @if (isUpdating()) {
+
+                <span class="feature-edit-form__spinner"></span>
+
+                Güncelleniyor...
+
+              }
+
+              @else {
+
+                Değişiklikleri Kaydet
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <aside class="feature-edit-card feature-edit-card--identity">
+
+        <div class="feature-edit-card__header">
+
+          <div>
+
+            <span class="feature-edit-card__eyebrow">
+              Kimlik
+            </span>
+
+            <h2>
+              Özellik Kimliği
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="feature-edit-identity">
+
+          <span>
+            Özellik ID
+          </span>
+
+          <strong>
+            {{ currentFeature.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="feature-edit-note">
+
+          <strong>
+            Bilgilendirme
+          </strong>
+
+          <p>
+            Özellik kimliği sistem tarafından oluşturulur ve düzenlenemez.
+            Yalnızca araç özelliğinin adı güncellenebilir.
+          </p>
+
+        </div>
+
+
+        <div class="feature-edit-note">
+
+          <strong>
+            Araç Atamaları
+          </strong>
+
+          <p>
+            Özellik adının güncellenmesi mevcut araç atamalarını kaldırmaz.
+            Araçlar ilgili özellik kaydını kullanmaya devam eder.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>
