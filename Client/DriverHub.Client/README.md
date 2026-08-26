@@ -2,8 +2,8 @@
 
 <p align="center">
 
-<img src="https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular" />
-<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+<img src="https://img.shields.io/badge/Angular-21.2-DD0031?style=for-the-badge&logo=angular" />
+<img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
 <img src="https://img.shields.io/badge/SCSS-C6538C?style=for-the-badge&logo=sass&logoColor=white" />
 <img src="https://img.shields.io/badge/API-ASP.NET_Core-512BD4?style=for-the-badge&logo=dotnet" />
 
@@ -23,38 +23,72 @@ Angular frontend for the DriverHub car rental platform.
 
 DriverHub Client is the Angular frontend of the DriverHub car rental platform.
 
-The frontend is designed to support two primary application areas:
+The frontend is designed around two primary application areas:
 
 - **Admin Panel**
 - **Public Rental Experience**
 
-Current development is focused on the **Admin Panel**, where administrators can manage the vehicle fleet and interact with the DriverHub ASP.NET Core Web API.
+Current development is focused primarily on the **Admin Panel**.
 
-The frontend is built using standalone Angular components and follows a feature-oriented structure with separate core services, shared components, helpers and typed API contracts.
+The current milestone provides the core fleet management workflows required for administrators to manage vehicles and the supporting entities used by the vehicle domain.
+
+The frontend communicates with the DriverHub ASP.NET Core Web API and follows a feature-oriented Angular structure built around:
+
+- Standalone components
+- Angular Signals
+- Typed request and response contracts
+- Centralized API endpoint definitions
+- Centralized route definitions
+- Feature-specific services
+- Shared helpers and UI services
+
+The current Admin Fleet Management foundation includes:
+
+- Vehicle listing
+- Vehicle detail
+- Vehicle editing
+- Vehicle media management
+- Vehicle status management
+- Vehicle location management
+- Vehicle pricing management
+- Vehicle feature assignment
+- Brand management
+- Category management
+- Location management
+- Feature management
 
 ---
 
 ## 🚀 Technology Stack
 
-- Angular
-- TypeScript
+### Frontend
+
+- Angular 21.2
+- TypeScript 5.9
 - Angular Signals
 - Angular Router
 - HttpClient
 - FormsModule
+- RxJS
 - SCSS
 - Standalone Components
 
-Backend integration:
+### Backend Integration
 
 - ASP.NET Core Web API
 - JWT-based authentication
 - REST API
 - Standardized API responses
+- Typed request / response contracts
+
+### Tooling
+
+- Angular CLI 21.2
+- npm 11.17
 
 ---
 
-## 🏗️ Frontend Architecture
+# 🏗️ Frontend Architecture
 
 The client separates application-wide infrastructure from feature-specific UI.
 
@@ -68,10 +102,15 @@ src/app
 │   └── services
 │
 ├── features
-│   ├── authentication
+│   ├── admin-login
+│   ├── forgot-password
+│   ├── reset-password
 │   ├── dashboard
 │   ├── cars
-│   └── ...
+│   ├── brands
+│   ├── categories
+│   ├── locations
+│   └── car-features
 │
 ├── layouts
 │   ├── admin-layout
@@ -85,137 +124,282 @@ src/app
 └── app.routes.ts
 ```
 
-The main responsibilities are divided as follows:
-
-### Core
-
-Contains application-level infrastructure such as:
-
-- API services
-- Request / response models
-- Route constants
-- Guards
-- Shared API contracts
-
-### Features
-
-Contains page-level application functionality.
-
-Examples:
-
-- Car List
-- Car Detail
-- Car Create
-- Car Edit
-- Dashboard
-- Authentication screens
-
-### Layouts
-
-Defines the primary visual shells of the application.
-
-Current layouts:
-
-- Admin Layout
-- Public Layout
-
-### Shared
-
-Contains reusable frontend functionality such as:
-
-- Toast notifications
-- Image URL helpers
-- Reusable components
-- Shared services
+The main responsibilities are divided as follows.
 
 ---
 
-## 🧭 Routing
+## Core
+
+The `core` layer contains application-wide frontend infrastructure.
+
+Examples include:
+
+- API endpoint definitions
+- Route path definitions
+- Route link definitions
+- Authentication guards
+- Feature services
+- Request models
+- Response models
+- Shared API contracts
+
+Feature components do not directly manage infrastructure concerns such as API URL construction.
+
+---
+
+## Features
+
+The `features` directory contains page-level application functionality.
+
+Current Admin Panel features include:
+
+```text
+Dashboard
+
+Cars
+├── Car List
+├── Car Detail
+└── Car Edit
+
+Brands
+├── Brand List
+├── Brand Create
+├── Brand Detail
+└── Brand Edit
+
+Categories
+├── Category List
+├── Category Create
+├── Category Detail
+└── Category Edit
+
+Locations
+├── Location List
+├── Location Create
+├── Location Detail
+└── Location Edit
+
+Car Features
+├── Feature List
+├── Feature Create
+├── Feature Detail
+└── Feature Edit
+```
+
+Deletion workflows for supporting entities are managed directly from their list screens.
+
+---
+
+## Layouts
+
+The application currently defines two layout foundations:
+
+- **Admin Layout**
+- **Public Layout**
+
+The Admin Layout contains shared administrative UI such as:
+
+- Sidebar
+- Topbar
+- Footer
+- Global Toast Component
+- Router outlet for protected Admin pages
+
+The Public Layout currently provides the foundation for the future customer-facing rental experience.
+
+---
+
+## Shared
+
+Reusable frontend behavior is placed under the shared area.
+
+Current examples include:
+
+- Toast notifications
+- Toast service
+- Image URL helper
+- Shared components
+- Reusable frontend utilities
+
+This prevents feature components from duplicating application-wide behavior.
+
+---
+
+# 🧭 Routing
 
 Routing is centrally managed through Angular Router.
 
-Route path definitions are separated from navigation links to avoid duplicated route strings throughout the application.
-
-The application currently contains separate routing areas for:
+Route path definitions and browser navigation links are separated through:
 
 ```text
-Public
-└── Public Layout
-
-Admin
-├── Authentication
-└── Admin Layout
-    ├── Dashboard
-    └── Car Management
+RoutePaths
+RouteLinks
 ```
 
-Protected Admin routes use route guards to prevent unauthorized navigation.
+This avoids duplicated route strings throughout feature components.
+
+The current Admin route structure is conceptually:
+
+```text
+/admin
+│
+├── login
+├── forgot-password
+├── reset-password
+│
+└── Protected Admin Layout
+    │
+    ├── dashboard
+    │
+    ├── cars
+    │   ├── :id
+    │   └── :id/edit
+    │
+    ├── brands
+    │   ├── create
+    │   ├── :id
+    │   └── :id/edit
+    │
+    ├── categories
+    │   ├── create
+    │   ├── :id
+    │   └── :id/edit
+    │
+    ├── locations
+    │   ├── create
+    │   ├── :id
+    │   └── :id/edit
+    │
+    └── features
+        ├── create
+        ├── :id
+        └── :id/edit
+```
+
+Protected Admin routes are placed under the Admin Layout and guarded before navigation is allowed.
 
 ---
 
-## 🛡️ Route Guards
+# 🛡️ Authentication and Route Guards
 
-Admin routes are protected through Angular route guards.
+The Admin area contains authentication-related screens for:
 
-The guard layer is responsible for determining whether the user can navigate to protected application areas.
+- Login
+- Forgot Password
+- Reset Password
 
-This keeps authorization-related navigation logic outside individual feature components.
+The routing infrastructure uses separate guards for authenticated and guest scenarios.
+
+Conceptually:
+
+```text
+Unauthenticated User
+        │
+        ▼
+Admin Login
+        │
+        ▼
+Authentication
+        │
+        ▼
+Admin Auth Guard
+        │
+        ▼
+Protected Admin Layout
+```
+
+Authentication and authorization-related navigation logic therefore remains outside individual business feature components.
 
 ---
 
-## 🌐 API Integration
+# 🌐 API Integration
 
 Backend communication is handled through Angular services using `HttpClient`.
 
-Feature components do not construct API URLs directly.
+Feature components do not construct backend URLs directly.
 
-Instead, communication follows a structure similar to:
+The general communication flow is:
 
 ```text
-Component
-    │
-    ▼
+Feature Component
+       │
+       ▼
 Feature Service
-    │
-    ▼
-API Endpoint Definition
-    │
-    ▼
+       │
+       ▼
+ApiEndpoints
+       │
+       ▼
+environment.apiUrl
+       │
+       ▼
 ASP.NET Core Web API
 ```
 
-Example service responsibilities include:
+Current service responsibilities include areas such as:
 
-- `CarService`
-- `LocationService`
-- Media service
-- Authentication services
+- Authentication
+- Cars
+- Brands
+- Categories
+- Locations
+- Features
+- Media
 
-Request and response contracts are represented through TypeScript interfaces.
+Each feature keeps its request and response contracts explicitly represented through TypeScript interfaces.
 
 ---
 
-## 📦 Standardized API Responses
+# 📦 Standardized API Responses
 
 The Angular application mirrors the standardized response structure returned by the DriverHub API.
 
-This allows components to consistently handle:
+This allows feature components to consistently process:
 
 - Successful responses
-- API errors
-- Validation errors
+- Validation failures
+- Business rule errors
+- Not found responses
 - Missing data
 - Unexpected failures
 
-Error messages returned by the backend can therefore be surfaced directly to the user when appropriate.
+Backend error messages can therefore be surfaced to the administrator when appropriate.
+
+A simplified flow is:
+
+```text
+ASP.NET Core API
+       │
+       ▼
+ApiResponse<T>
+       │
+       ▼
+Angular Service
+       │
+       ▼
+Feature Component
+       │
+       ├── Success State
+       │
+       └── Error / Toast Feedback
+```
 
 ---
 
 # 🚗 Car Management
 
-Car Management is currently the most developed Admin Panel feature.
+Car Management is the primary operational area of the current Admin Panel.
 
-The frontend integrates directly with the Admin Car API.
+The current frontend provides:
+
+- Car listing
+- Car detail
+- Car editing
+- Image management
+- Status management
+- Location management
+- Pricing management
+- Feature assignment
 
 ---
 
@@ -225,7 +409,9 @@ The Car List screen provides the administrative fleet overview.
 
 It consumes the paginated Car API and displays vehicle information required for fleet management.
 
-The screen provides navigation to individual vehicle detail and management screens.
+Administrators can navigate from the list to the detail screen of a specific physical vehicle.
+
+The detail-oriented navigation model keeps operational vehicle management centralized around the Car Detail screen.
 
 ---
 
@@ -253,15 +439,15 @@ It displays information such as:
 - Pricing
 - Vehicle images
 
-The page also provides access to vehicle editing and inline operational actions.
+The page also provides access to vehicle editing and several inline operational actions.
 
 ---
 
 ## ✏️ Car Editing
 
-Vehicle information can be edited through the dedicated Car Edit screen.
+Vehicle master information can be edited through the dedicated Car Edit screen.
 
-The edit flow:
+The flow is:
 
 ```text
 Car Detail
@@ -279,56 +465,78 @@ Update API
 Toast Feedback
 ```
 
-The edit screen integrates with supporting data such as:
+Existing vehicle data is loaded before editing.
+
+The edit screen also integrates supporting data such as:
 
 - Brands
 - Categories
 - Locations
 
-Existing vehicle data is loaded into the form before editing.
+This keeps relational selections synchronized with the available supporting entities in the system.
 
 ---
 
-## 🖼️ Vehicle Media Management
+# 🖼️ Vehicle Media Management
 
 The Admin Panel supports vehicle image uploads.
 
-Currently supported image formats include:
+Supported media formats currently include:
 
 - JPG
 - JPEG
 - PNG
 - WEBP
 
-Two primary vehicle images are supported:
+Two primary vehicle images are handled.
 
 ### Cover Image
 
-Used primarily in vehicle listing cards.
+Used primarily by vehicle listing-oriented views.
 
 ### Big Image
 
-Used as the larger vehicle image for detail-oriented views.
+Used for larger vehicle presentation and detail-oriented views.
 
-The upload UI provides:
+The media upload UI supports:
 
 - File selection
 - Upload loading state
 - Image preview
-- Upload status feedback
-- Existing image support
+- Existing image preview
+- Upload feedback
+- API-provided media paths
 
-Uploaded image paths returned by the API are stored as part of the vehicle data.
+The frontend sends the selected file through `FormData` to the backend media infrastructure.
+
+Conceptually:
+
+```text
+Browser File
+     │
+     ▼
+FormData
+     │
+     ▼
+Media API
+     │
+     ▼
+Stored Media
+     │
+     ▼
+Returned Path
+     │
+     ▼
+Vehicle Update
+```
 
 ---
 
-## 🔗 Image URL Handling
+# 🔗 Image URL Handling
 
-Backend media paths and frontend display URLs are separated.
+Stored backend media paths and browser-ready display URLs are kept separate.
 
-A shared `ImageUrlHelper` is responsible for resolving stored image paths into URLs that can be displayed by the browser.
-
-This prevents individual components from manually constructing media URLs.
+A shared `ImageUrlHelper` resolves the path returned by the API into an image URL suitable for the browser.
 
 Conceptually:
 
@@ -342,13 +550,15 @@ ImageUrlHelper
 Browser-ready Image URL
 ```
 
+This prevents Car List, Car Detail and Car Edit from implementing their own media URL construction logic.
+
 ---
 
-## 🚦 Vehicle Status Management
+# 🚦 Vehicle Status Management
 
-Vehicle status can be updated directly from the Car Detail screen.
+Vehicle status can be changed directly from the Car Detail screen.
 
-Supported statuses currently include:
+Supported statuses include:
 
 - Active
 - Maintenance
@@ -356,11 +566,9 @@ Supported statuses currently include:
 - Damaged
 - Retired
 
-Status management uses an inline workflow rather than requiring navigation to the full Car Edit form.
+Status changes are treated as operational actions rather than general vehicle editing.
 
-This separates operational changes from general vehicle information editing.
-
-The update flow is:
+The flow is:
 
 ```text
 Select Status
@@ -375,17 +583,15 @@ Update Local Car State
 Toast Feedback
 ```
 
-The UI prevents unnecessary requests when the selected status is already the vehicle's current status.
+The frontend prevents unnecessary API requests when the selected value already matches the current vehicle status.
 
 ---
 
-## 📍 Vehicle Location Management
+# 📍 Vehicle Location Management
 
-The vehicle's current location can also be changed directly from the Car Detail screen.
+A vehicle's current physical location can be changed directly from the Car Detail screen.
 
-Available locations are retrieved from the Location API.
-
-The currently assigned location is synchronized with the vehicle detail state.
+Available locations are loaded from the Location API.
 
 The update flow is:
 
@@ -405,23 +611,21 @@ Update Local Car State
 Toast Feedback
 ```
 
-This allows operational fleet movements to be performed without opening the complete vehicle edit form.
+This allows fleet movements to be performed without opening the complete Car Edit form.
 
 ---
 
-## 💰 Vehicle Pricing Management
+# 💰 Vehicle Pricing Management
 
-Pricing is managed from the Car Detail screen.
+Pricing is managed directly from the Car Detail screen.
 
-The pricing model currently supports:
+The current pricing model supports:
 
 - Daily
 - Weekly
 - Monthly
 
-Editable pricing state is kept separately from the original API response.
-
-This allows the user to modify pricing values before submitting them to the backend.
+Editable pricing values are stored separately from the original API response.
 
 Conceptually:
 
@@ -441,43 +645,201 @@ PUT Pricing API
 Updated Car State
 ```
 
-This separation avoids mutating the original vehicle state before the API confirms the update.
+This prevents the persisted vehicle state from being mutated before the backend confirms the operation.
 
 ---
 
-## ✨ Vehicle Feature Management
+# ✨ Vehicle Feature Assignment
 
-Vehicle feature management is currently being developed.
+Vehicle feature assignment is implemented directly inside the Car Detail screen.
 
-The intended flow allows administrators to select multiple available features for a vehicle.
+Administrators can load the available feature definitions and manage which features belong to the selected vehicle.
 
-Examples may include:
+The UI keeps an editable feature selection separate from the persisted vehicle state.
 
-- Air Conditioning
-- Cruise Control
-- Rear View Camera
-- Sunroof
-- Heated Seats
-
-The feature management flow is designed around a multi-selection model:
+Conceptually:
 
 ```text
 Available Features
        │
        ▼
-Editable Feature Selection
+Current Car Features
        │
        ▼
-Save
+Editable Feature Selection
+       │
+       ├── Save
+       │
+       └── Cancel
        │
        ▼
 Set Car Features API
        │
        ▼
-Updated Car State
+Updated Local Car State
 ```
 
-Feature selection is kept separate from the persisted vehicle state until the backend confirms the operation.
+This allows administrators to modify the feature selection without immediately mutating the original vehicle data.
+
+Changes are synchronized only after the backend confirms the operation.
+
+---
+
+# 🏷️ Supporting Entity Management
+
+Vehicle management depends on several supporting entities.
+
+The Admin Panel currently provides management workflows for:
+
+- Brands
+- Categories
+- Locations
+- Features
+
+These entities use a consistent administrative pattern.
+
+```text
+List
+ │
+ ├── Create
+ │
+ ├── Detail
+ │
+ ├── Edit
+ │
+ └── Delete
+```
+
+Common UI behavior includes:
+
+- Loading states
+- Error states
+- Empty states
+- Typed API communication
+- Toast feedback
+- Detail navigation
+- Edit navigation
+- Delete confirmation
+- Backend business rule feedback
+
+---
+
+## 🏷️ Brand Management
+
+Brand Management provides administrative workflows for vehicle manufacturers.
+
+Supported workflows include:
+
+- List brands
+- Create brand
+- View brand detail
+- Edit brand
+- Delete brand
+
+Brand records are used by vehicles through the Car domain.
+
+---
+
+## 🗂️ Category Management
+
+Category Management provides administrative workflows for vehicle categories.
+
+Supported workflows include:
+
+- List categories
+- Create category
+- View category detail
+- Edit category
+- Delete category
+
+Category records can be selected while managing vehicle information.
+
+---
+
+## 📍 Location Management
+
+Location Management represents the physical branches used by the rental fleet.
+
+Supported workflows include:
+
+- List locations
+- Create location
+- View location detail
+- Edit location
+- Delete location
+
+Locations are also used by the operational vehicle location management flow.
+
+---
+
+## ✨ Feature Management
+
+Feature Management defines the reusable vehicle features that can later be assigned to individual vehicles.
+
+Supported workflows include:
+
+- List features
+- Create feature
+- View feature detail
+- Edit feature
+- Delete feature
+
+Feature definitions and vehicle feature assignment are intentionally separate concerns.
+
+Conceptually:
+
+```text
+Feature Management
+       │
+       ▼
+Defines Available Features
+       │
+       ▼
+Car Detail
+       │
+       ▼
+Assign Features to Vehicle
+```
+
+This prevents feature definition management from being coupled directly to an individual vehicle.
+
+---
+
+# 🗑️ Delete Confirmation and Business Rules
+
+Supporting entity list screens use explicit delete confirmation before destructive operations.
+
+The general flow is:
+
+```text
+Delete Action
+     │
+     ▼
+Confirmation Modal
+     │
+     ├── Cancel
+     │
+     └── Confirm
+            │
+            ▼
+        DELETE API
+            │
+            ├── Success
+            │     │
+            │     ▼
+            │ Local List Update
+            │
+            └── Business Rule Error
+                  │
+                  ▼
+             Toast Feedback
+```
+
+When deletion succeeds, the frontend can remove the entity from local Signal state without requiring a complete list reload.
+
+If the backend rejects deletion because the entity is currently referenced by another domain object, the backend error is surfaced through the global toast system.
+
+Business rules therefore remain enforced by the backend while the frontend provides clear user feedback.
 
 ---
 
@@ -502,7 +864,7 @@ success
 error
 ```
 
-Feature components only request a notification:
+Feature components only request notification behavior:
 
 ```text
 Feature Component
@@ -514,7 +876,7 @@ ToastService
 Global Toast Component
 ```
 
-This keeps notification rendering separate from business-oriented components.
+This keeps notification rendering separate from feature behavior.
 
 ---
 
@@ -524,26 +886,29 @@ Toast timers are centrally controlled.
 
 When another toast is opened before the previous timeout expires, the previous timer is cleared.
 
-This prevents an older notification timer from accidentally closing a newer notification.
+This prevents an older notification timer from closing a newer notification unexpectedly.
 
 ---
 
 # 🧠 State Management
 
-The current application uses Angular Signals for local UI state.
+The application currently uses Angular Signals for local and feature-oriented UI state.
 
 Examples include:
 
 - Loading state
 - Error messages
-- Selected vehicle status
-- Selected location
+- Current entity
+- Entity collections
+- Vehicle status selection
+- Vehicle location selection
 - Editable pricing
+- Editable vehicle features
 - Upload state
+- Delete confirmation state
 - Toast state
-- Current vehicle data
 
-For example:
+Conceptually:
 
 ```text
 API Data
@@ -552,44 +917,77 @@ API Data
 Signal State
    │
    ▼
-Template
+Angular Template
 ```
 
-The application currently avoids introducing a global state management library where local signals and services are sufficient.
+The application currently avoids introducing a global state management library when local Signals and application services are sufficient.
 
 ---
 
-## 🔄 Local State Synchronization
+# 🔄 Local State Synchronization
 
-Operational updates such as status, location and pricing do not require a complete page reload.
+Several operations synchronize only the affected portion of frontend state after a successful backend request.
 
-After the backend confirms an update, the relevant portion of the local Car state is synchronized.
+Examples include:
 
-This provides immediate UI feedback while avoiding unnecessary GET requests.
+- Vehicle status updates
+- Vehicle location updates
+- Vehicle pricing updates
+- Vehicle feature updates
+- Supporting entity deletions
+- Supporting entity edits
+
+Conceptually:
+
+```text
+User Action
+    │
+    ▼
+API Request
+    │
+    ▼
+Successful Response
+    │
+    ▼
+Signal Update
+    │
+    ▼
+Immediate UI Synchronization
+```
+
+This reduces unnecessary GET requests and avoids full page reloads.
 
 ---
 
 # 🎨 UI Design
 
-The Admin Panel uses custom SCSS rather than relying entirely on a component library.
+The Admin Panel uses custom SCSS rather than depending entirely on a UI component framework.
 
 Current UI patterns include:
 
 - Admin sidebar
 - Topbar
 - Footer
-- Dashboard layout
-- Form cards
+- Dashboard shell
+- List cards
 - Detail cards
+- Create forms
+- Edit forms
 - Status controls
 - Location controls
 - Pricing controls
+- Feature controls
 - Image upload controls
-- Loading indicators
+- Loading states
+- Error states
+- Empty states
+- Delete confirmation modals
 - Toast notifications
 - Responsive layout behavior
 
-The goal is to keep the interface consistent while still maintaining control over the application's visual structure.
+Brand, Category, Location and Feature management intentionally follow a consistent visual language.
+
+The goal is to provide predictable administration workflows while keeping control over the application's UI structure.
 
 ---
 
@@ -603,7 +1001,7 @@ DriverHub
     └── DriverHub.Client
 ```
 
-The application uses standalone components rather than a traditional NgModule-oriented application structure.
+The project uses Angular standalone components rather than a traditional NgModule-oriented application structure.
 
 ---
 
@@ -611,7 +1009,7 @@ The application uses standalone components rather than a traditional NgModule-or
 
 ## Prerequisites
 
-Make sure the following tools are installed:
+Make sure the following tools are available:
 
 - Node.js
 - npm
@@ -636,16 +1034,28 @@ npm install
 Run:
 
 ```bash
+npm start
+```
+
+or:
+
+```bash
 ng serve
 ```
 
-The application will start using the Angular development server.
+The Angular development server will start the application.
 
 ---
 
 ## Build
 
 Create a production build with:
+
+```bash
+npm run build
+```
+
+or:
 
 ```bash
 ng build
@@ -659,13 +1069,21 @@ dist/
 
 ---
 
+## Tests
+
+Run the configured Angular test command with:
+
+```bash
+npm test
+```
+
+---
+
 # 🔧 Environment Configuration
 
 API base URLs are configured through Angular environment configuration.
 
-Feature services build their request URLs using centralized endpoint definitions rather than hardcoded endpoint strings inside components.
-
-Conceptually:
+Feature services combine:
 
 ```text
 environment.apiUrl
@@ -676,64 +1094,109 @@ ApiEndpoints
 Final API URL
 ```
 
-This keeps API addressing consistent throughout the application.
+Endpoint definitions remain centralized rather than being hardcoded inside components.
+
+This keeps backend addressing consistent across the application.
 
 ---
 
 # 🧩 Current Admin Panel Status
 
-## Completed
+## Fleet Management Foundation
 
-- ✅ Angular application foundation
-- ✅ Standalone component structure
-- ✅ Admin Layout
-- ✅ Public Layout foundation
-- ✅ Sidebar
-- ✅ Topbar
-- ✅ Footer
-- ✅ Centralized routing
-- ✅ Admin route protection
-- ✅ HttpClient integration
-- ✅ Standard API response handling
-- ✅ Car API service
-- ✅ Location API service
-- ✅ Media upload integration
-- ✅ Car listing
-- ✅ Car detail
-- ✅ Car creation
-- ✅ Car editing
-- ✅ Vehicle image upload
-- ✅ Image preview
-- ✅ Shared Image URL Helper
-- ✅ Global Toast Service
-- ✅ Global Toast Component
-- ✅ Vehicle status management
-- ✅ Vehicle location management
-- ✅ Vehicle pricing management
+The basic Admin Fleet Management foundation is now complete.
 
-## In Progress
+### Completed
 
-- 🚧 Vehicle feature management
-- 🚧 Admin fleet management improvements
+```text
+Application Foundation
+├── Standalone Angular architecture
+├── Admin Layout
+├── Public Layout foundation
+├── Sidebar
+├── Topbar
+├── Footer
+├── Centralized routing
+├── Route constants
+├── API endpoint constants
+├── Admin route protection
+├── Guest route protection
+├── HttpClient integration
+├── Typed API contracts
+├── Standard API response handling
+├── Global Toast Service
+├── Global Toast Component
+└── Shared Image URL Helper
+
+Authentication
+├── Admin Login
+├── Forgot Password
+└── Reset Password
+
+Car Management
+├── Car List
+├── Car Detail
+├── Car Edit
+├── Vehicle Media Upload
+├── Image Preview
+├── Vehicle Status Management
+├── Vehicle Location Management
+├── Vehicle Pricing Management
+└── Vehicle Feature Assignment
+
+Brand Management
+├── List
+├── Create
+├── Detail
+├── Edit
+└── Delete
+
+Category Management
+├── List
+├── Create
+├── Detail
+├── Edit
+└── Delete
+
+Location Management
+├── List
+├── Create
+├── Detail
+├── Edit
+└── Delete
+
+Feature Management
+├── List
+├── Create
+├── Detail
+├── Edit
+└── Delete
+```
+
+---
 
 ## Planned
 
-- Complete supporting entity management UI
-- Authentication integration improvements
+Future frontend milestones include:
+
+- Car creation UI
 - Reservation management UI
 - Availability management
+- Additional authentication UX improvements
 - Public vehicle listing
 - Public vehicle detail
-- Rental search flow
+- Rental location and date search
+- Available vehicle search
 - Reservation flow
 - Extras and insurance selection
-- Responsive UI improvements
+- Customer-facing rental experience
+- Broader responsive UI refinement
 
 ---
 
 # 🗺️ Frontend Roadmap
 
-The Admin Panel is being developed first.
+The current Admin Fleet Management foundation follows this structure:
 
 ```text
 Admin Authentication
@@ -745,16 +1208,36 @@ Admin Layout
 Fleet Management
         │
         ├── Cars
+        │   ├── List
+        │   ├── Detail
+        │   ├── Edit
+        │   ├── Status
+        │   ├── Location
+        │   ├── Pricing
+        │   └── Features
+        │
         ├── Brands
         ├── Categories
         ├── Locations
-        └── Features
+        └── Feature Definitions
+```
+
+The next major administrative domain can build on top of this fleet foundation:
+
+```text
+Fleet Management
+        │
+        ▼
+Availability
         │
         ▼
 Reservation Management
+        │
+        ▼
+Rental Lifecycle
 ```
 
-After the administrative workflows are established, development will move toward the public rental experience:
+After the administrative rental workflows are established, development can move toward the public rental experience:
 
 ```text
 Location + Dates
@@ -779,20 +1262,51 @@ Reservation
 
 # 💡 Frontend Design Philosophy
 
-The DriverHub frontend is built around several principles:
+The DriverHub frontend follows several principles:
 
 - Keep feature components focused on feature behavior.
 - Keep API communication inside services.
-- Use typed request and response contracts.
+- Keep request and response contracts explicit.
+- Centralize API endpoint definitions.
+- Centralize route definitions.
 - Avoid duplicated route strings.
-- Keep reusable UI behavior inside shared components and services.
-- Prefer local Signal state when global state management is unnecessary.
-- Synchronize UI state after successful API operations.
-- Provide immediate feedback for user actions.
-- Separate operational actions from full entity editing.
-- Keep backend contracts and frontend models explicit.
+- Use standalone Angular components.
+- Prefer Angular Signals for local state.
+- Avoid unnecessary global state infrastructure.
+- Synchronize frontend state after confirmed API operations.
+- Keep destructive operations explicit through confirmation.
+- Surface backend business rules clearly to administrators.
+- Separate operational vehicle actions from general vehicle editing.
+- Separate reusable feature definitions from vehicle-level feature assignments.
+- Keep shared UI behavior inside shared components and services.
+- Preserve consistency across related administrative workflows.
 
-The objective is not only to build screens, but to create a frontend structure that can grow together with the DriverHub domain.
+The objective is not only to build individual screens, but to maintain a frontend structure capable of growing together with the DriverHub domain.
+
+---
+
+# 🎯 Current Milestone
+
+With Brand, Category, Location and Feature management completed alongside the operational Car Detail workflows, the **basic Fleet Management Admin foundation is complete**.
+
+The frontend now has an established pattern for:
+
+```text
+List
+Create
+Detail
+Edit
+Delete
+API Integration
+Typed Contracts
+Loading State
+Error State
+Toast Feedback
+Business Rule Feedback
+Local State Synchronization
+```
+
+This provides a reusable implementation pattern for future administrative domains such as reservations and availability.
 
 ---
 
@@ -802,9 +1316,7 @@ DriverHub Client is part of the main DriverHub repository.
 
 The ASP.NET Core backend, Clean Architecture implementation, Identity infrastructure and complete project documentation can be found in the repository root:
 
-```text
-/README.md
-```
+[DriverHub Root README](../../README.md)
 
 ---
 
