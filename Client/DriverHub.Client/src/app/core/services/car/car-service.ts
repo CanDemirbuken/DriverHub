@@ -14,12 +14,19 @@ import { UpdateCarStatusRequest } from './models/update-car-status-request';
 import { UpdateCarLocationRequest } from './models/update-car-location-request';
 import { UpdateCarPricingsRequest } from './models/update-car-pricings-request';
 import { UpdateCarFeaturesRequest } from './models/update-car-features-request';
+import { CreateCarRequest } from './models/create-car-request';
+import { CreateCarResponse } from './models/create-car-response';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarService {
   constructor(private readonly http: HttpClient){}
+
+  createCar(request: CreateCarRequest): Observable<ApiResponse<CreateCarResponse>> {
+    const url = `${environment.apiUrl}${ApiEndpoints.Cars.Create}`;
+    return this.http.post<ApiResponse<CreateCarResponse>>(url, request);
+  }
 
   getCars(request: GetPagedCarRequest): Observable<ApiResponse<PagedResponse<GetPagedCarResponse>>>{
     const url = `${environment.apiUrl}${ApiEndpoints.Cars.GetPaged(request.pageNumber, request.pageSize)}`;

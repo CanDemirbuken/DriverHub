@@ -1,6 +1,7 @@
 ﻿using DriverHub.Domain.Abstraction;
-using DriverHub.Domain.Entities;
 using DriverHub.Domain.Enums;
+
+namespace DriverHub.Domain.Entities;
 
 public sealed class Car : Entity
 {

@@ -1,0 +1,48 @@
+<section class="reservation-page">
+  <header class="page-header">
+    <div><span class="eyebrow">Rezervasyon Yönetimi</span><h1>Yeni Rezervasyon</h1><p>Tarih ve lokasyona göre müsait aracı seçerek rezervasyon oluşturun.</p></div>
+    <a class="back-link" [routerLink]="routeLinks.Admin.Cars">← Araçlara Dön</a>
+  </header>
+
+  @if (isLoading()) { <div class="state"><span class="spinner"></span><span>Lokasyonlar hazırlanıyor...</span></div> }
+  @else if (createdReservationId(); as reservationId) {
+    <section class="card" role="status" aria-live="polite">
+      <h2>Rezervasyon başarıyla oluşturuldu</h2>
+      <p>Rezervasyon numarası: {{ reservationId }}</p>
+      <div class="confirmation">
+        <button class="button primary" type="button" (click)="startNewReservation()">Yeni Rezervasyon Oluştur</button>
+        <a class="back-link" [routerLink]="routeLinks.Admin.Cars">Araçlara Dön</a>
+      </div>
+    </section>
+  }
+  @else {
+    <fieldset [disabled]="isCreating()" style="border: 0; padding: 0; margin: 0; min-width: 0;">
+    @if (errorMessage()) { <div class="feedback"><strong>İşlem tamamlanamadı</strong><span>{{ errorMessage() }}</span></div> }
+    <section class="card search-card">
+      <div class="card-heading"><span>01</span><div><b>Arama Kriterleri</b><h2>Müsait Araç Bul</h2><p>Rezervasyonun başlangıç ve bitiş bilgilerini girin.</p></div></div>
+      <form class="search-form" (ngSubmit)="searchAvailability()">
+        <label>Pickup Location<select name="pickupLocationId" [(ngModel)]="pickupLocationId" (ngModelChange)="criteriaChanged()" required><option value="" disabled>Lokasyon seçiniz</option>@for (location of locations(); track location.id) {<option [value]="location.id">{{ location.name }}</option>}</select></label>
+        <label>Başlangıç Tarihi<input name="startDate" type="datetime-local" [min]="startDateMin" (focus)="refreshStartDateMin()" [(ngModel)]="startDate" (ngModelChange)="criteriaChanged()" required /></label>
+        <label>Bitiş Tarihi<input name="endDate" type="datetime-local" [(ngModel)]="endDate" (ngModelChange)="criteriaChanged()" required /></label>
+        <button class="button primary" type="submit" [disabled]="isSearching()">@if (isSearching()) { Aranıyor... } @else { Müsait Araçları Ara }</button>
+      </form>
+    </section>
+
+    @if (availableCars().length > 0) {
+      <section class="card results-card"><div class="results-heading"><div><b>Müsait Araçlar</b><h2>Aracınızı Seçin</h2></div><span>{{ availableCars().length }} araç bulundu</span></div><div class="car-grid">@for (car of availableCars(); track car.id) {<button type="button" class="car-option" [class.selected]="selectedCar()?.id === car.id" (click)="selectCar(car)"><img [src]="imageUrlHelper.getImageUrl(car.coverImageUrl)" [alt]="car.brandName + ' ' + car.model" /><span class="car-option__body"><strong>{{ car.brandName }} {{ car.model }}</strong><small>{{ car.modelYear }} · {{ car.plate }}</small><small>{{ car.transmission }} · {{ car.fuel }} · {{ car.km }} km</small></span>@if (selectedCar()?.id === car.id) {<span class="check">✓</span>}</button>}</div></section>
+    } @else if (!isSearching() && pickupLocationId && startDate && endDate) { <div class="empty"><strong>Müsait araç bulunamadı</strong><span>Farklı bir tarih aralığı veya lokasyon deneyin.</span></div> }
+
+    @if (quote(); as reservationQuote) {
+      <section class="card summary-card">
+        <div class="results-heading"><div><b>Rezervasyon Özeti</b><h2>{{ reservationQuote.car.brandName }} {{ reservationQuote.car.model }}</h2><span>{{ reservationQuote.car.plate }} · {{ reservationQuote.rentalDays }} gün</span></div><button class="button" type="button" (click)="backToCars()">Araca Geri Dön</button></div>
+        <div class="options-grid">
+          <div><h3>Ek Hizmetler</h3>@for (extra of reservationQuote.availableExtras; track extra.id) {<label class="option"><input type="checkbox" [checked]="selectedExtraIds.has(extra.id)" (change)="toggleExtra(extra.id)" /><span>{{ extra.name }}</span><small>{{ extra.dailyPrice | number:'1.2-2' }} / gün</small></label>}</div>
+          <div><h3>Sigorta Paketi</h3><label class="option"><input type="radio" name="insurancePackage" [checked]="selectedInsuranceId === null" (change)="selectInsurance(null)" /><span>Sigorta seçme</span></label>@for (insurance of reservationQuote.availableInsurancePackages; track insurance.id) {<label class="option"><input type="radio" name="insurancePackage" [checked]="selectedInsuranceId === insurance.id" (change)="selectInsurance(insurance.id)" /><span>{{ insurance.name }}</span><small>{{ insurance.dailyPrice | number:'1.2-2' }} / gün</small></label>}</div>
+        </div>
+        <div class="price-summary"><span>Araç kiralama <b>{{ reservationQuote.basePrice | number:'1.2-2' }}</b></span><span>Ek hizmetler <b>{{ reservationQuote.extrasTotal | number:'1.2-2' }}</b></span><span>Sigorta <b>{{ reservationQuote.insurancePrice | number:'1.2-2' }}</b></span><strong>Toplam <b>{{ reservationQuote.totalPrice | number:'1.2-2' }}</b></strong></div>
+        <footer class="confirmation"><div><b>Son adım</b><span>Fiyatlar backend tarafından hesaplandı. Onayladığınızda rezervasyon oluşturulur.</span></div><button class="button primary" type="button" [disabled]="isCreating() || isSearching()" (click)="createReservation()">@if (isCreating()) { Oluşturuluyor... } @else { Rezervasyonu Onayla }</button></footer>
+      </section>
+    }
+    </fieldset>
+  }
+</section>

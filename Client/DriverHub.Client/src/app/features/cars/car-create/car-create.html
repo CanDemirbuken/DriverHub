@@ -1,0 +1,61 @@
+<section class="car-create-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Filo Yönetimi</span>
+      <h1>Yeni Araç Ekle</h1>
+      <p>Filonuza yeni bir araç eklemek için bilgileri eksiksiz doldurun.</p>
+    </div>
+    <a class="back-link" [routerLink]="routeLinks.Admin.Cars">← Araç Listesine Dön</a>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state"><span class="spinner"></span><div><strong>Tanımlar hazırlanıyor</strong><p>Marka, kategori ve lokasyon bilgileri yükleniyor...</p></div></div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="feedback"><strong>Araç eklenemedi</strong><span>{{ errorMessage() }}</span></div>
+    }
+
+    <form class="create-form" (ngSubmit)="createCar()">
+      <section class="card">
+        <div class="card-heading"><span>01</span><div><b>Genel Bilgiler</b><h2>Temel Araç Bilgileri</h2><p>Model ve kimlik bilgilerini girin.</p></div></div>
+        <div class="grid">
+          <label>Model<input name="model" [(ngModel)]="model" maxlength="150" required placeholder="Örn: 320i" /></label>
+          <label>Model Yılı<input name="modelYear" type="number" [(ngModel)]="modelYear" min="1900" max="2100" required /></label>
+          <label>Plaka<input name="plate" [(ngModel)]="plate" maxlength="20" required placeholder="34 ABC 123" /></label>
+          <label>Renk<input name="color" [(ngModel)]="color" maxlength="50" required placeholder="Örn: Siyah" /></label>
+          <label class="full">VIN<input name="vin" [(ngModel)]="vin" maxlength="17" minlength="17" required placeholder="17 karakterli VIN" /></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-heading"><span>02</span><div><b>Teknik Detaylar</b><h2>Araç Özellikleri</h2><p>Kilometre ve kullanım özelliklerini belirleyin.</p></div></div>
+        <div class="grid three">
+          <label>Kilometre<input name="km" type="number" [(ngModel)]="km" min="0" required /></label>
+          <label>Vites<select name="transmission" [(ngModel)]="transmission" required><option value="" disabled>Seçiniz</option><option value="Automatic">Automatic</option><option value="Manual">Manual</option></select></label>
+          <label>Yakıt<select name="fuel" [(ngModel)]="fuel" required><option value="" disabled>Seçiniz</option><option value="Gasoline">Gasoline</option><option value="Diesel">Diesel</option><option value="Hybrid">Hybrid</option><option value="Electric">Electric</option></select></label>
+          <label>Koltuk Sayısı<input name="seat" type="number" [(ngModel)]="seat" min="1" max="9" required /></label>
+          <label>Bagaj Kapasitesi<input name="luggage" type="number" [(ngModel)]="luggage" min="0" required /></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-heading"><span>03</span><div><b>Sistem Bilgileri</b><h2>İlişkisel Tanımlar</h2><p>Aracın bağlı olduğu tanımları seçin.</p></div></div>
+        <div class="grid">
+          <label>Marka<select name="brandId" [(ngModel)]="brandId" required><option value="" disabled>Marka seçiniz</option>@for (brand of brands(); track brand.id) {<option [value]="brand.id">{{ brand.name }}</option>}</select></label>
+          <label>Kategori<select name="categoryId" [(ngModel)]="categoryId" required><option value="" disabled>Kategori seçiniz</option>@for (category of categories(); track category.id) {<option [value]="category.id">{{ category.name }}</option>}</select></label>
+          <label class="full">Lokasyon<select name="currentLocationId" [(ngModel)]="currentLocationId" required><option value="" disabled>Lokasyon seçiniz</option>@for (location of locations(); track location.id) {<option [value]="location.id">{{ location.name }}</option>}</select></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-heading"><span>04</span><div><b>Medya</b><h2>Araç Görselleri</h2><p>Liste ve detay ekranlarında kullanılacak görselleri yükleyin.</p></div></div>
+        <div class="uploads">
+          <div class="upload"><label>Kapak Görseli</label><input #cover type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onCoverImageSelected($event)" /><button type="button" [disabled]="isCoverImageUploading()" (click)="cover.click()">@if (isCoverImageUploading()) { Yükleniyor... } @else { {{ coverImageUrl ? 'Görseli Değiştir' : 'Kapak Görseli Seç' }} }</button>@if (selectedCoverFileName()) {<small>{{ selectedCoverFileName() }} · {{ coverImageUrl ? 'Hazır ✓' : '' }}</small>}@if (coverImageUrl) {<img [src]="imageUrlHelper.getImageUrl(coverImageUrl)" alt="Kapak önizleme" />}</div>
+          <div class="upload"><label>Büyük Görsel</label><input #big type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onBigImageSelected($event)" /><button type="button" [disabled]="isBigImageUploading()" (click)="big.click()">@if (isBigImageUploading()) { Yükleniyor... } @else { {{ bigImageUrl ? 'Görseli Değiştir' : 'Büyük Görsel Seç' }} }</button>@if (selectedBigFileName()) {<small>{{ selectedBigFileName() }} · {{ bigImageUrl ? 'Hazır ✓' : '' }}</small>}@if (bigImageUrl) {<img [src]="imageUrlHelper.getImageUrl(bigImageUrl)" alt="Büyük görsel önizleme" />}</div>
+        </div>
+      </section>
+
+      <footer class="form-actions"><a class="button secondary" [routerLink]="routeLinks.Admin.Cars">Vazgeç</a><button class="button primary" type="submit" [disabled]="isCreating() || isCoverImageUploading() || isBigImageUploading()">@if (isCreating()) { <span class="button-spinner"></span> Ekleniyor... } @else { Aracı Ekle }</button></footer>
+    </form>
+  }
+</section>

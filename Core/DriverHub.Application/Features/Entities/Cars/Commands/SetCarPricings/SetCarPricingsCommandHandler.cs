@@ -2,6 +2,7 @@
 using DriverHub.Application.Common.Results;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
+using DriverHub.Domain.Entities;
 using MediatR;
 
 namespace DriverHub.Application.Features.Entities.Cars.Commands.SetCarPricings;

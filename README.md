@@ -196,6 +196,28 @@ For example, a Brand, Category, Location or Feature cannot be removed while it i
 
 ---
 
+## 📅 Reservation Availability & Preparation
+
+The Admin API supports the following workflow through CQRS/MediatR handlers, FluentValidation, the Result Pattern, Query Services and Repository/Unit of Work:
+
+```text
+Availability → Quote → Pricing + Extras / Insurance → Confirmation → Reservation
+```
+
+- Availability filters physical vehicles in the database by pickup location, date range and `CarStatus.Active`.
+- A reservation blocks availability only when its status is `Pending` or `Confirmed` and `existing.StartDate < requested.EndDate && existing.EndDate > requested.StartDate`. `Cancelled` and `Completed` do not block; adjacent intervals are allowed.
+- Quote generation validates the selected vehicle and location without inserting a reservation or holding the vehicle.
+- Pricing is calculated on the server using the vehicle's Daily, Weekly and Monthly `CarPricing` entries. Rental duration rounds partial days up to whole days, with a minimum of one day.
+- Rental extras use the existing `Extra` model; extras and `InsurancePackage` selection are optional. Selected IDs must exist. Empty catalogs are supported, and unselected extras/insurance contribute zero.
+- Extras and insurance are charged by daily price multiplied by rental days. `ReservationExtra` stores the selected extra's unit price and total price snapshot.
+- Final creation rechecks vehicle status, pickup location, dates, selected options and pricing, recalculates all totals, and repeats overlap validation inside the save transaction. Client-calculated prices are not part of the create contract.
+- Creation persists a `Pending` reservation and its extras together. Return location currently equals pickup location; the authenticated administrator supplies the reservation user identity.
+- Availability, quote and create share a five-minute start-time grace period measured from the current UTC minute. Older starts and `end <= start` are rejected; the Angular client applies the matching policy.
+
+Quotes are estimates, not price locks or inventory holds. Simultaneous-confirmation protection still needs database-level hardening: repeating the overlap query in the current transaction does not guarantee exclusive booking. The monthly pricing remainder calculation also needs correction and boundary tests before production use.
+
+---
+
 ## 🖥️ Angular Client
 
 DriverHub includes an Angular client for the Admin Panel and future public rental experience.
@@ -214,6 +236,8 @@ The current Admin Panel communicates directly with the ASP.NET Core Web API and 
 - Inline vehicle status management
 - Inline vehicle location management
 - Vehicle pricing management
+- Reservation availability, quote and explicit confirmation workflow
+- Route-level lazy loading for admin feature screens
 - Global toast notifications
 - Shared helpers and reusable UI infrastructure
 
@@ -457,6 +481,11 @@ Swagger/OpenAPI includes:
 - ✅ Category Management
 - ✅ Location Management
 - ✅ Feature Management
+- ✅ Reservation availability and overlap filtering
+- ✅ Pre-reservation quote and server-side pricing integration
+- ✅ Optional extras / insurance and reservation extra price snapshots
+- ✅ Explicit reservation creation with final rule revalidation
+- ✅ Shared reservation start-time grace-period validation
 
 ### Angular Admin Panel
 
@@ -473,15 +502,15 @@ Swagger/OpenAPI includes:
 - ✅ Vehicle status management
 - ✅ Vehicle location management
 - ✅ Vehicle pricing management
+- ✅ Reservation search, quote, options and confirmation
+- ✅ Reservation success state and UI duplicate-submit protection
+- ✅ Admin feature route-level lazy loading
 - 🚧 Vehicle feature management
 
 ### In Progress
 
 - 🚧 Angular Admin Panel
-- 🚧 Reservation use cases
-- 🚧 Vehicle availability checks
-- 🚧 Rental price calculation
-- 🚧 Extras and insurance flow
+- 🚧 Reservation production hardening: simultaneous confirmations and monthly pricing remainder correction
 
 ### Planned
 
@@ -496,35 +525,35 @@ Swagger/OpenAPI includes:
 
 ## 🗺️ Domain Roadmap
 
-The next major domain milestone is the rental flow:
+The administrative reservation preparation and creation flow is available:
 
 ```text
 Location + Rental Dates
           │
           ▼
-Available Vehicle Models
+Available Physical Vehicles
           │
           ▼
 Vehicle Selection
           │
           ▼
-Pricing Calculation
+Quote / Server-Side Pricing
           │
           ▼
 Extras / Insurance
           │
           ▼
-Reservation
+Explicit Confirmation → Pending Reservation
 ```
 
-The domain already contains the initial foundation for:
+The flow uses the existing domain models:
 
 - Reservation
 - Reservation Extras
 - Insurance Packages
-- Rental Extras
+- Rental Extras (`Extra`)
 
-These models will evolve together with the upcoming reservation and availability use cases.
+Next steps include public rental screens, reservation lifecycle management, automated boundary/concurrency tests and the production-hardening work noted above.
 
 ---
 

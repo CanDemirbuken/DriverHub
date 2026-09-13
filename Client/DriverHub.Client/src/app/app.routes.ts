@@ -8,25 +8,6 @@ import { AdminLogin } from './features/admin-login/admin-login';
 import { ForgotPassword } from './features/forgot-password/forgot-password';
 import { ResetPassword } from './features/reset-password/reset-password';
 import { adminGuestGuard } from './core/guards/admin-guest-guard';
-import { Cars } from './features/cars/car-list/cars';
-import { CarDetail } from './features/cars/car-detail/car-detail';
-import { CarEdit } from './features/cars/car-edit/car-edit';
-import { Brands } from './features/brands/brand-list/brands';
-import { BrandById } from './features/brands/brand-detail/brand-by-id';
-import { CreateBrand } from './features/brands/brand-create/create-brand';
-import { EditBrand } from './features/brands/brand-edit/edit-brand';
-import { CategoryList } from './features/categories/category-list/category-list';
-import { CreateCategory } from './features/categories/category-create/create-category';
-import { CategoryDetail } from './features/categories/category-detail/category-detail';
-import { EditCategory } from './features/categories/category-edit/edit-category';
-import { LocationList } from './features/locations/location-list/location-list';
-import { LocationDetail } from './features/locations/location-detail/location-detail';
-import { LocationCreate } from './features/locations/location-create/location-create';
-import { LocationEdit } from './features/locations/location-edit/location-edit';
-import { FeatureList } from './features/car-features/feature-list/feature-list';
-import { FeatureCreate } from './features/car-features/feature-create/feature-create';
-import { FeatureDetail } from './features/car-features/feature-detail/feature-detail';
-import { FeatureEdit } from './features/car-features/feature-edit/feature-edit';
 
 export const routes: Routes = [
   {
@@ -62,79 +43,87 @@ export const routes: Routes = [
       },
       {
         path: RoutePaths.Admin.Cars,
-        component: Cars
+        loadComponent: () => import('./features/cars/car-list/cars').then(m => m.Cars)
+      },
+      {
+        path: `${RoutePaths.Admin.Cars}/create`,
+        loadComponent: () => import('./features/cars/car-create/car-create').then(m => m.CarCreate)
       },
       {
         path: `${RoutePaths.Admin.Cars}/:id`,
-        component: CarDetail
+        loadComponent: () => import('./features/cars/car-detail/car-detail').then(m => m.CarDetail)
       },
       {
         path: `${RoutePaths.Admin.Cars}/:id/edit`,
-        component: CarEdit
+        loadComponent: () => import('./features/cars/car-edit/car-edit').then(m => m.CarEdit)
+      },
+      {
+        path: `${RoutePaths.Admin.Reservations}/create`,
+        loadComponent: () => import('./features/reservations/reservation-create/reservation-create').then(m => m.ReservationCreate)
       },
       {
         path: RoutePaths.Admin.Brands,
-        component: Brands
+        loadComponent: () => import('./features/brands/brand-list/brands').then(m => m.Brands)
       },
       {
         path: `${RoutePaths.Admin.Brands}/create`,
-        component: CreateBrand
+        loadComponent: () => import('./features/brands/brand-create/create-brand').then(m => m.CreateBrand)
       },
       {
         path: `${RoutePaths.Admin.Brands}/:id`,
-        component: BrandById
+        loadComponent: () => import('./features/brands/brand-detail/brand-by-id').then(m => m.BrandById)
       },
       {
         path: `${RoutePaths.Admin.Brands}/:id/edit`,
-        component: EditBrand
+        loadComponent: () => import('./features/brands/brand-edit/edit-brand').then(m => m.EditBrand)
       },
       {
         path: `${RoutePaths.Admin.Categories}`,
-        component: CategoryList
+        loadComponent: () => import('./features/categories/category-list/category-list').then(m => m.CategoryList)
       },
       {
         path: `${RoutePaths.Admin.Categories}/create`,
-        component: CreateCategory
+        loadComponent: () => import('./features/categories/category-create/create-category').then(m => m.CreateCategory)
       },
       {
         path: `${RoutePaths.Admin.Categories}/:id`,
-        component: CategoryDetail
+        loadComponent: () => import('./features/categories/category-detail/category-detail').then(m => m.CategoryDetail)
       },
       {
         path: `${RoutePaths.Admin.Categories}/:id/edit`,
-        component: EditCategory
+        loadComponent: () => import('./features/categories/category-edit/edit-category').then(m => m.EditCategory)
       },
       {
         path: `${RoutePaths.Admin.Locations}`,
-        component: LocationList
+        loadComponent: () => import('./features/locations/location-list/location-list').then(m => m.LocationList)
       },
       {
         path: `${RoutePaths.Admin.Locations}/create`,
-        component: LocationCreate
+        loadComponent: () => import('./features/locations/location-create/location-create').then(m => m.LocationCreate)
       },
       {
         path: `${RoutePaths.Admin.Locations}/:id`,
-        component: LocationDetail
+        loadComponent: () => import('./features/locations/location-detail/location-detail').then(m => m.LocationDetail)
       },
       {
         path: `${RoutePaths.Admin.Locations}/:id/edit`,
-        component: LocationEdit
+        loadComponent: () => import('./features/locations/location-edit/location-edit').then(m => m.LocationEdit)
       },
       {
         path: `${RoutePaths.Admin.Features}`,
-        component: FeatureList
+        loadComponent: () => import('./features/car-features/feature-list/feature-list').then(m => m.FeatureList)
       },
       {
         path: `${RoutePaths.Admin.Features}/create`,
-        component: FeatureCreate
+        loadComponent: () => import('./features/car-features/feature-create/feature-create').then(m => m.FeatureCreate)
       },
       {
         path: `${RoutePaths.Admin.Features}/:id`,
-        component: FeatureDetail
+        loadComponent: () => import('./features/car-features/feature-detail/feature-detail').then(m => m.FeatureDetail)
       },
       {
         path: `${RoutePaths.Admin.Features}/:id/edit`,
-        component: FeatureEdit
+        loadComponent: () => import('./features/car-features/feature-edit/feature-edit').then(m => m.FeatureEdit)
       },
     ]
   }

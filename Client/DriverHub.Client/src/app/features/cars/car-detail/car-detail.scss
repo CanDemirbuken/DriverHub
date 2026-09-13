@@ -630,7 +630,9 @@
 
 /* Status */
 
-.detail-card--operation {
+.detail-card--operation,
+.detail-card--pricing,
+.detail-card--location {
   border-color: #cbd5e1;
   background:
     linear-gradient(
@@ -640,7 +642,9 @@
     );
 }
 
-.operation-status {
+.operation-status,
+.pricing-editor,
+.location-operation {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -759,22 +763,6 @@
 
 /* Pricing */
 
-.detail-card--pricing {
-  border-color: #cbd5e1;
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #f8fafc
-    );
-}
-
-.pricing-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .pricing-editor__list {
   display: flex;
   flex-direction: column;
@@ -857,22 +845,6 @@
 }
 
 /* Location */
-
-.detail-card--location {
-  border-color: #cbd5e1;
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #f8fafc
-    );
-}
-
-.location-operation {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
 .location-card {
   display: flex;

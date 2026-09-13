@@ -1,4 +1,5 @@
 ﻿using DriverHub.Domain.Abstraction;
+using DriverHub.Domain.Entities;
 using DriverHub.Domain.Enums;
 
 public sealed class CarPricing : Entity

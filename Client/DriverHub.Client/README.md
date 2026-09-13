@@ -252,6 +252,7 @@ The current Admin route structure is conceptually:
     ├── dashboard
     │
     ├── cars
+    │   ├── create
     │   ├── :id
     │   └── :id/edit
     │
@@ -270,13 +271,18 @@ The current Admin route structure is conceptually:
     │   ├── :id
     │   └── :id/edit
     │
-    └── features
-        ├── create
-        ├── :id
-        └── :id/edit
+    ├── features
+    │   ├── create
+    │   ├── :id
+    │   └── :id/edit
+    │
+    └── reservations
+        └── create
 ```
 
 Protected Admin routes are placed under the Admin Layout and guarded before navigation is allowed.
+
+Admin fleet route components and the reservation creation screen use route-level `loadComponent` lazy loading to reduce the initial production bundle. The Admin Layout, Sidebar, Topbar, Footer, Toast and authentication guards remain eager. Static routes such as `create` precede dynamic `:id` routes, preserving existing navigation behavior.
 
 ---
 
@@ -440,6 +446,14 @@ It displays information such as:
 - Vehicle images
 
 The page also provides access to vehicle editing and several inline operational actions.
+
+---
+
+## ➕ Car Creation
+
+The car list links to `/admin/cars/create`. The standalone creation screen provides Brand, Category and Location selections backed by lookup services, vehicle fields, and cover/big image uploads with previews.
+
+Typed create models and `CarService` use the centralized API endpoint definitions. Required-field validation, lookup/upload/save loading states, API errors and shared `ToastService` notifications follow the existing form patterns. Successful creation navigates to the new car's detail screen.
 
 ---
 
@@ -843,6 +857,26 @@ Business rules therefore remain enforced by the backend while the frontend provi
 
 ---
 
+# 📅 Reservation Creation
+
+The lazy-loaded `/admin/reservations/create` screen keeps preparation and confirmation on one page:
+
+```text
+Search Criteria → Available Cars → Select Car → Reservation Quote
+→ Extras → Insurance → Price Summary → Confirmation → Success State
+```
+
+- Select a pickup location and local start/end date-time, then explicitly request availability. Dates are sent to the API as UTC ISO strings; changing criteria clears the displayed results and quote without automatically searching again.
+- Selecting a vehicle requests a backend-generated quote; it does not create a reservation. Users can return to vehicle selection or change the search criteria.
+- Optional extra checkboxes and an optional insurance package selection refresh the quote through the API. The price summary displays returned base, extras, insurance and total amounts; Angular does not calculate authoritative prices.
+- The date input minimum and action validation follow the backend's five-minute grace period at minute precision. Older starts and an end at or before the start are rejected.
+- `Rezervasyonu Onayla` is the explicit create action. Busy-state checks and disabled controls prevent duplicate submissions from the screen while confirmation is in progress.
+- On success, the quote/form is replaced by a success panel with the reservation ID, `Yeni Rezervasyon Oluştur` and `Araçlara Dön` actions. Vehicle, quote, options, criteria and operation error state are cleared; a success toast remains additional feedback.
+
+The screen uses standalone components, local Signals, typed API models, centralized endpoint definitions and the shared `ToastService`. Loading and API errors are handled separately from the success state. Availability and quoted prices can change before confirmation; the API remains authoritative. Reservation list/detail and lifecycle screens are not yet provided.
+
+---
+
 # 🔔 Global Toast Notifications
 
 The application contains a reusable global toast notification system.
@@ -1117,6 +1151,7 @@ Application Foundation
 ├── Topbar
 ├── Footer
 ├── Centralized routing
+├── Admin feature route-level lazy loading
 ├── Route constants
 ├── API endpoint constants
 ├── Admin route protection
@@ -1135,6 +1170,7 @@ Authentication
 
 Car Management
 ├── Car List
+├── Car Create
 ├── Car Detail
 ├── Car Edit
 ├── Vehicle Media Upload
@@ -1143,6 +1179,14 @@ Car Management
 ├── Vehicle Location Management
 ├── Vehicle Pricing Management
 └── Vehicle Feature Assignment
+
+Reservation Creation
+├── Availability Search and Vehicle Selection
+├── Backend-Generated Quote and Price Summary
+├── Optional Extras and Insurance
+├── Explicit Confirmation
+├── Matching Start-Time Grace-Period Validation
+└── Success State and UI Duplicate-Submit Protection
 
 Brand Management
 ├── List
@@ -1179,16 +1223,11 @@ Feature Management
 
 Future frontend milestones include:
 
-- Car creation UI
-- Reservation management UI
-- Availability management
+- Reservation list/detail and lifecycle management UI
 - Additional authentication UX improvements
 - Public vehicle listing
 - Public vehicle detail
-- Rental location and date search
-- Available vehicle search
-- Reservation flow
-- Extras and insurance selection
+- Public rental search and reservation flow with extras / insurance
 - Customer-facing rental experience
 - Broader responsive UI refinement
 
@@ -1222,7 +1261,7 @@ Fleet Management
         └── Feature Definitions
 ```
 
-The next major administrative domain can build on top of this fleet foundation:
+Availability and reservation creation now build on this fleet foundation; broader reservation management and the rental lifecycle remain planned:
 
 ```text
 Fleet Management
@@ -1306,7 +1345,7 @@ Business Rule Feedback
 Local State Synchronization
 ```
 
-This provides a reusable implementation pattern for future administrative domains such as reservations and availability.
+This pattern also supports the reservation preparation workflow described above and provides a foundation for future administrative domains.
 
 ---
 

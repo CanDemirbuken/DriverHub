@@ -39,6 +39,7 @@ public static class DependencyInjection
 
         services.AddScoped<IBrandQueryService, BrandQueryService>();
         services.AddScoped<ICarQueryService, CarQueryService>();
+        services.AddScoped<IReservationQueryService, ReservationQueryService>();
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         services.AddScoped<IFeatureQueryService, FeatureQueryService>();
         services.AddScoped<IRoleQueryService, RoleQueryService>();

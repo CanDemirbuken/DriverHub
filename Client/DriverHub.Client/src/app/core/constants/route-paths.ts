@@ -9,6 +9,7 @@ export const RoutePaths = {
     ResetPassword: 'reset-password',
     Dashboard: 'dashboard',
     Cars: 'cars',
+    Reservations: 'reservations',
     Brands: 'brands',
     Categories: 'categories',
     Locations: 'locations',
@@ -27,6 +28,8 @@ export const RouteLinks = {
     Dashboard: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Dashboard}`,
     
     Cars: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}`,
+    CreateCar: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/create`,
+    CreateReservation: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Reservations}/create`,
     CarDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}`,
     CarEdit: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}/edit`,
 

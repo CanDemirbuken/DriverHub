@@ -15,14 +15,20 @@
       </p>
     </div>
 
-    <div class="cars-page__summary">
-      <span class="cars-page__summary-label">
-        Toplam Araç
-      </span>
+    <div class="cars-page__header-actions">
+      <a class="cars-page__create" [routerLink]="routeLinks.Admin.CreateCar">
+        + Yeni Araç
+      </a>
 
-      <strong>
-        {{ totalCount() }}
-      </strong>
+      <div class="cars-page__summary">
+        <span class="cars-page__summary-label">
+          Toplam Araç
+        </span>
+
+        <strong>
+          {{ totalCount() }}
+        </strong>
+      </div>
     </div>
   </div>
 

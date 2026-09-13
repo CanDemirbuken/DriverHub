@@ -10,6 +10,8 @@ export const ApiEndpoints = {
   },
   
   Cars: {
+    Create: `/api/cars`,
+
     GetPaged: (pageNumber: number, pageSize: number) =>
       `/api/cars?PageNumber=${pageNumber}&PageSize=${pageSize}`,
 
@@ -30,6 +32,12 @@ export const ApiEndpoints = {
 
     UpdateFeatures: (id: string) =>
       `/api/cars/${id}/features`
+  },
+
+  Reservations: {
+    Availability: `/api/reservations/availability`,
+    Quote: `/api/reservations/quote`,
+    Create: `/api/reservations`
   },
 
   Brands: {

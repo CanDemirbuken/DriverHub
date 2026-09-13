@@ -49,6 +49,22 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
 
+.cars-page__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cars-page__create {
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 .cars-page__summary-label {
   display: block;
   margin-bottom: 4px;
@@ -444,6 +460,11 @@
 
   .cars-page__summary {
     width: 100%;
+  }
+
+  .cars-page__header-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .cars-grid {
