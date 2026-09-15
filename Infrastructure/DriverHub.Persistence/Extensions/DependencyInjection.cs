@@ -1,5 +1,7 @@
 ﻿using DriverHub.Application.Interfaces.QueryServices;
 using DriverHub.Application.Interfaces.QueryServices.Identity;
+using DriverHub.Application.Interfaces.Communication;
+using DriverHub.Persistence.Communication;
 using DriverHub.Application.Interfaces.Repositories;
 using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Persistence.Context;
@@ -40,6 +42,10 @@ public static class DependencyInjection
         services.AddScoped<IBrandQueryService, BrandQueryService>();
         services.AddScoped<ICarQueryService, CarQueryService>();
         services.AddScoped<IReservationQueryService, ReservationQueryService>();
+        services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IUserQueryService, UserQueryService>();
+        services.AddScoped<IReservationNotificationQueue, EmailOutbox>();
+        services.AddScoped<IEmailOutbox, EmailOutbox>();
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         services.AddScoped<IFeatureQueryService, FeatureQueryService>();
         services.AddScoped<IRoleQueryService, RoleQueryService>();

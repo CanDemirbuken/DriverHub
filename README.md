@@ -214,7 +214,44 @@ Availability → Quote → Pricing + Extras / Insurance → Confirmation → Res
 - Creation persists a `Pending` reservation and its extras together. Return location currently equals pickup location; the authenticated administrator supplies the reservation user identity.
 - Availability, quote and create share a five-minute start-time grace period measured from the current UTC minute. Older starts and `end <= start` are rejected; the Angular client applies the matching policy.
 
-Quotes are estimates, not price locks or inventory holds. Simultaneous-confirmation protection still needs database-level hardening: repeating the overlap query in the current transaction does not guarantee exclusive booking. The monthly pricing remainder calculation also needs correction and boundary tests before production use.
+Quotes are estimates, not price locks or inventory holds. Creation and lifecycle commands serialize writes on the physical car row with SQL Server `UPDLOCK, HOLDLOCK` inside the existing Unit of Work transaction. Approval rechecks dates, active status, pickup location and overlapping Pending/Confirmed reservations. Pricing uses complete 30-day months, then weeks, then remaining days; existing reservation price snapshots are unchanged.
+
+### Admin reservation management
+
+- `/admin/reservations`: paged history, customer/vehicle search, status and rental-period filters, creation-date ordering, approval/cancellation and detail navigation.
+- `/admin/reservations/create`: existing availability/quote/options flow, creating a Pending request for the authenticated admin account. Creating on behalf of another customer is not an existing use case.
+- `/admin/reservations/:id`: customer snapshot, vehicle, pickup/return locations, server-calculated rental days, saved pricing and admin processing audit.
+- `GET /api/reservations`, `GET /api/reservations/{id}`, `POST /api/reservations/{id}/approve`, `POST /api/reservations/{id}/cancel` all require `AdminOnly`.
+- List parameters: `PageNumber` (default 1), `PageSize` (default 10, maximum 100), `Status`, `Search`, `CarId`, `From`, `To`, `OldestFirst`. Date filters select rental periods intersecting `[From, To)`. Dates in responses are UTC; Angular displays local time.
+- First/last name, email and optional phone are resolved server-side from the active Identity account and stored as a snapshot. Client-supplied user IDs, prices, customer snapshots and status are not bound to the create command.
+- `ProcessedAt` / `ProcessedBy` capture the single allowed admin decision. Repeating the same successful approve/cancel operation returns success without rewriting the audit or creating another notification. Other transitions return Conflict.
+
+```text
+Created → Pending
+          ├── Approved (existing Confirmed = 2)
+          └── Cancelled
+Completed = 4 remains a supported stored status; no completion operation is introduced.
+```
+
+Migration `20260915073331_AddReservationManagement` adds nullable customer/audit columns, query indexes and `EmailOutboxMessages`. Existing status values and prices are preserved. Legacy customer snapshots are initialized from the current Identity account because reservation-time values are unavailable; historical admin dates/actors remain null. Old migrations are unchanged. Apply the new migration before starting the updated API.
+
+### Reservation email delivery
+
+Create/approve/cancel enqueue an email in the **same database transaction** as the reservation change. A hosted worker sends it using the existing `IMailService` / MailKit SMTP configuration and a central HTML-encoded template. No SMTP request runs inside a reservation transaction.
+
+The worker locks one outbox message per delivery across instances, preserves lifecycle order per reservation, uses a 30-second delivery timeout, and retries failures with exponential delay (up to six hours). State changes stay committed when SMTP fails. Unique `(ReservationId, Status)` prevents duplicate enqueue on retries. Delivery is **at least once**: a crash after SMTP accepts a message but before its receipt commits can cause a duplicate email. Successful receipts retain IDs/timestamps while recipient/body are cleared. Monitor unsent rows, attempt counts and worker warning/error logs; sustained SMTP errors need operator attention. No historical emails are sent by the migration.
+
+Existing `Smtp` settings and secret storage are reused. Keep credentials in user-secrets or environment configuration, never in source control.
+
+### Reservation validation
+
+`Tests/DriverHub.Tests` uses xUnit, real SQL Server transactions/migrations, a local HTTP host and fake mail delivery. It always creates and removes uniquely named `DriverHub_ReservationTests_*` databases and never loads the application's database configuration. Windows defaults to `(localdb)\MSSQLLocalDB`; set `DRIVERHUB_TEST_SQL_SERVER` to a dedicated SQL Server instance with integrated authentication if needed.
+
+```bash
+dotnet test Tests/DriverHub.Tests/DriverHub.Tests.csproj
+```
+
+Tests cover customer snapshots, Pending creation, valid/invalid/idempotent transitions, authorization and mass assignment, date/vehicle/overlap rules, concurrent requests, pagination, pricing boundaries, clean/upgrade migrations, and notification failure handling. If a running API locks Debug DLLs, use `-p:OutputPath=bin/ReservationValidation/` for build/test validation.
 
 ---
 
@@ -400,6 +437,14 @@ dotnet user-secrets set "Smtp:Password" "YOUR_SMTP_PASSWORD"
 
 ### Apply Migrations
 
+The design-time factory lives in `DriverHub.WebApi` and reads JSON configuration, Development User Secrets, environment variables and command-line overrides. Its default environment is Development; use `-- --environment Production` explicitly when needed. Set `SqlOptions:ConnectionString` in the WebApi project's User Secrets or `SqlOptions__ConnectionString` in the environment. An empty connection fails with a configuration error before attempting a database connection.
+
+Visual Studio Package Manager Console:
+
+```powershell
+Update-Database -Project DriverHub.Persistence -StartupProject DriverHub.WebApi -Context AppDbContext
+```
+
 ```bash
 dotnet ef database update \
   --project Infrastructure/DriverHub.Persistence \
@@ -510,13 +555,13 @@ Swagger/OpenAPI includes:
 ### In Progress
 
 - 🚧 Angular Admin Panel
-- 🚧 Reservation production hardening: simultaneous confirmations and monthly pricing remainder correction
+- ✅ Reservation admin history/detail, lifecycle decisions, customer snapshots and durable email delivery
 
 ### Planned
 
 - Public rental flow
-- Reservation lifecycle management
-- Automated tests
+- Reservation completion operation and public customer flow
+- Broader automated test coverage
 - Docker
 - CI/CD
 - Monitoring / metrics
@@ -553,7 +598,7 @@ The flow uses the existing domain models:
 - Insurance Packages
 - Rental Extras (`Extra`)
 
-Next steps include public rental screens, reservation lifecycle management, automated boundary/concurrency tests and the production-hardening work noted above.
+Next steps include public rental screens, a completion operation, broader test coverage and operational monitoring for the email outbox.
 
 ---
 

@@ -1,0 +1,16 @@
+@if (reservation().status === pending) {
+  @if (action(); as selectedAction) {
+    <div class="confirmation" role="group" aria-label="Rezervasyon işlemi onayı">
+      <p>{{ selectedAction === 'approve' ? 'Bu rezervasyon onaylansın mı?' : 'Bu rezervasyon iptal edilsin mi?' }}</p>
+      <div class="actions">
+        <button type="button" class="button" [class.danger]="selectedAction === 'cancel'" [class.primary]="selectedAction === 'approve'" [disabled]="isSaving() || disabled()" (click)="confirm()">{{ isSaving() ? 'İşleniyor…' : 'Evet, devam et' }}</button>
+        <button type="button" class="button" [disabled]="isSaving()" (click)="action.set(null)">Vazgeç</button>
+      </div>
+    </div>
+  } @else {
+    <div class="actions">
+      <button type="button" class="button primary" [disabled]="disabled()" (click)="action.set('approve')">Onayla</button>
+      <button type="button" class="button danger" [disabled]="disabled()" (click)="action.set('cancel')">İptal Et</button>
+    </div>
+  }
+}

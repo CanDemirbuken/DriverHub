@@ -10,11 +10,46 @@ using DriverHub.WebApi.Controllers.Abstraction;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DriverHub.Application.Common.Models;
+using DriverHub.Application.Features.Entities.Reservations.Common;
+using DriverHub.Application.Features.Entities.Reservations.Queries.GetPagedReservations;
+using DriverHub.Application.Features.Entities.Reservations.Queries.GetReservationById;
+using DriverHub.Application.Features.Entities.Reservations.Commands.UpdateReservationStatus;
+using DriverHub.Domain.Enums;
 
 namespace DriverHub.WebApi.Controllers.Entities;
 
 public sealed class ReservationsController(IMediator mediator) : BaseController(mediator)
 {
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponse<PagedResponse<ReservationResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPagedAsync([FromQuery] GetPagedReservationsQuery request, CancellationToken cancellationToken) =>
+        ToActionResult(await _mediator.Send(request, cancellationToken));
+
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<ReservationResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+        ToActionResult(await _mediator.Send(new GetReservationByIdQuery(id), cancellationToken));
+
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
+    [HttpPost("{id:guid}/approve")]
+    public Task<IActionResult> ApproveAsync(Guid id, CancellationToken cancellationToken) =>
+        UpdateStatusAsync(id, ReservationStatus.Confirmed, cancellationToken);
+
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
+    [HttpPost("{id:guid}/cancel")]
+    public Task<IActionResult> CancelAsync(Guid id, CancellationToken cancellationToken) =>
+        UpdateStatusAsync(id, ReservationStatus.Cancelled, cancellationToken);
+
+    private async Task<IActionResult> UpdateStatusAsync(Guid id, ReservationStatus status, CancellationToken cancellationToken)
+    {
+        string? actorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(actorId)) return Unauthorized();
+        return ToActionResult(await _mediator.Send(new UpdateReservationStatusCommand(id, status, actorId), cancellationToken));
+    }
+
     [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [HttpGet("availability")]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<GetAvailableCarsQueryResponse>>), StatusCodes.Status200OK)]

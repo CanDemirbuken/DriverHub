@@ -35,6 +35,10 @@ export const ApiEndpoints = {
   },
 
   Reservations: {
+    List: `/api/reservations`,
+    Detail: (id: string) => `/api/reservations/${id}`,
+    Approve: (id: string) => `/api/reservations/${id}/approve`,
+    Cancel: (id: string) => `/api/reservations/${id}/cancel`,
     Availability: `/api/reservations/availability`,
     Quote: `/api/reservations/quote`,
     Create: `/api/reservations`

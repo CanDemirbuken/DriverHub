@@ -10,6 +10,15 @@ public sealed class ReservationConfiguration : EntityConfiguration<Reservation>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Reservation> builder)
     {
+        // Nullable snapshots preserve legacy records without inventing historical customer data.
+        builder.Property(x => x.CustomerFirstName).HasMaxLength(100);
+        builder.Property(x => x.CustomerLastName).HasMaxLength(100);
+        builder.Property(x => x.CustomerEmail).HasMaxLength(256);
+        builder.Property(x => x.CustomerPhone).HasMaxLength(50);
+        builder.Property(x => x.ProcessedBy).HasMaxLength(450);
+        builder.HasIndex(x => new { x.CreatedDate, x.Id });
+        builder.HasIndex(x => new { x.Status, x.CreatedDate, x.Id });
+        builder.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ProcessedBy).OnDelete(DeleteBehavior.Restrict);
         builder.ToTable("Reservations", tableBuilder =>
         {
             tableBuilder.HasCheckConstraint(

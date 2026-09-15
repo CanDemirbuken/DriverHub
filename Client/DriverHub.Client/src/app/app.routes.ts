@@ -62,6 +62,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reservations/reservation-create/reservation-create').then(m => m.ReservationCreate)
       },
       {
+        path: RoutePaths.Admin.Reservations,
+        loadComponent: () => import('./features/reservations/reservation-list/reservation-list').then(m => m.ReservationList)
+      },
+      {
+        path: `${RoutePaths.Admin.Reservations}/:id`,
+        loadComponent: () => import('./features/reservations/reservation-detail/reservation-detail').then(m => m.ReservationDetail)
+      },
+      {
         path: RoutePaths.Admin.Brands,
         loadComponent: () => import('./features/brands/brand-list/brands').then(m => m.Brands)
       },

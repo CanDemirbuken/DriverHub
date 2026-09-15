@@ -1,0 +1,46 @@
+<section class="reservation-page">
+  <header class="page-header">
+    <div><span class="eyebrow">Rezervasyon Yönetimi</span><h1>Rezervasyon Geçmişi</h1><p>Müşterileri, kiralama dönemlerini ve rezervasyon işlemlerini takip edin.</p></div>
+    <a class="button primary" [routerLink]="routeLinks.Admin.CreateReservation">+ Yeni Rezervasyon</a>
+  </header>
+  <form class="card filters" (ngSubmit)="applyFilters()">
+    <fieldset [disabled]="isLoading() || isUpdating()">
+      <label>Müşteri / Araç / Rezervasyon No<input name="search" [(ngModel)]="search" maxlength="200" placeholder="Ad, e-posta, marka veya plaka" /></label>
+      <label>Durum<select name="status" [(ngModel)]="status"><option [ngValue]="null">Tüm durumlar</option><option [ngValue]="statuses.Pending">Onay Bekliyor</option><option [ngValue]="statuses.Approved">Onaylandı</option><option [ngValue]="statuses.Cancelled">İptal Edildi</option><option [ngValue]="statuses.Completed">Tamamlandı</option></select></label>
+      <label>Dönem başlangıcı<input type="datetime-local" name="from" [(ngModel)]="from" /></label>
+      <label>Dönem bitişi (hariç)<input type="datetime-local" name="to" [(ngModel)]="to" /></label>
+      <label>Sıralama<select name="order" [(ngModel)]="oldestFirst"><option [ngValue]="false">En yeni kayıt</option><option [ngValue]="true">En eski kayıt</option></select></label>
+      <button type="submit" class="button primary">Filtrele</button>
+    </fieldset>
+  </form>
+  @if (isLoading()) { <div class="state" role="status">Rezervasyonlar yükleniyor…</div> }
+  @else if (errorMessage()) { <div class="state error" role="alert"><p>{{ errorMessage() }}</p><button class="button" type="button" (click)="load()">Tekrar Dene</button></div> }
+  @else if (data(); as result) {
+    <p class="summary">Toplam {{ result.totalCount }} rezervasyon • Tarihler yerel saatinizle gösterilir.</p>
+    <div class="reservation-grid">
+      @for (reservation of result.items; track reservation.id) {
+        <article class="card">
+          <div class="card-heading"><div><span class="eyebrow">{{ reservation.brandName }}</span><h2>{{ reservation.model }}</h2><span class="plate">{{ reservation.plate }}</span></div><app-reservation-status [status]="reservation.status" /></div>
+          <p class="identifier">{{ reservation.id }}</p>
+          <dl class="details">
+            <div><dt>Müşteri</dt><dd>{{ reservation.customerFirstName || 'Bilgi yok' }} {{ reservation.customerLastName }}</dd></div>
+            <div><dt>E-posta</dt><dd>{{ reservation.customerEmail || 'Bilgi yok' }}</dd></div>
+            @if (reservation.customerPhone) { <div><dt>Telefon</dt><dd>{{ reservation.customerPhone }}</dd></div> }
+            <div><dt>Teslim alma</dt><dd>{{ reservation.pickupLocationName }}</dd></div>
+            <div><dt>İade</dt><dd>{{ reservation.returnLocationName }}</dd></div>
+            <div><dt>Başlangıç</dt><dd>{{ reservation.startDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+            <div><dt>Bitiş</dt><dd>{{ reservation.endDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+            <div><dt>Süre</dt><dd>{{ reservation.rentalDays }} gün</dd></div>
+            <div><dt>Toplam</dt><dd>{{ reservation.totalPrice | number:'1.2-2' }} ₺</dd></div>
+            <div><dt>Oluşturulma</dt><dd>{{ reservation.createdDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+            <div><dt>Admin işlemi</dt><dd>{{ (reservation.processedAt | date:'dd.MM.yyyy HH:mm') || '—' }}</dd></div>
+          </dl>
+          <div class="card-footer"><a class="button" [routerLink]="routeLinks.Admin.ReservationDetail(reservation.id)">Detay</a><app-reservation-actions [reservation]="reservation" [disabled]="isUpdating()" (busyChange)="isUpdating.set($event)" (changed)="load()" /></div>
+        </article>
+      } @empty { <div class="state">Bu filtrelere uygun rezervasyon bulunamadı.</div> }
+    </div>
+    @if (result.totalPages > 0) {
+      <nav class="pagination" aria-label="Rezervasyon sayfaları"><span>Sayfa {{ result.pageNumber }} / {{ result.totalPages }}</span><div class="actions"><button type="button" class="button" [disabled]="!result.hasPreviousPage || isUpdating()" (click)="changePage(pageNumber - 1)">← Önceki</button><button type="button" class="button primary" [disabled]="!result.hasNextPage || isUpdating()" (click)="changePage(pageNumber + 1)">Sonraki →</button></div></nav>
+    }
+  }
+</section>

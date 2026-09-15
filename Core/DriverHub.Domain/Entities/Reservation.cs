@@ -13,6 +13,12 @@ public sealed class Reservation : Entity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public ReservationStatus Status { get; set; }
+    public string? CustomerFirstName { get; set; }
+    public string? CustomerLastName { get; set; }
+    public string? CustomerEmail { get; set; }
+    public string? CustomerPhone { get; set; }
+    public DateTime? ProcessedAt { get; set; }
+    public string? ProcessedBy { get; set; }
     public decimal BasePrice { get; set; }
     public decimal ExtraPrice { get; set; }
     public decimal InsurancePrice { get; set; }

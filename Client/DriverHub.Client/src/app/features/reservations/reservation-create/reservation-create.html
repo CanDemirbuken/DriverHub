@@ -1,7 +1,7 @@
 <section class="reservation-page">
   <header class="page-header">
-    <div><span class="eyebrow">Rezervasyon Yönetimi</span><h1>Yeni Rezervasyon</h1><p>Tarih ve lokasyona göre müsait aracı seçerek rezervasyon oluşturun.</p></div>
-    <a class="back-link" [routerLink]="routeLinks.Admin.Cars">← Araçlara Dön</a>
+    <div><span class="eyebrow">Rezervasyon Yönetimi</span><h1>Yeni Rezervasyon</h1><p>Tarih ve lokasyona göre müsait aracı seçerek rezervasyon oluşturun. Talep oturum açtığınız hesap adına kaydedilir ve admin onayı bekler.</p></div>
+    <a class="back-link" [routerLink]="routeLinks.Admin.Reservations">← Rezervasyonlara Dön</a>
   </header>
 
   @if (isLoading()) { <div class="state"><span class="spinner"></span><span>Lokasyonlar hazırlanıyor...</span></div> }
@@ -11,7 +11,7 @@
       <p>Rezervasyon numarası: {{ reservationId }}</p>
       <div class="confirmation">
         <button class="button primary" type="button" (click)="startNewReservation()">Yeni Rezervasyon Oluştur</button>
-        <a class="back-link" [routerLink]="routeLinks.Admin.Cars">Araçlara Dön</a>
+        <a class="back-link" [routerLink]="routeLinks.Admin.ReservationDetail(reservationId)">Rezervasyon Detayı</a>
       </div>
     </section>
   }
@@ -40,7 +40,7 @@
           <div><h3>Sigorta Paketi</h3><label class="option"><input type="radio" name="insurancePackage" [checked]="selectedInsuranceId === null" (change)="selectInsurance(null)" /><span>Sigorta seçme</span></label>@for (insurance of reservationQuote.availableInsurancePackages; track insurance.id) {<label class="option"><input type="radio" name="insurancePackage" [checked]="selectedInsuranceId === insurance.id" (change)="selectInsurance(insurance.id)" /><span>{{ insurance.name }}</span><small>{{ insurance.dailyPrice | number:'1.2-2' }} / gün</small></label>}</div>
         </div>
         <div class="price-summary"><span>Araç kiralama <b>{{ reservationQuote.basePrice | number:'1.2-2' }}</b></span><span>Ek hizmetler <b>{{ reservationQuote.extrasTotal | number:'1.2-2' }}</b></span><span>Sigorta <b>{{ reservationQuote.insurancePrice | number:'1.2-2' }}</b></span><strong>Toplam <b>{{ reservationQuote.totalPrice | number:'1.2-2' }}</b></strong></div>
-        <footer class="confirmation"><div><b>Son adım</b><span>Fiyatlar backend tarafından hesaplandı. Onayladığınızda rezervasyon oluşturulur.</span></div><button class="button primary" type="button" [disabled]="isCreating() || isSearching()" (click)="createReservation()">@if (isCreating()) { Oluşturuluyor... } @else { Rezervasyonu Onayla }</button></footer>
+        <footer class="confirmation"><div><b>Son adım</b><span>Talebiniz onay bekleyen rezervasyon olarak kaydedilecektir.</span></div><button class="button primary" type="button" [disabled]="isCreating() || isSearching()" (click)="createReservation()">@if (isCreating()) { Oluşturuluyor... } @else { Rezervasyon Talebi Oluştur }</button></footer>
       </section>
     }
     </fieldset>

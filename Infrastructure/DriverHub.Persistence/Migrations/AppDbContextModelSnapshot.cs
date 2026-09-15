@@ -22,7 +22,65 @@ namespace DriverHub.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Car", b =>
+            modelBuilder.Entity("CarPricing", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("CarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId", "Type")
+                        .IsUnique();
+
+                    b.ToTable("CarPricings", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CarPricings_Amount_Positive", "[Amount] > 0");
+
+                            t.HasCheckConstraint("CK_CarPricings_Type_Valid", "[Type] BETWEEN 1 AND 3");
+                        });
+                });
+
+            modelBuilder.Entity("DriverHub.Domain.Entities.Brand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Brands", (string)null);
+                });
+
+            modelBuilder.Entity("DriverHub.Domain.Entities.Car", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -123,64 +181,6 @@ namespace DriverHub.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_Cars_Status_Valid", "[Status] BETWEEN 1 AND 5");
                         });
-                });
-
-            modelBuilder.Entity("CarPricing", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("CarId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId", "Type")
-                        .IsUnique();
-
-                    b.ToTable("CarPricings", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_CarPricings_Amount_Positive", "[Amount] > 0");
-
-                            t.HasCheckConstraint("CK_CarPricings_Type_Valid", "[Type] BETWEEN 1 AND 3");
-                        });
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.Brand", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("DriverHub.Domain.Entities.CarDescription", b =>
@@ -386,6 +386,22 @@ namespace DriverHub.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("CustomerFirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerLastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerPhone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -402,6 +418,13 @@ namespace DriverHub.Persistence.Migrations
 
                     b.Property<Guid>("PickupLocationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProcessedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("ReturnLocationId")
                         .HasColumnType("uniqueidentifier");
@@ -430,9 +453,15 @@ namespace DriverHub.Persistence.Migrations
 
                     b.HasIndex("PickupLocationId");
 
+                    b.HasIndex("ProcessedBy");
+
                     b.HasIndex("ReturnLocationId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("CreatedDate", "Id");
+
+                    b.HasIndex("Status", "CreatedDate", "Id");
 
                     b.HasIndex("CarId", "StartDate", "EndDate", "Status");
 
@@ -490,6 +519,54 @@ namespace DriverHub.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_ReservationExtras_UnitPrice_NonNegative", "[UnitPrice] >= 0");
                         });
+                });
+
+            modelBuilder.Entity("DriverHub.Persistence.Communication.EmailOutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextAttemptAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Recipient")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NextAttemptAt", "CreatedAt")
+                        .HasFilter("[DeliveredAt] IS NULL");
+
+                    b.HasIndex("ReservationId", "Status")
+                        .IsUnique();
+
+                    b.ToTable("EmailOutboxMessages", (string)null);
                 });
 
             modelBuilder.Entity("DriverHub.Persistence.Identity.AppUser", b =>
@@ -753,7 +830,18 @@ namespace DriverHub.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Car", b =>
+            modelBuilder.Entity("CarPricing", b =>
+                {
+                    b.HasOne("DriverHub.Domain.Entities.Car", "Car")
+                        .WithMany("CarPricings")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
+            modelBuilder.Entity("DriverHub.Domain.Entities.Car", b =>
                 {
                     b.HasOne("DriverHub.Domain.Entities.Brand", "Brand")
                         .WithMany("Cars")
@@ -780,20 +868,9 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("CurrentLocation");
                 });
 
-            modelBuilder.Entity("CarPricing", b =>
-                {
-                    b.HasOne("Car", "Car")
-                        .WithMany("CarPricings")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-                });
-
             modelBuilder.Entity("DriverHub.Domain.Entities.CarDescription", b =>
                 {
-                    b.HasOne("Car", "Car")
+                    b.HasOne("DriverHub.Domain.Entities.Car", "Car")
                         .WithOne("CarDescription")
                         .HasForeignKey("DriverHub.Domain.Entities.CarDescription", "CarId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -804,7 +881,7 @@ namespace DriverHub.Persistence.Migrations
 
             modelBuilder.Entity("DriverHub.Domain.Entities.CarFeature", b =>
                 {
-                    b.HasOne("Car", "Car")
+                    b.HasOne("DriverHub.Domain.Entities.Car", "Car")
                         .WithMany("CarFeatures")
                         .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -823,7 +900,7 @@ namespace DriverHub.Persistence.Migrations
 
             modelBuilder.Entity("DriverHub.Domain.Entities.Reservation", b =>
                 {
-                    b.HasOne("Car", "Car")
+                    b.HasOne("DriverHub.Domain.Entities.Car", "Car")
                         .WithMany("Reservations")
                         .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -839,6 +916,11 @@ namespace DriverHub.Persistence.Migrations
                         .HasForeignKey("PickupLocationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DriverHub.Persistence.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("ProcessedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DriverHub.Domain.Entities.Location", null)
                         .WithMany()
@@ -874,6 +956,15 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("Extra");
 
                     b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("DriverHub.Persistence.Communication.EmailOutboxMessage", b =>
+                {
+                    b.HasOne("DriverHub.Domain.Entities.Reservation", null)
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DriverHub.Persistence.Identity.RefreshToken", b =>
@@ -938,7 +1029,12 @@ namespace DriverHub.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Car", b =>
+            modelBuilder.Entity("DriverHub.Domain.Entities.Brand", b =>
+                {
+                    b.Navigation("Cars");
+                });
+
+            modelBuilder.Entity("DriverHub.Domain.Entities.Car", b =>
                 {
                     b.Navigation("CarDescription");
 
@@ -947,11 +1043,6 @@ namespace DriverHub.Persistence.Migrations
                     b.Navigation("CarPricings");
 
                     b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("DriverHub.Domain.Entities.Brand", b =>
-                {
-                    b.Navigation("Cars");
                 });
 
             modelBuilder.Entity("DriverHub.Domain.Entities.Category", b =>

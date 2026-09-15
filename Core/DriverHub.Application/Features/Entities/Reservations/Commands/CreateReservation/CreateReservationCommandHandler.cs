@@ -8,22 +8,36 @@ using DriverHub.Application.Interfaces.UnitOfWork;
 using DriverHub.Domain.Entities;
 using DriverHub.Domain.Enums;
 using MediatR;
+using DriverHub.Application.Interfaces.QueryServices.Identity;
+using DriverHub.Application.Interfaces.Communication;
+using FluentValidation;
 
 namespace DriverHub.Application.Features.Entities.Reservations.Commands.CreateReservation;
 
 public sealed class CreateReservationCommandHandler(
-    IRepository<Car> carRepository,
     IRepository<Location> locationRepository,
-    IRepository<Reservation> reservationRepository,
+    IReservationRepository reservationRepository,
     IRepository<Extra> extraRepository,
     IRepository<InsurancePackage> insuranceRepository,
     IRepository<ReservationExtra> reservationExtraRepository,
     ICarQueryService carQueryService,
+    IUserQueryService userQueryService,
+    IValidator<ReservationCustomer> customerValidator,
+    IReservationNotificationQueue notificationQueue,
     IUnitOfWork unitOfWork) : IRequestHandler<CreateReservationCommand, Result<CreateReservationCommandResponse>>
 {
     public async Task<Result<CreateReservationCommandResponse>> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
     {
-        Car? car = await carRepository.GetByIdAsync(request.CarId, cancellationToken);
+        ReservationCustomer? customer = await userQueryService.GetReservationCustomerAsync(request.UserId, cancellationToken);
+        if (customer is null)
+            return Result<CreateReservationCommandResponse>.Failure(Error.Unauthorized("Geçerli kullanıcı bulunamadı."));
+        var customerValidation = await customerValidator.ValidateAsync(customer, cancellationToken);
+        if (!customerValidation.IsValid)
+            return Result<CreateReservationCommandResponse>.Failure(customerValidation.Errors.Select(e =>
+                Error.Validation("Reservation.InvalidCustomer", e.ErrorMessage, e.PropertyName)));
+
+        await using IUnitOfWorkTransaction transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        Car? car = await reservationRepository.GetCarForUpdateAsync(request.CarId, cancellationToken);
 
         if (car is null)
             return Result<CreateReservationCommandResponse>.Failure(Error.NotFound("Araç bulunamadı.", nameof(request.CarId)));
@@ -31,11 +45,8 @@ public sealed class CreateReservationCommandHandler(
         if (car.Status != CarStatus.Active)
             return Result<CreateReservationCommandResponse>.Failure(Error.Conflict("Seçilen araç şu anda kiralamaya uygun değil.", nameof(request.CarId)));
 
-        bool pickupLocationExists = await locationRepository.AnyAsync(
-            location => location.Id == request.PickupLocationId,
-            cancellationToken);
-
-        if (!pickupLocationExists)
+        Location? pickupLocation = await locationRepository.GetByIdAsync(request.PickupLocationId, cancellationToken);
+        if (pickupLocation is null)
             return Result<CreateReservationCommandResponse>.Failure(Error.NotFound("Teslim alma lokasyonu bulunamadı.", nameof(request.PickupLocationId)));
 
         if (car.CurrentLocationId != request.PickupLocationId)
@@ -52,7 +63,7 @@ public sealed class CreateReservationCommandHandler(
         if (request.InsurancePackageId is not null && insurance is null)
             return Result<CreateReservationCommandResponse>.Failure(Error.Validation("Reservation.InvalidInsurance", "Seçilen sigorta paketi geçersiz.", nameof(request.InsurancePackageId)));
 
-        int rentalDays = Math.Max(1, (int)Math.Ceiling((request.EndDate - request.StartDate).TotalDays));
+        int rentalDays = ReservationTimePolicy.GetRentalDays(request.StartDate, request.EndDate);
         ReservationPrice price = ReservationPriceCalculator.Calculate(
             rentalDays,
             carDetails.Pricings.Select(item => (item.Type, item.Amount)),
@@ -69,21 +80,13 @@ public sealed class CreateReservationCommandHandler(
         if (overlaps)
             return Result<CreateReservationCommandResponse>.Failure(Error.Conflict("Araç seçilen tarih aralığında başka bir rezervasyonla çakışıyor.", nameof(request.CarId)));
 
-        await using IUnitOfWorkTransaction transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
-
-        bool finalOverlap = await reservationRepository.AnyAsync(
-            reservation => reservation.CarId == request.CarId &&
-                (reservation.Status == ReservationStatus.Pending || reservation.Status == ReservationStatus.Confirmed) &&
-                reservation.StartDate < request.EndDate &&
-                reservation.EndDate > request.StartDate,
-            cancellationToken);
-
-        if (finalOverlap)
-            return Result<CreateReservationCommandResponse>.Failure(Error.Conflict("Araç seçilen tarih aralığında başka bir rezervasyonla çakışıyor.", nameof(request.CarId)));
-
         Reservation reservation = new()
         {
             UserId = request.UserId,
+            CustomerFirstName = customer.FirstName,
+            CustomerLastName = customer.LastName,
+            CustomerEmail = customer.Email,
+            CustomerPhone = customer.Phone,
             CarId = request.CarId,
             PickupLocationId = request.PickupLocationId,
             ReturnLocationId = request.PickupLocationId,
@@ -106,6 +109,7 @@ public sealed class CreateReservationCommandHandler(
                 UnitPrice = extra.DailyPrice,
                 TotalPrice = extra.DailyPrice * price.RentalDays
             }, cancellationToken);
+        await notificationQueue.EnqueueAsync(reservation, $"{carDetails.BrandName} {car.Model} — {car.Plate}", pickupLocation.Name, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 

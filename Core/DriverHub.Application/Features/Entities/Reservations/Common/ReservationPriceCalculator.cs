@@ -12,7 +12,7 @@ public static class ReservationPriceCalculator
     {
         int months = rentalDays / 30;
         int weeks = rentalDays % 30 / 7;
-        int days = rentalDays % 7;
+        int days = rentalDays % 30 % 7;
 
         IReadOnlyDictionary<PricingType, decimal> prices = carPricings
             .ToDictionary(item => item.Type, item => item.Amount);

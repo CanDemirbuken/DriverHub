@@ -10,4 +10,7 @@
   <Folder Name="/Presentation/">
     <Project Path="Presentation/DriverHub.WebApi/DriverHub.WebApi.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/DriverHub.Tests/DriverHub.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -1,0 +1,35 @@
+<section class="reservation-page">
+  <header class="page-header"><div><span class="eyebrow">Rezervasyon Yönetimi</span><h1>Rezervasyon Detayı</h1><p>Tarihler yerel saatinizle gösterilir.</p></div><a class="button" [routerLink]="routeLinks.Admin.Reservations">← Rezervasyonlara Dön</a></header>
+  @if (isLoading()) { <div class="state" role="status">Rezervasyon yükleniyor…</div> }
+  @else if (errorMessage()) { <div class="state error" role="alert"><p>{{ errorMessage() }}</p><button type="button" class="button" (click)="load()">Tekrar Dene</button></div> }
+  @else if (reservation(); as item) {
+    <section class="card overview"><div><p class="identifier">{{ item.id }}</p><app-reservation-status [status]="item.status" /></div><app-reservation-actions [reservation]="item" (changed)="load()" /></section>
+    <div class="reservation-grid">
+      <section class="card"><h2>Müşteri</h2><dl class="details">
+        <div><dt>Ad soyad</dt><dd>{{ item.customerFirstName || 'Bilgi yok' }} {{ item.customerLastName }}</dd></div>
+        <div><dt>E-posta</dt><dd>{{ item.customerEmail || 'Bilgi yok' }}</dd></div>
+        <div><dt>Telefon</dt><dd>{{ item.customerPhone || '—' }}</dd></div>
+      </dl></section>
+      <section class="card"><h2>Rezervasyon</h2><dl class="details">
+        <div><dt>Oluşturulma</dt><dd>{{ item.createdDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+        <div><dt>Başlangıç</dt><dd>{{ item.startDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+        <div><dt>Bitiş</dt><dd>{{ item.endDate | date:'dd.MM.yyyy HH:mm' }}</dd></div>
+        <div><dt>Kiralama süresi</dt><dd>{{ item.rentalDays }} gün</dd></div>
+        <div><dt>Admin işlem tarihi</dt><dd>{{ (item.processedAt | date:'dd.MM.yyyy HH:mm') || '—' }}</dd></div>
+        <div><dt>İşlemi yapan</dt><dd>{{ item.processedByName || '—' }}</dd></div>
+      </dl></section>
+      <section class="card"><h2>Araç ve Lokasyon</h2><dl class="details">
+        <div><dt>Marka / Model</dt><dd>{{ item.brandName }} {{ item.model }}</dd></div>
+        <div><dt>Plaka</dt><dd>{{ item.plate }}</dd></div>
+        <div><dt>Teslim alma</dt><dd>{{ item.pickupLocationName }}</dd></div>
+        <div><dt>İade</dt><dd>{{ item.returnLocationName }}</dd></div>
+      </dl><a class="button" [routerLink]="routeLinks.Admin.CarDetail(item.carId)">Araç Detayı</a></section>
+      <section class="card"><h2>Fiyatlandırma</h2><dl class="details">
+        <div><dt>Araç kiralama</dt><dd>{{ item.basePrice | number:'1.2-2' }} ₺</dd></div>
+        <div><dt>Ek hizmetler</dt><dd>{{ item.extraPrice | number:'1.2-2' }} ₺</dd></div>
+        <div><dt>Sigorta</dt><dd>{{ item.insurancePrice | number:'1.2-2' }} ₺</dd></div>
+        <div><dt>Toplam</dt><dd class="total">{{ item.totalPrice | number:'1.2-2' }} ₺</dd></div>
+      </dl></section>
+    </div>
+  }
+</section>

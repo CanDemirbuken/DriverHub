@@ -39,7 +39,7 @@ public sealed class GetReservationQuoteQueryHandler(
         if (request.InsurancePackageId is not null && insurance is null)
             return Result<GetReservationQuoteResponse>.Failure(Error.Validation("Reservation.InvalidInsurance", "Seçilen sigorta paketi geçersiz.", nameof(request.InsurancePackageId)));
 
-        int rentalDays = Math.Max(1, (int)Math.Ceiling((request.EndDate - request.StartDate).TotalDays));
+        int rentalDays = ReservationTimePolicy.GetRentalDays(request.StartDate, request.EndDate);
         ReservationPrice price = ReservationPriceCalculator.Calculate(
             rentalDays,
             car.Pricings.Select(item => (item.Type, item.Amount)),

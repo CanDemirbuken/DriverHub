@@ -134,6 +134,7 @@ public static class DependencyInjection
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddHostedService<EmailOutboxWorker>();
         services.AddScoped<IStorageService, StorageService>();
 
         services

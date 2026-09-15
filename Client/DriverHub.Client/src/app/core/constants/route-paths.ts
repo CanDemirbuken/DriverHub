@@ -30,6 +30,8 @@ export const RouteLinks = {
     Cars: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}`,
     CreateCar: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/create`,
     CreateReservation: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Reservations}/create`,
+    Reservations: `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Reservations}`,
+    ReservationDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Reservations}/${id}`,
     CarDetail: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}`,
     CarEdit: (id: string) => `/${RoutePaths.Admin.Root}/${RoutePaths.Admin.Cars}/${id}/edit`,
 

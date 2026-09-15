@@ -870,10 +870,26 @@ Search Criteria → Available Cars → Select Car → Reservation Quote
 - Selecting a vehicle requests a backend-generated quote; it does not create a reservation. Users can return to vehicle selection or change the search criteria.
 - Optional extra checkboxes and an optional insurance package selection refresh the quote through the API. The price summary displays returned base, extras, insurance and total amounts; Angular does not calculate authoritative prices.
 - The date input minimum and action validation follow the backend's five-minute grace period at minute precision. Older starts and an end at or before the start are rejected.
-- `Rezervasyonu Onayla` is the explicit create action. Busy-state checks and disabled controls prevent duplicate submissions from the screen while confirmation is in progress.
-- On success, the quote/form is replaced by a success panel with the reservation ID, `Yeni Rezervasyon Oluştur` and `Araçlara Dön` actions. Vehicle, quote, options, criteria and operation error state are cleared; a success toast remains additional feedback.
+- `Rezervasyon Talebi Oluştur` creates a Pending request for the authenticated account. Admin approval is a separate operation. Busy-state checks and disabled controls prevent duplicate submissions.
+- On success, the quote/form is replaced by a success panel with the reservation ID, `Yeni Rezervasyon Oluştur` and `Rezervasyon Detayı` actions. Vehicle, quote, options, criteria and operation error state are cleared; a success toast remains additional feedback.
 
-The screen uses standalone components, local Signals, typed API models, centralized endpoint definitions and the shared `ToastService`. Loading and API errors are handled separately from the success state. Availability and quoted prices can change before confirmation; the API remains authoritative. Reservation list/detail and lifecycle screens are not yet provided.
+The screen uses standalone components, local Signals, typed API models, centralized endpoint definitions and the shared `ToastService`. Loading and API errors are handled separately from the success state. Availability and quoted prices can change before confirmation; the API remains authoritative.
+
+## Reservation History and Detail
+
+The sidebar opens `/admin/reservations`, a responsive paged history with customer/vehicle/ID search, status filters, rental-period filters and creation-date ordering. Cards display customer snapshots, vehicle/plate, pickup/return locations, rental dates, backend-calculated days, total price, creation time and admin processing time.
+
+`/admin/reservations/:id` adds pricing breakdown and the processing administrator. Shared status badges and action components keep list/detail behavior consistent. Pending requests can be approved or cancelled after inline confirmation. Busy controls prevent duplicate submission; `ToastService` provides results and pages reload authoritative state after actions or conflicts. Approved, Cancelled and Completed records hide invalid actions.
+
+The UI maps `Approved = 2` to the backend's existing `Confirmed = 2` value. Completed remains displayable; there is no completion action. Timestamps from the API are UTC and rendered in local time. Rental days and prices always come from the API. The existing parent admin guard and backend `AdminOnly` policy protect customer information.
+
+Focused tests:
+
+```bash
+npm test -- --watch=false --include="src/app/features/reservations/**/*.spec.ts" --include="src/app/core/services/reservation/**/*.spec.ts"
+```
+
+These cover service contracts, confirmation, duplicate submission, conflict feedback, valid actions and list/detail rendering. The general test suite also contains pre-existing scaffold failures (missing route/HTTP providers and an obsolete application title assertion).
 
 ---
 
@@ -1223,7 +1239,7 @@ Feature Management
 
 Future frontend milestones include:
 
-- Reservation list/detail and lifecycle management UI
+- Reservation completion UI when a backend completion operation is defined
 - Additional authentication UX improvements
 - Public vehicle listing
 - Public vehicle detail
